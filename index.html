@@ -466,7 +466,7 @@ let msgT=0;function msg(a,b,t,small){$('msg').textContent=a;$('msg').style.fontS
 /* ================= CoD-style extras: slide, melee, grenades, ammo drops, score popups ================= */
 let nades=[],picks=[],pops=[],meleeT=0,shake=0;
 function pop(txt,c){pops.unshift({txt,c:c||'#fff',t:1.6});pops=pops.slice(0,5)}
-function startSlide(p){const f=dirOf(p.yaw,0);p.slX=f[0];p.slZ=f[2];p.slideT=.75;p.sprint=false;p.crouch=true;sfx('slide')}
+function startSlide(p){const f=dirOf(p.yaw,0);p.slX=f[0];p.slZ=f[2];p.slideT=.9;p.slideV=Math.max(9,Math.hypot(p.vx,p.vz)+2.2);p.vx=p.slX*p.slideV;p.vz=p.slZ*p.slideV;p.sprint=false;p.crouch=true;sfx('slide')}
 function melee(p){if(p.dead||p.meleeCd>T)return;p.meleeCd=T+.8;if(p===me){meleeT=.35;sfx('swap')}const f=dirOf(p.yaw,0);
   for(const q of players){if(q===p||q.dead||!foe(p,q))continue;const dx=q.x-p.x,dz=q.z-p.z,d=Math.hypot(dx,dz);if(d<2.3&&(dx*f[0]+dz*f[2])/Math.max(d,.01)>.6&&Math.abs(q.y-p.y)<1.2){if(damage(q,150,p,false)&&p===me)pop('MELEE KILL','#ffb02e');if(p===me){hitT=.2;hitK=q.dead;sfx('hit')}break}}}
 function throwNade(p){if(p.dead||!p.nades||p.nadeCd>T)return;p.nades--;p.nadeCd=T+1;const e=eyeOf(p),d=dirOf(p.yaw,p.pitch+.18),v=15;nades.push({x:e[0]+d[0]*.5,y:e[1]-.2,z:e[2]+d[2]*.5,vx:d[0]*v+p.vx*.5,vy:d[1]*v+2,vz:d[2]*v+p.vz*.5,t:2.3,from:p});if(p===me)sfx('swap')}
@@ -570,9 +570,9 @@ function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&
   const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(M['g_'+curW(p).id]);draw(M['m_'+curW(p).id])}
 function render(){const W2=C.width,H2=C.height;gl.viewport(0,0,W2,H2);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   if(!staticMesh)return;let eye,yaw,pitch;
-  if(state==='play'&&me){const cr=me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,.2);const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3}}
+  if(state==='play'&&me){const rdt=Math.min(.05,(performance.now()-(window._rT||0))/1000);window._rT=performance.now();const cr=me.slideT>0?.92:me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,1-Math.exp(-rdt*16));const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH-landK*.13+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3}}
   else{const t=performance.now()/9000;eye=[Math.cos(t)*40,14,Math.sin(t)*40];yaw=Math.atan2(eye[0],eye[2]);pitch=-.22}
-  const W0=WEP[me&&!me.dead?curW(me).id:'ar'],fov=(S.fov*Math.PI/180)/(1+(W0.zoom-1)*adsK);projV=persp(fov,W2/H2,.08,420);VP=mul(projV,viewM(eye,yaw,pitch));camE=eye;camY=yaw;camP=pitch;
+  const W0=WEP[me&&!me.dead?curW(me).id:'ar'],fov=((S.fov+(state==='play'?fovK*5*(1-adsK):0))*Math.PI/180)/(1+(W0.zoom-1)*adsK);projV=persp(fov,W2/H2,.08,420);VP=mul(projV,viewM(eye,yaw,pitch));camE=eye;camY=yaw;camP=pitch;
   setWorld(VP,eye);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,I4);draw(staticMesh);gl.uniform1f(U.uEm,1);const fl=.85+Math.sin(T*23)*.1+Math.sin(T*7)*.08;gl.uniform3fv(U.uTint,[fl,fl,fl]);draw(glowMesh);gl.uniform1f(U.uEm,0);
   if(state==='play'&&MODE===MODES.hp&&hillMesh[hill.i]){const st=hill.state,pu=.75+.25*Math.sin(performance.now()/180);gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,I4);
     gl.uniform3fv(U.uTint,st==='ours'?[.35,.8,1.6]:st==='theirs'?[1.6,.45,.35]:st==='contested'?[1.6*pu,1.05*pu,.3]:[1,1,1]);draw(hillMesh[hill.i]);gl.uniform1f(U.uEm,0);gl.uniform3fv(U.uTint,[1,1,1])}
@@ -625,15 +625,25 @@ addEventListener('contextmenu',e=>e.preventDefault());
 addEventListener('wheel',e=>{if(state==='play'&&me&&!paused)swapW(me,me.wi?0:1)},{passive:true});
 addEventListener('keydown',e=>{keys[e.code]=true;if(state==='play'&&e.code.startsWith('Arrow'))e.preventDefault();if(state!=='play')return;if(e.code==='Tab'){e.preventDefault();$('board').hidden=false;renderBoard()}
   if(e.code==='Escape'&&!isLocked()){paused=!paused;$('pause').hidden=!paused;mouse.l=mouse.r=false;if(!paused)lockMouse();updLockUI();return}
-  if(!me||paused)return;if(e.code==='KeyR')reload(me);if(e.code==='Digit1')swapW(me,0);if(e.code==='Digit2')swapW(me,1);if(e.code==='KeyC'){if(me.sprint&&me.ground)startSlide(me);else me.crouch=!me.crouch}if(e.code==='KeyV')melee(me);if(e.code==='KeyG')throwNade(me);if(e.code==='KeyF'){mouse.r=!mouse.r}if(e.code==='Space')e.preventDefault()});
-addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='Tab')$('board').hidden=true});
+  if(!me||paused)return;if(e.code==='KeyR')reload(me);if(e.code==='Digit1')swapW(me,0);if(e.code==='Digit2')swapW(me,1);if(e.code==='KeyC'&&!e.repeat){me.cDown=T;if(me.sprint&&me.ground){startSlide(me);me.cWasUp=false}else if(!(me.slideT>0)){me.crouch=!me.crouch;me.cWasUp=!me.crouch}}if(e.code==='KeyV')melee(me);if(e.code==='KeyG')throwNade(me);if(e.code==='KeyF'){mouse.r=!mouse.r}if(e.code==='Space'){e.preventDefault();if(e.repeat)return;if(me.slideT>0){me.slideT=0;me.crouch=false;me.jumpReq=true}else if(me.crouch&&me.ground&&canStand(me)){me.crouch=false;me.noJump=true}}});
+addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='Tab')$('board').hidden=true;if(!me)return;if(e.code==='Space')me.noJump=false;
+  if(e.code==='KeyC'&&T-(me.cDown||0)>.28&&me.crouch&&!(me.slideT>0)&&!me.cWasUp&&canStand(me))me.crouch=false});
 /* ================= Update ================= */
 function update(dt){if(state!=='play')return;T+=dt;matchT-=dt;msgT-=dt;flashT-=dt;hitT-=dt;dmgT-=dt;meleeT-=dt;shake*=Math.exp(-dt*6);recoil*=Math.exp(-dt*7);
   if(me&&!me.dead){const ak=2.2*(1-adsK*.5)*dt*(S.sens/7);me.yaw+=((keys.ArrowLeft?1:0)-(keys.ArrowRight?1:0))*ak;me.pitch=cl(me.pitch+((keys.ArrowUp?1:0)-(keys.ArrowDown?1:0))*ak*.7,-1.45,1.45);
     const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);adsK+=((mouse.r&&!(me.slideT>0)?1:0)-adsK)*Math.min(1,dt*11);
-    const wasSp=me.sprint;me.sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&!mouse.r&&adsK<.2&&!mouse.l&&curW(me).rl<=0&&!(me.slideT>0);if(me.sprint&&!(me.slideT>0))me.crouch=false;if(wasSp&&!me.sprint)me.sprintOut=T+.16;
+    const wasSp=me.sprint;me.sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&!mouse.r&&adsK<.2&&!mouse.l&&curW(me).rl<=0&&!(me.slideT>0);
+    if(me.sprint&&me.crouch){if(canStand(me))me.crouch=false;else me.sprint=false}if(wasSp&&!me.sprint)me.sprintOut=T+.12;
     const fx=-Math.sin(me.yaw),fz=-Math.cos(me.yaw),rx=Math.cos(me.yaw),rz=-Math.sin(me.yaw);let wx=fx*f+rx*s,wz=fz*f+rz*s;const L=Math.hypot(wx,wz);if(L>0){wx/=L;wz/=L}
-    const W=wd(me);let sp=(me.sprint?6.9:me.crouch?2.7:4.7)*W.spd*(1-adsK*.4);if(me.slideT>0){me.slideT-=dt;sp=lerp(4,9.5,me.slideT/.75);wx=me.slX;wz=me.slZ;me.crouch=true}moveBody(me,dt,wx,wz,sp,keys.Space&&!(me.slideT>0));const v=Math.hypot(me.vx,me.vz);if(me.ground&&v>.5){const ob=bob;bob+=dt*v*1.55;if(Math.floor(ob/Math.PI)!==Math.floor(bob/Math.PI))sfx('step')}
+    const W=wd(me);let sp=(me.sprint?6.9:me.crouch?2.9:4.8)*W.spd*(1-adsK*.38);
+    if(me.slideT>0){/* slide: carries momentum, slows with friction, can be steered a little */
+      me.slideT-=dt;me.slideV=Math.max(0,me.slideV-dt*(me.ground?7.5:1.5));const k=Math.min(1,dt*1.6);me.slX=lerp(me.slX,fx,k);me.slZ=lerp(me.slZ,fz,k);const n=Math.hypot(me.slX,me.slZ)||1;me.slX/=n;me.slZ/=n;
+      sp=me.slideV;wx=me.slX;wz=me.slZ;me.crouch=true;
+      if(me.slideT<=0||me.slideV<3.4){me.slideT=0;/* come out of the slide standing if still pushing forward, crouched otherwise */if(f>0&&!keys.KeyC&&canStand(me))me.crouch=false}}
+    const jump=me.jumpReq||(keys.Space&&!me.noJump&&!me.crouch&&!(me.slideT>0));me.jumpReq=false;const wasG=me.ground,vy0=me.vy;
+    moveBody(me,dt,wx,wz,sp,jump);if(!wasG&&me.ground&&vy0<-3){landK=Math.min(1,-vy0/11);sfx('step')}
+    const v=Math.hypot(me.vx,me.vz);if(me.ground&&v>.5&&!(me.slideT>0)){const ob=bob;bob+=dt*v*1.55;if(Math.floor(ob/Math.PI)!==Math.floor(bob/Math.PI))sfx('step')}
+    fovK+=((me.slideT>0?1.5:me.sprint?1:0)-fovK)*Math.min(1,dt*7);landK*=Math.exp(-dt*7);
     tickWeapon(me,dt);if(mouse.l&&!me.sprint){if(W.auto||!mouse.fired){if(fire(me))mouse.fired=true}}
     if(T-me.lastHit>4)me.hp=Math.min(100,me.hp+dt*30)}
   for(const p of players){if(p.dead){p.respT-=dt;if(p.respT<=0&&matchT>0)spawn(p);continue}if(p.bot){botThink(p,dt);tickWeapon(p,dt);if(T-p.lastHit>5)p.hp=Math.min(100,p.hp+dt*25)}}
@@ -642,7 +652,8 @@ function update(dt){if(state!=='play')return;T+=dt;matchT-=dt;msgT-=dt;flashT-=d
   for(const f of feed)f.t-=dt;if(feed.some(f=>f.t<=0)){feed=feed.filter(f=>f.t>0);renderFeed()}for(const d of dmgDir)d.t-=dt;dmgDir=dmgDir.filter(d=>d.t>0);
   if(MODE===MODES.hp)hillTick(dt);const lead=MODE.team?Math.max(...tScore):Math.max(...players.map(p=>p.k));if(lead>=SCORE_LIM||matchT<=0)endMatch()}
 /* ================= HUD ================= */
-let hudT=0,xk=0;
+let hudT=0,xk=0,fovK=0,landK=0;
+function canStand(p){for(const b of COLL)if(p.x>b.x0-.35&&p.x<b.x1+.35&&p.z>b.z0-.35&&p.z<b.z1+.35&&b.y0>p.y+1.1&&b.y0<p.y+1.8)return false;return true}
 function hud(){updLockUI();if(state!=='play'||!me)return;const c=curW(me),W=WEP[c.id];
   if(MODE.team){$('sMe').textContent=tScore[0];$('sLead').textContent=tScore[1]}else{$('sMe').textContent=me.k;$('sLead').textContent=Math.max(...players.filter(p=>p!==me).map(p=>p.k),0)}
   if(MODE===MODES.hp){const h=HILLS[hill.i],st=hill.state,el=$('hpS');el.hidden=false;el.className='hp '+st;el.innerHTML=`<b>${h.n}</b><span>${st==='ours'?'HELD BY '+TEAMS[0].n:st==='theirs'?'HELD BY '+TEAMS[1].n:st==='contested'?'CONTESTED':'UNCLAIMED'}</span><i>Moves in ${Math.ceil(hill.t)}s</i>`}else $('hpS').hidden=true;const mt=Math.max(0,matchT);$('sTime').textContent=`${Math.floor(mt/60)}:${String(Math.floor(mt%60)).padStart(2,'0')}`;
