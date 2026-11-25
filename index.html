@@ -553,8 +553,8 @@ addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='Tab')$('board').hid
 /* ================= Update ================= */
 function update(dt){if(state!=='play')return;T+=dt;matchT-=dt;msgT-=dt;flashT-=dt;hitT-=dt;dmgT-=dt;meleeT-=dt;shake*=Math.exp(-dt*6);recoil*=Math.exp(-dt*7);
   if(me&&!me.dead){const ak=2.2*(1-adsK*.5)*dt*(S.sens/7);me.yaw+=((keys.ArrowLeft?1:0)-(keys.ArrowRight?1:0))*ak;me.pitch=cl(me.pitch+((keys.ArrowUp?1:0)-(keys.ArrowDown?1:0))*ak*.7,-1.45,1.45);
-    const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);adsK+=((mouse.r&&!me.sprint?1:0)-adsK)*Math.min(1,dt*11);
-    const wasSp=me.sprint;me.sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&adsK<.2&&!mouse.l&&curW(me).rl<=0&&!(me.slideT>0);if(me.sprint&&!(me.slideT>0))me.crouch=false;if(wasSp&&!me.sprint)me.sprintOut=T+.16;
+    const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);adsK+=((mouse.r&&!(me.slideT>0)?1:0)-adsK)*Math.min(1,dt*11);
+    const wasSp=me.sprint;me.sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&!mouse.r&&adsK<.2&&!mouse.l&&curW(me).rl<=0&&!(me.slideT>0);if(me.sprint&&!(me.slideT>0))me.crouch=false;if(wasSp&&!me.sprint)me.sprintOut=T+.16;
     const fx=-Math.sin(me.yaw),fz=-Math.cos(me.yaw),rx=Math.cos(me.yaw),rz=-Math.sin(me.yaw);let wx=fx*f+rx*s,wz=fz*f+rz*s;const L=Math.hypot(wx,wz);if(L>0){wx/=L;wz/=L}
     const W=wd(me);let sp=(me.sprint?6.9:me.crouch?2.7:4.7)*W.spd*(1-adsK*.4);if(me.slideT>0){me.slideT-=dt;sp=lerp(4,9.5,me.slideT/.75);wx=me.slX;wz=me.slZ;me.crouch=true}moveBody(me,dt,wx,wz,sp,keys.Space&&!(me.slideT>0));const v=Math.hypot(me.vx,me.vz);if(me.ground&&v>.5){const ob=bob;bob+=dt*v*1.55;if(Math.floor(ob/Math.PI)!==Math.floor(bob/Math.PI))sfx('step')}
     tickWeapon(me,dt);if(mouse.l&&!me.sprint){if(W.auto||!mouse.fired){if(fire(me))mouse.fired=true}}
