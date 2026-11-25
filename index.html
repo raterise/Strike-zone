@@ -485,11 +485,11 @@ let noLock=false,wasLocked=false,lastMX=null,lastMY=null,lockTry=0,lockFails=0;
 const isLocked=()=>document.pointerLockElement===C;
 function lockMouse(){if(isLocked())return;lockTry=performance.now();const plain=()=>{try{const r=C.requestPointerLock();if(r&&r.catch)r.catch(lockFailed)}catch(e){lockFailed()}};
   try{const r=C.requestPointerLock({unadjustedMovement:true});if(r&&r.catch)r.catch(plain);else if(!r)return}catch(e){plain()}}
-let failTry=-1;function lockFailed(){if(failTry===lockTry)return;failTry=lockTry;lockFails++;noLock=true;if(lockFails===1)lockHint();updLockUI()}
+let failTry=-1;function lockFailed(){if(failTry===lockTry)return;failTry=lockTry;setTimeout(()=>{if(isLocked())return;lockFails++;noLock=true;if(lockFails===1)lockHint();updLockUI()},450)}
 function lockHint(){if(state==='play')msg('MOUSE NOT CAPTURED','Open the game in its own Chrome/Edge tab (not a preview window) so the mouse can be captured',4)}
 function updLockUI(){document.body.classList.toggle('playing',state==='play'&&!paused);const el=$('clk');if(el)el.hidden=!(state==='play'&&!paused&&!isLocked())}
 document.addEventListener('pointerlockerror',lockFailed);
-document.addEventListener('pointerlockchange',()=>{const L=isLocked();if(L){wasLocked=true;noLock=false;lockFails=0;lastMX=null}
+document.addEventListener('pointerlockchange',()=>{const L=isLocked();if(L){wasLocked=true;noLock=false;lockFails=0;lastMX=null;if($('msg').textContent==='MOUSE NOT CAPTURED')msgT=0}
   if(!L&&state==='play'&&!paused&&!window.__noPause&&wasLocked){paused=true;$('pause').hidden=false;mouse.l=mouse.r=false;keys={}}updLockUI()});
 addEventListener('blur',()=>{if(state==='play'&&!paused&&!window.__noPause){paused=true;$('pause').hidden=false;mouse.l=mouse.r=false;keys={};if(isLocked())document.exitPointerLock()}updLockUI()});
 addEventListener('mousemove',e=>{if(state!=='play'||paused||!me)return;const L=isLocked();let mx=e.movementX||0,my=e.movementY||0;
