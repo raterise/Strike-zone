@@ -308,7 +308,7 @@ const WEP={
   ar:{n:'VK-12 RIFLE',dmg:25,dr:[[28,25],[48,21],[1e9,18]],hs:1.4,rps:10,mag:30,res:120,rl:2.1,hip:.035,ads:.006,rec:.022,auto:1,range:28,pel:1,zoom:1.35,spd:1},
   smg:{n:'HORNET SMG',dmg:25,dr:[[12,25],[24,20],[1e9,15]],hs:1.3,rps:14,mag:32,res:128,rl:1.8,hip:.04,ads:.012,rec:.016,auto:1,range:12,pel:1,zoom:1.2,spd:1.06},
   sg:{n:'BREACHER SHOTGUN',dmg:30,dr:[[7,30],[14,18],[22,10],[1e9,4]],hs:1.15,rps:1.25,mag:6,res:30,rl:3,hip:.075,ads:.06,rec:.06,auto:0,range:9,pel:8,zoom:1.12,spd:1},
-  dmr:{n:'LONGSHOT DMR',dmg:60,dr:[[60,60],[1e9,50]],hs:2,rps:3.2,mag:12,res:48,rl:2.6,hip:.05,ads:.0015,rec:.05,auto:0,range:60,pel:1,zoom:3.2,spd:.95},
+  dmr:{n:'LONGSHOT DMR',dmg:100,dr:[[1e9,100]],hs:1,limb:.5,rps:1.5,mag:6,res:30,rl:2.6,hip:.09,ads:.0012,rec:.07,auto:0,range:60,pel:1,zoom:3.2,spd:.93},
   pis:{n:'SIDEARM P9',dmg:34,dr:[[10,34],[20,25],[1e9,20]],hs:1.5,rps:6,mag:12,res:60,rl:1.4,hip:.03,ads:.01,rec:.03,auto:0,range:10,pel:1,zoom:1.15,spd:1.08}};
 const DIFF={easy:{react:.75,aim:.09,burst:.35,acc:.6},normal:{react:.45,aim:.05,burst:.55,acc:.85},hard:{react:.25,aim:.025,burst:.8,acc:1}};
 const NAMES=['Rook','Vex','Havoc','Kestrel','Grim','Nova','Ash','Brick','Talon','Viper','Ghost','Sable'];
@@ -337,7 +337,7 @@ function dirOf(yaw,pitch){const cp=Math.cos(pitch);return[-Math.sin(yaw)*cp,Math
 function dmgAt(W,dist){for(const[r,d]of W.dr)if(dist<=r)return d;return W.dr[W.dr.length-1][1]}
 function hitPlayer(o,d,q,maxT){const rh=.38;let best=null;/* body box and head box */
   const parts2=[{x0:q.x-rh,x1:q.x+rh,y0:q.y,y1:q.y+(q.crouch?.95:1.42),z0:q.z-rh,z1:q.z+rh,h:false},{x0:q.x-.2,x1:q.x+.2,y0:q.y+(q.crouch?.95:1.42),y1:q.y+(q.crouch?1.3:1.8),z0:q.z-.2,z1:q.z+.2,h:true}];
-  for(const b of parts2){const t=rayBox(o,d,b,maxT);if(t>=0&&(!best||t<best.t))best={t,h:b.h,leg:!b.h&&o[1]+d[1]*t<q.y+(q.crouch?.42:.78)}}return best}
+  for(const b of parts2){const t=rayBox(o,d,b,maxT);if(t>=0&&(!best||t<best.t)){const hl=Math.hypot(d[0],d[2])||1,lat=Math.abs((d[0]*(q.z-o[2])-d[2]*(q.x-o[0]))/hl),hy=o[1]+d[1]*t;best={t,h:b.h,leg:!b.h&&(hy<q.y+(q.crouch?.42:.78)||lat>.24)}}}return best}
 function fire(p){const c=curW(p),W=WEP[c.id];if(c.cd>0||c.rl>0||p.dead||(p===me&&(T<(p.sprintOut||0)||meleeT>0)))return false;if(c.mag<=0){reload(p);if(p===me)sfx('dry');return false}
   c.mag--;c.cd=1/W.rps;const ads=p===me?adsK:(p.ai.tgt?1:0),moving=Math.hypot(p.vx,p.vz)>1,spr=lerp(W.hip,W.ads,ads)*(moving?1.5:1)*(p.ground?1:2)*(p.crouch?.8:1)+(p.bot?DIFF[S.diff].aim*(1-p.ai.react*0):0)+(p===me?recoil*.4:0);
   const o=eyeOf(p);let any=false,kill=false;
@@ -345,7 +345,7 @@ function fire(p){const c=curW(p),W=WEP[c.id];if(c.cd>0||c.rl>0||p.dead||(p===me&
     for(const q of players){if(q===p||q.dead)continue;const h=hitPlayer(o,d,q,tB);if(h&&h.t<tB){tB=h.t;who=q;hs=h.h;leg=h.leg}}
     const end=[o[0]+d[0]*tB,o[1]+d[1]*tB,o[2]+d[2]*tB];
     if(k===0||W.pel<4){const mz=p===me?muzzleWorld():[o[0]+d[0]*.8,o[1]-.15+d[1]*.8,o[2]+d[2]*.8];tracers.push({a:mz,b:end,t:.06})}
-    if(who){const dmg=dmgAt(W,tB)*(hs?W.hs:leg?.85:1);any=true;if(damage(who,dmg,p,hs))kill=true;for(let i=0;i<4;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-2,2),vy:R(0,3),vz:R(-2,2),t:.4,c:[.6,.05,.05],s:.12})}
+    if(who){const dmg=dmgAt(W,tB)*(hs?W.hs:leg?(W.limb||.85):1);any=true;if(damage(who,dmg,p,hs))kill=true;for(let i=0;i<4;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-2,2),vy:R(0,3),vz:R(-2,2),t:.4,c:[.6,.05,.05],s:.12})}
     else if(w.b){for(let i=0;i<3;i++)parts.push({x:end[0]-d[0]*.05,y:end[1]-d[1]*.05,z:end[2]-d[2]*.05,vx:R(-1.5,1.5),vy:R(.5,2.5),vz:R(-1.5,1.5),t:.5,c:[.55,.5,.42],s:.1})}}
   if(p===me){recoil=Math.min(.12,recoil+W.rec);me.pitch+=W.rec*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=.05;sfx('shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
   else{const d=Math.hypot(p.x-me.x,p.z-me.z);sfx('far',c.id,d,Math.atan2(p.x-me.x,p.z-me.z)-me.yaw);p.lastShot=T}
@@ -594,8 +594,8 @@ function overlay(){const W2=OV.width,H2=OV.height,dp=devicePixelRatio||1;ox.clea
   for(const f of FIRES){const s=project(f);if(!s)continue;const d=Math.hypot(f[0]-camE[0],f[2]-camE[2]);if(d>60||!los(camE,[f[0],f[1]+.2,f[2]]))continue;const r=(40-d*.5)*dp*(1+Math.sin(T*19+f[0])*.1);if(r<4)continue;const gr=ox.createRadialGradient(s[0],s[1],0,s[0],s[1],r);gr.addColorStop(0,'rgba(255,170,60,.35)');gr.addColorStop(1,'rgba(255,120,30,0)');ox.fillStyle=gr;ox.fillRect(s[0]-r,s[1]-r,r*2,r*2)}}
 /* ================= Menu ================= */
 function chips(el,opts,key,fn){$(el).innerHTML=opts.map(([v,t])=>`<button class="chip" data-v="${v}" aria-pressed="${S[key]==v}">${t}</button>`).join('');$(el).onclick=e=>{const b=e.target.closest('button');if(!b)return;S[key]=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;save();chips(el,opts,key,fn);fn&&fn()}}
-function stkText(id){const W=WEP[id];if(W.pel>1)return'One-shot kill up to '+W.dr[0][0]+'m · two shots to '+W.dr[1][0]+'m · weak beyond '+W.dr[2][0]+'m';
-  let lo=0;return W.dr.map(([r,d])=>{const t=Math.ceil(100/d)+' shots '+(r>1e8?lo+'m+':lo+'–'+r+'m');lo=r;return t}).join(' · ')+(id==='dmr'?' · headshots always kill':'')}
+function stkText(id){const W=WEP[id];if(id==='dmr')return'One-shot kill to the head or body at any range · 2 shots to arms and legs';if(W.pel>1)return'One-shot kill up to '+W.dr[0][0]+'m · two shots to '+W.dr[1][0]+'m · weak beyond '+W.dr[2][0]+'m';
+  let lo=0;return W.dr.map(([r,d])=>{const t=Math.ceil(100/d)+' shots '+(r>1e8?lo+'m+':lo+'–'+r+'m');lo=r;return t}).join(' · ')}
 function renderMenu(){chips('prim',[['ar','VK-12 Rifle'],['smg','Hornet SMG'],['sg','Breacher Shotgun'],['dmr','Longshot DMR']],'prim',()=>{$('stk').textContent=stkText(S.prim)});$('stk').textContent=stkText(S.prim);chips('diff',[['easy','Easy'],['normal','Normal'],['hard','Hard']],'diff');chips('bcount',[[3,'3 bots'],[5,'5 bots'],[7,'7 bots'],[9,'9 bots']],'bots');chips('gfx',[['high','High detail'],['low','Low (faster)']],'gfx',()=>{S.gfxUser=true;save()});
   $('sens').value=S.sens;$('sensV').textContent=S.sens;$('fov').value=S.fov;$('fovV').textContent=S.fov+'°'}
 $('sens').oninput=e=>{S.sens=+e.target.value;$('sensV').textContent=S.sens;save()};$('fov').oninput=e=>{S.fov=+e.target.value;$('fovV').textContent=S.fov+'°';save()};
