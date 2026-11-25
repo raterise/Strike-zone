@@ -181,7 +181,16 @@ const PAL={asph:[.27,.26,.25],asph2:[.24,.23,.23],dirt:[.42,.35,.27],side:[.48,.
 const RS=(a,b)=>a+rnd()*(b-a);
 for(const[k,m]of Object.entries({brick:1,brick2:1,conc:2,conc2:2,side:2,soot:2,dark:2,green:2,asph:3,asph2:3,line:3,dirt:4,ash:4,sand:4,rust:5,rust2:5,metal:5,wood:6}))MATMAP.set(PAL[k],m);
 function solid(a,x,y,z,sx,sy,sz,c,ct,noColl){box(a,x,y,z,sx,sy,sz,c,ct);if(!noColl)COLL.push({x0:x-sx/2,x1:x+sx/2,y0:y,y1:y+sy,z0:z-sz/2,z1:z+sz/2})}
-function rotSolid(a,x,y,z,sx,sy,sz,c,ct,ry){box(a,x,y,z,sx,sy,sz,c,ct,ry);const co=Math.abs(Math.cos(ry)),si=Math.abs(Math.sin(ry)),hx=(sx*co+sz*si)/2,hz=(sx*si+sz*co)/2;COLL.push({x0:x-hx*.92,x1:x+hx*.92,y0:y,y1:y+sy,z0:z-hz*.92,z1:z+hz*.92})}
+/* collision for a yawed box: split along its long side into short pieces so the boxes hug the shape instead of one big square */
+function rotColl(x,y0,y1,z,sx,sz,ry){const co=Math.cos(ry),si=Math.sin(ry),ac=Math.abs(co),as=Math.abs(si);
+  if(ac<.02||as<.02){const hx=(ac<.02?sz:sx)/2,hz=(ac<.02?sx:sz)/2;COLL.push({x0:x-hx,x1:x+hx,y0,y1,z0:z-hz,z1:z+hz});return}
+  const longU=sx>=sz,L=longU?sx:sz,W=longU?sz:sx,n=Math.min(24,Math.max(1,Math.ceil(L/Math.max(W*.4,.5)))),seg=L/n;
+  for(let k=0;k<n;k++){const o=-L/2+seg*(k+.5),u=longU?o:0,w=longU?0:o,cx=x+u*co+w*si,cz=z-u*si+w*co,a2=longU?seg:W,b2=longU?W:seg,hx=(a2*ac+b2*as)/2*.94,hz=(a2*as+b2*ac)/2*.94;
+    COLL.push({x0:cx-hx,x1:cx+hx,y0,y1,z0:cz-hz,z1:cz+hz})}}
+function rotSolid(a,x,y,z,sx,sy,sz,c,ct,ry){box(a,x,y,z,sx,sy,sz,c,ct,ry);rotColl(x,y,y+sy,z,sx,sz,ry)}
+/* collision boxes along a beam (leaning poles, fallen beams) */
+function beamColl(p,q,w){const L=Math.hypot(q[0]-p[0],q[1]-p[1],q[2]-p[2]),n=Math.max(1,Math.ceil(L/.7));for(let k=0;k<n;k++){const t0=k/n,t1=(k+1)/n,A=p.map((v,i)=>v+(q[i]-v)*t0),B=p.map((v,i)=>v+(q[i]-v)*t1),h=w/2;
+  COLL.push({x0:Math.min(A[0],B[0])-h,x1:Math.max(A[0],B[0])+h,y0:Math.min(A[1],B[1])-h,y1:Math.max(A[1],B[1])+h,z0:Math.min(A[2],B[2])-h,z1:Math.max(A[2],B[2])+h})}}
 /* wall along x (dir 'x') or z, made of 3 m cells: solid, door, window, broken */
 function wall(a,x0,z0,len,dir,h,t,c,pattern){const n=Math.max(1,Math.round(len/3)),cw=len/n;
   for(let k=0;k<n;k++){const u=-len/2+cw*(k+.5),cx=dir==='x'?x0+u:x0,cz=dir==='x'?z0:z0+u,ty=pattern[k%pattern.length],hh=h*(ty==='b'?RS(.35,.7):RS(.86,1.06));
@@ -194,11 +203,11 @@ function wall(a,x0,z0,len,dir,h,t,c,pattern){const n=Math.max(1,Math.round(len/3
 function ruin(a,cx,cz,w,d,h,c,pats){const t=.45;wall(a,cx,cz-d/2,w,'x',h,t,c,pats[0]);wall(a,cx,cz+d/2,w,'x',h,t,c,pats[1]);wall(a,cx-w/2,cz,d,'z',h,t,c,pats[2]);wall(a,cx+w/2,cz,d,'z',h,t,c,pats[3]);
   flat(a,cx-w/2+.2,cz-d/2+.2,cx+w/2-.2,cz+d/2-.2,.02,PAL.ash);
   for(let k=0;k<5;k++){const x=cx+RS(-w/2+1.5,w/2-1.5),z=cz+RS(-d/2+1.5,d/2-1.5),s=RS(.5,1.4);solid(a,x,0,z,s*1.4,s*.6,s,PAL.conc2,PAL.conc)}
-  for(let k=0;k<3;k++)box(a,cx+RS(-w/2+1,w/2-1),h*RS(.3,.8),cz+RS(-d/2+1,d/2-1),RS(1.5,3),.25,.4,PAL.dark,null,RS(0,3))}
-function car(a,x,z,ry,c){rotSolid(a,x,.25,z,2,.85,4.4,c,c.map(v=>v*.9),ry);box(a,x,1.1,z,1.7,.55,2.2,PAL.soot,PAL.soot,ry);for(const[u,w]of[[-.9,-1.4],[.9,-1.4],[-.9,1.4],[.9,1.4]]){const co=Math.cos(ry),si=Math.sin(ry);box(a,x+u*co+w*si,0,z-u*si+w*co,.3,.5,.6,PAL.dark,null,ry)}}
+  for(let k=0;k<3;k++){const x=cx+RS(-w/2+1.5,w/2-1.5),z=cz+RS(-d/2+1.5,d/2-1.5),an=RS(0,6.28),L=RS(2,3.2),ht=RS(1,1.8),p=[x,0,z],q=[x+Math.cos(an)*L,ht,z+Math.sin(an)*L];beam(a,p,q,.28,PAL.dark);beamColl(p,q,.24)}}
+function car(a,x,z,ry,c){box(a,x,.25,z,2,.85,4.4,c,c.map(v=>v*.9),ry);rotColl(x,0,1.1,z,2,4.4,ry);box(a,x,1.1,z,1.7,.55,2.2,PAL.soot,PAL.soot,ry);rotColl(x,1.1,1.65,z,1.7,2.2,ry);for(const[u,w]of[[-.9,-1.4],[.9,-1.4],[-.9,1.4],[.9,1.4]]){const co=Math.cos(ry),si=Math.sin(ry);box(a,x+u*co+w*si,0,z-u*si+w*co,.3,.5,.6,PAL.dark,null,ry)}}
 function barrier(a,x,z,ry){rotSolid(a,x,0,z,.7,1.05,3,PAL.conc,PAL.conc,ry);box(a,x,.95,z,.4,.12,3.02,[.7,.55,.2],null,ry)}
 function sandbags(a,x,z,len,ry){const co=Math.cos(ry),si=Math.sin(ry);for(let r=0;r<2;r++)for(let k=0;k<Math.round(len/1.1);k++){const u=-len/2+.55+k*1.1+(r?.5:0);if(u>len/2-.4)continue;box(a,x+u*co,r*.42,z-u*si,1,.42,.6,PAL.sand,PAL.sand.map(v=>v*1.08),ry)}
-  rotSolid(a,x,0,z,len,.84,.6,PAL.sand,PAL.sand,ry);COLL.pop();const hx=(len*Math.abs(co)+.6*Math.abs(si))/2,hz=(len*Math.abs(si)+.6*Math.abs(co))/2;COLL.push({x0:x-hx,x1:x+hx,y0:0,y1:.84,z0:z-hz,z1:z+hz})}
+  box(a,x,0,z,len,.84,.6,PAL.sand,PAL.sand,ry);rotColl(x,0,.84,z,len,.6,ry)}
 function barrel(a,g,x,z,fire){solid(a,x,0,z,.7,1,.7,PAL.rust,PAL.rust2);if(fire){box(g,x,1,z,.5,.5,.5,[1.8,.9,.3]);box(g,x,1.3,z,.3,.5,.3,[1.9,1.4,.4]);FIRES.push([x,1.4,z])}}
 function genMap(){seed=4021;MAT=2;COLL=[];SPAWNS=[];FIRES=[];SMOKE=[];const a=[],g=[];
   /* ground: dirt base, cracked asphalt avenues, sidewalks */
@@ -221,7 +230,7 @@ function genMap(){seed=4021;MAT=2;COLL=[];SPAWNS=[];FIRES=[];SMOKE=[];const a=[]
     for(let k=0;k<6;k++)solid(a,bx+RS(-20,20),0,bz+RS(-20,20),RS(.6,1.4),RS(.4,1),RS(.6,1.4),PAL.conc2,PAL.conc)});
   roofBuilding(a,-52,24,1);roofBuilding(a,52,-24,-1);
   /* central intersection: wrecked bus, cars, barricades */
-  rotSolid(a,-3,.3,-2,2.6,2.6,10,[.5,.4,.2],[.36,.3,.16],.5);for(let k=-4;k<=4;k+=2){const co=Math.cos(.5),si=Math.sin(.5);box(a,-3+k*si+1.31*co,1.6,-2+k*co-1.31*si,.06,.9,1.4,PAL.dark,null,.5);box(a,-3+k*si-1.31*co,1.6,-2+k*co+1.31*si,.06,.9,1.4,PAL.dark,null,.5)}
+  box(a,-3,.45,-2,2.6,2.45,10,[.5,.4,.2],[.36,.3,.16],.5);rotColl(-3,0,2.9,-2,2.6,10,.5);for(const w of[-3.6,-2.4,3.4])for(const u of[-1.15,1.15]){const co=Math.cos(.5),si=Math.sin(.5);box(a,-3+u*co+w*si,0,-2-u*si+w*co,.35,.6,.9,PAL.dark,null,.5)}box(a,-3,.4,-2,2.4,.1,9.6,PAL.dark,null,.5);for(let k=-4;k<=4;k+=2){const co=Math.cos(.5),si=Math.sin(.5);box(a,-3+k*si+1.31*co,1.6,-2+k*co-1.31*si,.06,.9,1.4,PAL.dark,null,.5);box(a,-3+k*si-1.31*co,1.6,-2+k*co+1.31*si,.06,.9,1.4,PAL.dark,null,.5)}
   car(a,9,4,1.3,PAL.rust);car(a,-12,-3,.2,[.3,.36,.4]);car(a,4,-14,2.6,[.5,.18,.15]);car(a,-5,15,1.7,PAL.rust2);car(a,30,-4,1.6,[.25,.3,.2]);car(a,-36,5,.1,PAL.rust);car(a,3,-38,.4,[.4,.4,.38]);car(a,-4,40,2.9,PAL.rust);car(a,58,3,1.4,[.3,.22,.18]);car(a,-58,-2,1.6,PAL.rust2);
   barrier(a,14,-9,0);barrier(a,14,-5,0);barrier(a,-14,9,0);barrier(a,-9,14,1.57);barrier(a,9,-14,1.57);barrier(a,20,6,1.57);barrier(a,-20,-6,1.57);barrier(a,-3,24,.3);barrier(a,2,-24,.3);
   sandbags(a,-18,4,5,1.57);sandbags(a,18,-2,5,1.57);sandbags(a,4,18,5,0);sandbags(a,-6,-19,5,0);sandbags(a,44,-20,4,.8);sandbags(a,-44,22,4,.8);
@@ -274,8 +283,8 @@ function colBox(x,z,hx,hz,h){COLL.push({x0:x-hx,x1:x+hx,y0:0,y1:h,z0:z-hz,z1:z+h
 function clutter(a,g){const BURN=[.13,.11,.1],WIRE=[.08,.08,.08];
   /* power poles with sagging wires down both sides of the east-west avenue */
   for(const s of[-1,1]){let prev=null;for(let x=-66;x<=66;x+=16){if(Math.abs(x)<10){prev=null;continue}const z=s*8.1,lean=rnd()<.3?RS(.6,1.6):RS(0,.25),la=RS(0,6.28),top=[x+Math.cos(la)*lean,8,z+Math.sin(la)*lean];
-      if(rnd()<.15){beam(a,[x,0,z],[x+RS(-.3,.3),RS(1.5,3),z],.34,PAL.wood,.3);colBox(x,z,.2,.2,2.5);prev=null;continue}
-      beam(a,[x,0,z],top,.34,PAL.wood,.26);colBox(x,z,.2,.2,4);const arm=[[top[0]-.9,top[1]-.5,top[2]],[top[0]+.9,top[1]-.5,top[2]]];beam(a,arm[0],arm[1],.14,PAL.wood);
+      if(rnd()<.15){{const q=[x+RS(-.3,.3),RS(1.5,3),z];beam(a,[x,0,z],q,.34,PAL.wood,.3);beamColl([x,0,z],q,.3)}prev=null;continue}
+      beam(a,[x,0,z],top,.34,PAL.wood,.26);beamColl([x,0,z],top,.3);const arm=[[top[0]-.9,top[1]-.5,top[2]],[top[0]+.9,top[1]-.5,top[2]]];beam(a,arm[0],arm[1],.14,PAL.wood);
       for(const ar of arm)box(a,ar[0],ar[1]+.07,ar[2],.1,.16,.1,[.55,.55,.5]);
       if(prev){for(let w=0;w<2;w++){const p0=prev[w],p1=arm[w],sag=RS(.9,1.6),N=8;let last=p0;for(let k=1;k<=N;k++){const t=k/N,q=[p0[0]+(p1[0]-p0[0])*t,p0[1]+(p1[1]-p0[1])*t-sag*4*t*(1-t)+.07,p0[2]+(p1[2]-p0[2])*t];beam(a,last,q,.03,WIRE);last=q}}}
       else if(x>-66){const p0=arm[0];let last=p0;for(let k=1;k<=6;k++){const q=[p0[0]-k*.5,p0[1]-k*k*.2,p0[2]+k*.05*s];if(q[1]<.05)break;beam(a,last,q,.03,WIRE);last=q}}
@@ -288,7 +297,7 @@ function clutter(a,g){const BURN=[.13,.11,.1],WIRE=[.08,.08,.08];
   for(const[x,z,c]of[[10.5,10.5,[.18,.42,.26]],[-10.5,-10.5,[.62,.14,.1]],[10.5,-24,[.75,.6,.15]],[-24,10.5,[.18,.42,.26]],[30,-10.5,[.62,.14,.1]],[-10.5,40,[.75,.6,.15]],[52,10.5,[.18,.42,.26]],[-52,-10.5,[.75,.6,.15]]]){
     const tl=RS(-.35,.35),top=[x+tl,2.7,z+tl*.5];beam(a,[x,0,z],top,.08,PAL.metal);const ry=RS(0,3.14);box(a,top[0],top[1]-.1,top[2],1,.7,.05,c,c,ry);box(a,top[0],top[1]+.02,top[2],.8,.08,.06,[.85,.85,.8],null,ry)}
   /* burnt trees */
-  for(let i=0;i<14;i++){const sp=freeSpot(1,2.2);if(!sp)continue;const[x,z]=sp,h=RS(3.6,6),top=[x+RS(-.6,.6),h,z+RS(-.6,.6)];beam(a,[x,0,z],top,.42,BURN,.2);colBox(x,z,.25,.25,h);
+  for(let i=0;i<14;i++){const sp=freeSpot(1,2.2);if(!sp)continue;const[x,z]=sp,h=RS(3.6,6),top=[x+RS(-.6,.6),h,z+RS(-.6,.6)];beam(a,[x,0,z],top,.42,BURN,.2);beamColl([x,0,z],top,.34);
     const nb=3+Math.floor(rnd()*3);for(let b=0;b<nb;b++){const t=RS(.45,.9),o=[x+(top[0]-x)*t,h*t,z+(top[2]-z)*t],an=RS(0,6.28),L=RS(1.2,2.4),e=[o[0]+Math.cos(an)*L,o[1]+RS(.4,1.4),o[2]+Math.sin(an)*L];beam(a,o,e,.14,BURN,.05);
       if(rnd()<.6){const an2=an+RS(-.8,.8),f=[e[0]+Math.cos(an2)*.8,e[1]+RS(.1,.6),e[2]+Math.sin(an2)*.8];beam(a,e,f,.05,BURN,.02)}}}
   /* rubble piles with exposed rebar */
@@ -387,7 +396,7 @@ function dirOf(yaw,pitch){const cp=Math.cos(pitch);return[-Math.sin(yaw)*cp,Math
 /* CoD-style damage: flat steps by distance rather than a smooth fade */
 function dmgAt(W,dist){for(const[r,d]of W.dr)if(dist<=r)return d;return W.dr[W.dr.length-1][1]}
 function hitPlayer(o,d,q,maxT){const rh=.38;let best=null;/* body box and head box */
-  const parts2=[{x0:q.x-rh,x1:q.x+rh,y0:q.y,y1:q.y+(q.crouch?.95:1.42),z0:q.z-rh,z1:q.z+rh,h:false},{x0:q.x-.2,x1:q.x+.2,y0:q.y+(q.crouch?.95:1.42),y1:q.y+(q.crouch?1.3:1.8),z0:q.z-.2,z1:q.z+.2,h:true}];
+  const ch=q.crouch?.32:0,parts2=[{x0:q.x-rh,x1:q.x+rh,y0:q.y,y1:q.y+1.42-ch,z0:q.z-rh,z1:q.z+rh,h:false},{x0:q.x-.2,x1:q.x+.2,y0:q.y+1.42-ch,y1:q.y+1.8-ch,z0:q.z-.2,z1:q.z+.2,h:true}];
   for(const b of parts2){const t=rayBox(o,d,b,maxT);if(t>=0&&(!best||t<best.t)){const hl=Math.hypot(d[0],d[2])||1,lat=Math.abs((d[0]*(q.z-o[2])-d[2]*(q.x-o[0]))/hl),hy=o[1]+d[1]*t;best={t,h:b.h,leg:!b.h&&(hy<q.y+(q.crouch?.42:.78)||lat>.24)}}}return best}
 function fire(p){const c=curW(p),W=WEP[c.id];if(c.cd>0||c.rl>0||p.dead||(p===me&&(T<(p.sprintOut||0)||meleeT>0)))return false;if(c.mag<=0){reload(p);if(p===me)sfx('dry');return false}
   c.mag--;c.cd=1/W.rps;const ads=p===me?adsK:(p.ai.tgt?1:0),moving=Math.hypot(p.vx,p.vz)>1,spr=lerp(W.hip,W.ads,ads)*(moving?1.5:1)*(p.ground?1:2)*(p.crouch?.8:1)+(p.bot?DIFF[S.diff].aim*(1-p.ai.react*0):0)+(p===me?recoil*.4:0);
