@@ -307,7 +307,7 @@ const WEP={
   ar:{n:'VK-12 RIFLE',dmg:28,hs:1.6,rps:10,mag:30,res:120,rl:2.1,hip:.035,ads:.006,rec:.022,auto:1,range:45,pel:1,zoom:1.35,spd:1},
   smg:{n:'HORNET SMG',dmg:22,hs:1.4,rps:14,mag:32,res:128,rl:1.8,hip:.04,ads:.012,rec:.016,auto:1,range:22,pel:1,zoom:1.2,spd:1.06},
   sg:{n:'BREACHER SHOTGUN',dmg:16,hs:1.25,rps:1.25,mag:6,res:30,rl:3,hip:.075,ads:.06,rec:.06,auto:0,range:10,pel:8,zoom:1.12,spd:1},
-  dmr:{n:'LONGSHOT DMR',dmg:55,hs:2,rps:3.2,mag:12,res:48,rl:2.6,hip:.05,ads:.0015,rec:.05,auto:0,range:80,pel:1,zoom:2.1,spd:.95},
+  dmr:{n:'LONGSHOT DMR',dmg:55,hs:2,rps:3.2,mag:12,res:48,rl:2.6,hip:.05,ads:.0015,rec:.05,auto:0,range:80,pel:1,zoom:3.2,spd:.95},
   pis:{n:'SIDEARM P9',dmg:30,hs:1.5,rps:6,mag:12,res:60,rl:1.4,hip:.03,ads:.01,rec:.03,auto:0,range:20,pel:1,zoom:1.15,spd:1.08}};
 const DIFF={easy:{react:.75,aim:.09,burst:.35,acc:.6},normal:{react:.45,aim:.05,burst:.55,acc:.85},hard:{react:.25,aim:.025,burst:.8,acc:1}};
 const NAMES=['Rook','Vex','Havoc','Kestrel','Grim','Nova','Ash','Brick','Talon','Viper','Ghost','Sable'];
@@ -412,12 +412,20 @@ function buildMeshes(){let a;
   a=[];box(a,0,-.5,0,1,1,1,[1,1,1]);M.cube=mkVBO(a);
   a=[];box(a,0,0,0,.09,.09,.32,[.62,.5,.42]);box(a,0,0,.1,.11,.11,.16,[.25,.26,.22]);M.hand=mkVBO(a);
   a=[];box(a,0,-.5,0,1,1,1,[2,1.6,.8]);box(a,0,-.2,0,.4,.4,1.6,[2,1.8,1]);M.flash=mkVBO(a)}
-function gunGeo(a,id){const B=[.16,.16,.17],G=[.3,.3,.28],W=[.42,.3,.18];
-  if(id==='ar'){box(a,0,0,0,.07,.1,.5,B);box(a,0,.02,-.45,.035,.035,.42,G);box(a,0,-.12,-.04,.05,.16,.09,B);box(a,0,-.08,.32,.06,.11,.22,B);box(a,0,.1,.12,.05,.035,.05,G);box(a,0,.05,-.6,.012,.06,.012,G)}
-  else if(id==='smg'){box(a,0,0,0,.07,.11,.36,B);box(a,0,.02,-.3,.035,.035,.2,G);box(a,0,-.18,-.05,.045,.22,.06,B);box(a,0,-.04,.24,.04,.05,.18,G)}
-  else if(id==='sg'){box(a,0,0,0,.08,.1,.5,W);box(a,0,.03,-.5,.06,.06,.5,B);box(a,0,-.04,-.38,.07,.06,.2,W);box(a,0,-.08,.32,.06,.12,.22,W)}
-  else if(id==='dmr'){box(a,0,0,0,.07,.1,.6,G);box(a,0,.02,-.55,.035,.035,.5,B);box(a,0,.13,-.05,.05,.07,.28,B);box(a,0,-.11,-.02,.05,.13,.08,B);box(a,0,-.08,.38,.06,.12,.24,G)}
-  else{box(a,0,0,0,.05,.09,.22,B);box(a,0,-.13,.05,.045,.16,.07,B)}}
+const SIGHT={ar:{y:.165,ret:1},smg:{y:.165,ret:1},sg:{y:.15},dmr:{y:.175,ret:1,scope:1},pis:{y:.108}};
+function frameSight(a,z,cy,hw,hh,th,dp,c,bot){/* hollow rectangular window centred on (0,cy) */box(a,-hw-th/2,bot,z,th,cy+hh+th-bot,dp,c);box(a,hw+th/2,bot,z,th,cy+hh+th-bot,dp,c);box(a,0,cy+hh,z,hw*2+th*2,th,dp,c);box(a,0,bot,z,hw*2+th*2,cy-hh-bot,dp,c)}
+function gunGeo(a,id){const B=[.16,.16,.17],G=[.3,.3,.28],W=[.42,.3,.18],K=[.08,.08,.09],RED=[2.6,.35,.2];
+  if(id==='ar'){box(a,0,0,0,.07,.1,.5,B);box(a,0,.02,-.45,.035,.035,.42,G);box(a,0,-.12,-.04,.05,.16,.09,B);box(a,0,-.08,.32,.06,.11,.22,B);box(a,0,.05,-.6,.012,.06,.012,G);
+    /* reflex red dot */box(a,0,.1,.06,.05,.012,.1,K);frameSight(a,.06,.165,.034,.038,.009,.03,K,.112);box(a,0,.162,.06,.0065,.0065,.004,RED)}
+  else if(id==='smg'){box(a,0,0,0,.07,.11,.36,B);box(a,0,.02,-.3,.035,.035,.2,G);box(a,0,-.18,-.05,.045,.22,.06,B);box(a,0,-.04,.24,.04,.05,.18,G);
+    /* holographic sight with ring reticle */box(a,0,.11,.02,.07,.012,.12,K);frameSight(a,.02,.165,.045,.03,.011,.07,K,.122);
+    for(let k=0;k<14;k++){const t=k/14*6.283;box(a,Math.cos(t)*.0135,.165+Math.sin(t)*.0135-.00175,.02,.0035,.0035,.003,RED)}box(a,0,.1635,.02,.003,.003,.003,RED)}
+  else if(id==='sg'){box(a,0,0,0,.08,.1,.5,W);box(a,0,.03,-.5,.06,.06,.5,B);box(a,0,-.04,-.38,.07,.06,.2,W);box(a,0,-.08,.32,.06,.12,.22,W);
+    /* ghost ring rear sight and bead front sight */frameSight(a,-.02,.15,.03,.026,.007,.012,K,.1);box(a,0,.09,-.72,.009,.054,.009,K);box(a,0,.144,-.72,.012,.012,.012,[.5,2.4,.6])}
+  else if(id==='dmr'){box(a,0,0,0,.07,.1,.6,G);box(a,0,.02,-.55,.035,.035,.5,B);box(a,0,-.11,-.02,.05,.13,.08,B);box(a,0,-.08,.38,.06,.12,.24,G);
+    /* 4x scope */for(const z of[-.12,.1])box(a,0,.1,z,.03,.05,.03,K);box(a,0,.15,-.02,.05,.05,.38,K);box(a,0,.137,-.24,.076,.076,.08,K);box(a,0,.142,.2,.066,.066,.08,K);box(a,0,.142,-.282,.06,.066,.004,[.25,.4,.55]);box(a,.033,.165,-.02,.02,.02,.03,K)}
+  else{box(a,0,0,0,.05,.09,.22,B);box(a,0,-.13,.05,.045,.16,.07,B);
+    /* iron sights: rear notch and front post with dots */for(const x of[-.017,.017])box(a,x,.09,.09,.013,.018,.014,K);box(a,0,.09,-.095,.008,.018,.008,K);box(a,0,.1,-.1,.005,.005,.002,[1.6,1.6,1.3])}}
 /* ================= Camera & render ================= */
 let VP=null,camE=[0,0,0],camY=0,camP=0,projV=null;
 const SKY=[.62,.5,.4],FOG=[.58,.48,.39];
@@ -461,9 +469,9 @@ function render(){const W2=C.width,H2=C.height;gl.viewport(0,0,W2,H2);gl.clearCo
   /* viewmodel */
   if(state==='play'&&me&&!me.dead){gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1f(U.uFireOn,0);gl.uniform1f(U.uDetail,0);const pv=persp(60*Math.PI/180,W2/H2,.02,10);gl.uniformMatrix4fv(U.uVP,false,pv);gl.uniform3fv(U.uCam,[0,0,0]);gl.uniform1f(U.uFogD,0);
     const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=me.sprint?1:0,bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WEP[c.id].rl-c.rl)/WEP[c.id].rl)*Math.PI):0;
-    const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.128,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.5,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
-    const gm=modelM(gx,gy,gz,ry,rx,.75);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);draw(M['g_'+c.id]);
-    for(const[hx,hy,hz]of[[.0,-.12,.18],[-.02,-.05,-.28]]){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));draw(M.hand)}
+    const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.75*SIGHT[c.id].y,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.5,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
+    const gm=modelM(gx,gy,gz,ry,rx,.75);const scoped=SIGHT[c.id].scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped)draw(M['g_'+c.id]);
+    if(!scoped)for(const[hx,hy,hz]of[[.0,-.12,.18],[-.02,-.05,-.28]]){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));draw(M.hand)}
     if(flashT>0){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,0,c.id==='pis'?-.18:c.id==='smg'?-.42:-.72,R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}}
 function muzzleWorld(){const f=dirOf(me.yaw,me.pitch),r=[Math.cos(me.yaw),0,-Math.sin(me.yaw)],e=camE,s=1-adsK;return[e[0]+f[0]*.9+r[0]*.22*s,e[1]+f[1]*.9-.16*s-.05,e[2]+f[2]*.9+r[2]*.22*s]}
 function project(p){const m=VP,w=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(w<=.05)return null;return[((m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12])/w*.5+.5)*OV.width,(1-((m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13])/w*.5+.5))*OV.height]}
@@ -525,7 +533,7 @@ function hud(){updLockUI();if(state!=='play'||!me)return;const c=curW(me),W=WEP[
   $('hpBar').style.width=Math.max(0,me.hp)+'%';$('hpBar').style.background=me.hp<35?'#ff4b3a':'linear-gradient(90deg,#e8e2d6,#fff)';
   const spr=lerp(W.hip,W.ads,adsK)*(Math.hypot(me.vx,me.vz)>1?1.5:1)+recoil*.4,g0=Math.max(3,spr/Math.tan(S.fov*Math.PI/360)*innerHeight*.5),hidden=me.dead||me.sprint;
   const xdt=Math.min(.1,(performance.now()-(window._xT||0))/1000);window._xT=performance.now();xk+=(adsK-xk)*Math.min(1,xdt*(adsK>xk?16:5));
-  const L=Math.max(0,10*(1-xk)),g=g0*(1-xk),op=hidden?0:Math.min(1,(1-xk)*1.6);const d=$('c0');d.style.opacity=hidden?0:Math.min(1,xk*1.6);
+  const L=Math.max(0,10*(1-xk)),g=g0*(1-xk),op=hidden?0:Math.min(1,(1-xk)*1.6);const d=$('c0');d.style.opacity=hidden||SIGHT[c.id].ret?0:Math.min(1,xk*1.6);
   const cs=[[0,-g-L,2,L],[0,g,2,L],[-g-L,0,L,2],[g,0,L,2]];['c1','c2','c3','c4'].forEach((id,i)=>{const e=$(id),[x,y,w,h]=cs[i];e.style.left=(x-w/2+(i>1?w/2:0))+'px';e.style.top=(y-h/2+(i<2?h/2:0))+'px';e.style.width=w+'px';e.style.height=h+'px';e.style.opacity=op});
   const hm=$('hitm');hm.style.opacity=hitT>0?Math.min(1,hitT*8):0;hm.classList.toggle('k',hitK);
   $('msg').style.opacity=msgT>0?Math.min(1,msgT*2):0;$('sub').style.opacity=$('msg').style.opacity;
@@ -557,8 +565,15 @@ $('resume').onclick=()=>{paused=false;$('pause').hidden=true;lockMouse();updLock
 function resize(){const d=Math.min(devicePixelRatio||1,1.5);C.width=Math.round(innerWidth*d);C.height=Math.round(innerHeight*d);OV.width=Math.round(innerWidth*(devicePixelRatio||1));OV.height=Math.round(innerHeight*(devicePixelRatio||1))}
 addEventListener('resize',resize);
 let last=performance.now();
+function scopeOv(){if(window.__noScope||state!=='play'||!me||me.dead||!SIGHT[curW(me).id].scope||adsK<.7)return;const W2=OV.width,H2=OV.height,a=Math.min(1,(adsK-.7)/.25),cx=W2/2,cy=H2/2,r=Math.min(W2,H2)*.44*(1.15-.15*a);
+  ox.save();ox.globalAlpha=a;ox.fillStyle='#050505';ox.beginPath();ox.rect(0,0,W2,H2);ox.moveTo(cx+r,cy);ox.arc(cx,cy,r,0,6.2832);ox.fill('evenodd');
+  const g=ox.createRadialGradient(cx,cy,r*.72,cx,cy,r);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.85)');ox.fillStyle=g;ox.beginPath();ox.arc(cx,cy,r,0,6.283);ox.fill();
+  const lw=Math.max(1,r*.004);ox.fillStyle='#000';ox.fillRect(cx-r,cy-lw/2,r*2,lw);ox.fillRect(cx-lw/2,cy-r,lw,r*2);const pw=lw*4.5,gap=r*.28;
+  ox.fillRect(cx-r,cy-pw/2,r-gap,pw);ox.fillRect(cx+gap,cy-pw/2,r-gap,pw);ox.fillRect(cx-pw/2,cy+gap,pw,r-gap);
+  for(let k=1;k<=4;k++){const y=cy+k*r*.055;ox.fillRect(cx-r*.03/(k%2?1:.6),y-lw/2,r*.06/(k%2?1:.6),lw)}
+  ox.fillStyle='rgba(255,40,30,.95)';ox.beginPath();ox.arc(cx,cy,Math.max(1.5,lw*1.1),0,6.283);ox.fill();ox.restore()}
 let perfN=0,perfS=0;function loop(now){const raw=(now-last)/1000,dt=Math.min(.05,raw);last=now;
-  if(state==='play'&&!paused&&T>1&&T<5&&S.gfx!=='low'&&!S.gfxUser){perfN++;perfS+=raw;if(perfN>=60){if(perfS/perfN>.03){S.gfx='low';save();renderMenu();msg('GRAPHICS SET TO LOW','Your computer was struggling - change it on the main menu',3,true)}perfN=-1e9}}if(!paused){update(dt/2);update(dt/2)}render();hud();overlay();requestAnimationFrame(loop)}
+  if(state==='play'&&!paused&&T>1&&T<5&&S.gfx!=='low'&&!S.gfxUser){perfN++;perfS+=raw;if(perfN>=60){if(perfS/perfN>.03){S.gfx='low';save();renderMenu();msg('GRAPHICS SET TO LOW','Your computer was struggling - change it on the main menu',3,true)}perfN=-1e9}}if(!paused){update(dt/2);update(dt/2)}render();hud();overlay();scopeOv();requestAnimationFrame(loop)}
 resize();buildMeshes();genMapOnce();renderMenu();requestAnimationFrame(loop);
 window.__sz={get st(){return state},get me(){return me},get P(){return players},step(n){for(let i=0;i<n;i++)update(1/60)},key(k,v){keys[k]=v},mouse,get COLL(){return COLL},start:startMatch,set pz(v){paused=v},fire:()=>fire(me),melee:()=>melee(me),nade:()=>throwNade(me),get nades(){return nades},get spawns(){return SPAWNS},S};
 </script>
