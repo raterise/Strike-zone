@@ -29,6 +29,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 #hp small{font:800 12px Arial,sans-serif;letter-spacing:2px;color:#d6c9b8}
 #msg{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-size:34px;text-align:center;white-space:nowrap}
 #sub{position:absolute;left:50%;top:62%;transform:translateX(-50%);font:800 16px Arial,sans-serif;text-align:center;color:#ffe7c2}
+#clk{position:absolute;left:50%;top:58%;transform:translateX(-50%);font:900 20px Arial,sans-serif;background:rgba(0,0,0,.65);padding:10px 20px;border-radius:10px;color:#ffd34d;pointer-events:none}
+body.playing canvas{cursor:none}
 #hint{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);font:800 15px Arial,sans-serif;background:rgba(0,0,0,.5);padding:6px 14px;border-radius:8px}
 #board{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,92vw);background:var(--panel);border-radius:14px;padding:14px 18px;box-shadow:0 0 0 3px #000;font:800 15px Arial,sans-serif}
 #board table{width:100%;border-collapse:collapse}#board td,#board th{padding:5px 6px;text-align:left}#board th{color:#bfb3a2;font-size:12px;letter-spacing:1px}#board tr.me td{color:var(--y)}#board td:not(:nth-child(2)),#board th:not(:nth-child(2)){text-align:right}
@@ -66,6 +68,7 @@ button.mid{font:inherit;font-size:16px;padding:10px 22px;border:0;border-radius:
   <div id="ammo" class="out"><small id="wName">VK-12</small><b id="aMag">30</b> <span id="aRes">/ 90</span><em id="nadeN">◆ 2</em></div><div id="pops" class="out"></div>
   <div id="msg" class="out"></div><div id="sub" class="out"></div>
   <div id="hint" hidden></div>
+  <div id="clk" hidden>CLICK TO CAPTURE MOUSE</div>
   <div id="board" hidden></div>
 </div>
 <section class="screen" id="menu">
@@ -371,18 +374,26 @@ function sfx(k,id,dist,ang){if(!ac)return;try{const pan=ang!=null?-Math.sin(ang)
   else if(k==='hurt'){tn(120,.2,.3,'sawtooth',.5);nz(.15,.25,500)}else if(k==='reload'){nz(.05,.2,3000,'bandpass',null,8);setTimeout(()=>nz(.06,.22,2200,'bandpass',null,8),420);setTimeout(()=>nz(.05,.25,3400,'bandpass',null,8),900)}
   else if(k==='boom'){const v=cl(1-(dist||0)/120,.08,1);nz(1.1,.7*v,700,'lowpass',null);tn(55,.7,.5*v,'sine',.5)}else if(k==='slide')nz(.6,.12,900,'lowpass');else if(k==='dry')nz(.03,.15,4000,'bandpass',null,10);else if(k==='swap')nz(.06,.15,2500,'bandpass',null,6);else if(k==='step')nz(.06,.08,500,'lowpass')}catch(e){}}
 /* ================= Input ================= */
-let noLock=false,wasLocked=false,lastMX=null,lastMY=null;
-function lockMouse(){if(noLock)return;try{const r=C.requestPointerLock&&C.requestPointerLock();if(r&&r.catch)r.catch(()=>{noLock=true;lockHint()})}catch(e){noLock=true;lockHint()}}
-function lockHint(){if(state==='play')msg('MOUSE MODE','Your browser blocked mouse capture: move the mouse to look, or use the arrow keys',3)}
-document.addEventListener('pointerlockerror',()=>{noLock=true;lockHint()});
-document.addEventListener('pointerlockchange',()=>{const L=document.pointerLockElement===C;if(L){wasLocked=true;noLock=false}if(!L&&wasLocked&&state==='play'&&!window.__noPause){paused=true;$('pause').hidden=false;mouse.l=mouse.r=false}});
-addEventListener('mousemove',e=>{if(state!=='play'||paused||!me)return;const L=document.pointerLockElement===C;let mx=e.movementX,my=e.movementY;if(!L){if(mx==null||(!mx&&!my&&lastMX!=null)){mx=e.clientX-(lastMX??e.clientX);my=e.clientY-(lastMY??e.clientY)}lastMX=e.clientX;lastMY=e.clientY;mx*=1.6;my*=1.6}const k=S.sens*.00028*(1-adsK*.45);me.yaw-=mx*k;me.pitch=cl(me.pitch-e.movementY*k,-1.45,1.45)});
-addEventListener('mousedown',e=>{if(state!=='play'||paused)return;if(document.pointerLockElement!==C&&!noLock)lockMouse();if(e.button===0)mouse.l=true;if(e.button===2)mouse.r=true});
+let noLock=false,wasLocked=false,lastMX=null,lastMY=null,lockTry=0,lockFails=0;
+const isLocked=()=>document.pointerLockElement===C;
+function lockMouse(){if(isLocked())return;lockTry=performance.now();const plain=()=>{try{const r=C.requestPointerLock();if(r&&r.catch)r.catch(lockFailed)}catch(e){lockFailed()}};
+  try{const r=C.requestPointerLock({unadjustedMovement:true});if(r&&r.catch)r.catch(plain);else if(!r)return}catch(e){plain()}}
+let failTry=-1;function lockFailed(){if(failTry===lockTry)return;failTry=lockTry;lockFails++;noLock=true;if(lockFails===1)lockHint();updLockUI()}
+function lockHint(){if(state==='play')msg('MOUSE NOT CAPTURED','Open the game in its own Chrome/Edge tab (not a preview window) so the mouse can be captured',4)}
+function updLockUI(){document.body.classList.toggle('playing',state==='play'&&!paused);const el=$('clk');if(el)el.hidden=!(state==='play'&&!paused&&!isLocked())}
+document.addEventListener('pointerlockerror',lockFailed);
+document.addEventListener('pointerlockchange',()=>{const L=isLocked();if(L){wasLocked=true;noLock=false;lockFails=0;lastMX=null}
+  if(!L&&state==='play'&&!paused&&!window.__noPause&&wasLocked){paused=true;$('pause').hidden=false;mouse.l=mouse.r=false;keys={}}updLockUI()});
+addEventListener('blur',()=>{if(state==='play'&&!paused&&!window.__noPause){paused=true;$('pause').hidden=false;mouse.l=mouse.r=false;keys={};if(isLocked())document.exitPointerLock()}updLockUI()});
+addEventListener('mousemove',e=>{if(state!=='play'||paused||!me)return;const L=isLocked();let mx=e.movementX||0,my=e.movementY||0;
+  if(!L){if(!noLock)return;if(lastMX==null){lastMX=e.clientX;lastMY=e.clientY;return}mx=(e.clientX-lastMX)*1.6;my=(e.clientY-lastMY)*1.6;lastMX=e.clientX;lastMY=e.clientY}
+  mx=cl(mx,-250,250);my=cl(my,-250,250);const k=S.sens*.00028*(1-adsK*.45);me.yaw-=mx*k;me.pitch=cl(me.pitch-my*k,-1.45,1.45)});
+addEventListener('mousedown',e=>{if(state!=='play'||paused)return;if(!isLocked()){lockMouse();if(!noLock)return}if(e.button===0)mouse.l=true;if(e.button===2)mouse.r=true});
 addEventListener('mouseup',e=>{if(e.button===0){mouse.l=false;mouse.fired=false}if(e.button===2)mouse.r=false});
 addEventListener('contextmenu',e=>e.preventDefault());
 addEventListener('wheel',e=>{if(state==='play'&&me&&!paused)swapW(me,me.wi?0:1)},{passive:true});
 addEventListener('keydown',e=>{keys[e.code]=true;if(state==='play'&&e.code.startsWith('Arrow'))e.preventDefault();if(state!=='play')return;if(e.code==='Tab'){e.preventDefault();$('board').hidden=false;renderBoard()}
-  if(e.code==='Escape'&&document.pointerLockElement!==C){paused=!paused;$('pause').hidden=!paused;mouse.l=mouse.r=false;return}
+  if(e.code==='Escape'&&!isLocked()){paused=!paused;$('pause').hidden=!paused;mouse.l=mouse.r=false;if(!paused)lockMouse();updLockUI();return}
   if(!me||paused)return;if(e.code==='KeyR')reload(me);if(e.code==='Digit1')swapW(me,0);if(e.code==='Digit2')swapW(me,1);if(e.code==='KeyC'){if(me.sprint&&me.ground)startSlide(me);else me.crouch=!me.crouch}if(e.code==='KeyV')melee(me);if(e.code==='KeyG')throwNade(me);if(e.code==='KeyF'){mouse.r=!mouse.r}if(e.code==='Space')e.preventDefault()});
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='Tab')$('board').hidden=true});
 /* ================= Update ================= */
@@ -401,7 +412,7 @@ function update(dt){if(state!=='play')return;T+=dt;matchT-=dt;msgT-=dt;flashT-=d
   const lead=Math.max(...players.map(p=>p.k));if(lead>=SCORE_LIM||matchT<=0)endMatch()}
 /* ================= HUD ================= */
 let hudT=0;
-function hud(){if(state!=='play'||!me)return;const c=curW(me),W=WEP[c.id];
+function hud(){updLockUI();if(state!=='play'||!me)return;const c=curW(me),W=WEP[c.id];
   $('sMe').textContent=me.k;$('sLead').textContent=Math.max(...players.filter(p=>p!==me).map(p=>p.k),0);const mt=Math.max(0,matchT);$('sTime').textContent=`${Math.floor(mt/60)}:${String(Math.floor(mt%60)).padStart(2,'0')}`;
   $('aMag').textContent=c.rl>0?'—':c.mag;$('aRes').textContent='/ '+c.res;$('wName').textContent=c.rl>0?'RELOADING…':W.n;$('aMag').style.color=c.mag<=W.mag*.25?'#ff6b5a':'#fff';
   $('hpBar').style.width=Math.max(0,me.hp)+'%';$('hpBar').style.background=me.hp<35?'#ff4b3a':'linear-gradient(90deg,#e8e2d6,#fff)';
@@ -432,7 +443,7 @@ function renderMenu(){chips('prim',[['ar','VK-12 Rifle'],['smg','Hornet SMG'],['
 $('sens').oninput=e=>{S.sens=+e.target.value;$('sensV').textContent=S.sens;save()};$('fov').oninput=e=>{S.fov=+e.target.value;$('fovV').textContent=S.fov+'°';save()};
 $('play').onclick=()=>startMatch();$('again').onclick=()=>startMatch();
 $('toMenu').onclick=$('quit').onclick=()=>{state='menu';paused=false;$('pause').hidden=true;$('over').hidden=true;$('hud').hidden=true;$('menu').hidden=false;try{document.exitPointerLock()}catch(e){}};
-$('resume').onclick=()=>{paused=false;$('pause').hidden=true;lockMouse()};
+$('resume').onclick=()=>{paused=false;$('pause').hidden=true;lockMouse();updLockUI()};
 /* ================= Loop ================= */
 function resize(){const d=Math.min(devicePixelRatio||1,1.5);C.width=Math.round(innerWidth*d);C.height=Math.round(innerHeight*d);OV.width=Math.round(innerWidth*(devicePixelRatio||1));OV.height=Math.round(innerHeight*(devicePixelRatio||1))}
 addEventListener('resize',resize);
