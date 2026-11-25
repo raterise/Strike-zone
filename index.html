@@ -12,7 +12,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 .hud{position:fixed;inset:0;pointer-events:none;z-index:2}
 .out{text-shadow:0 2px 0 #000,0 0 6px rgba(0,0,0,.6)}
 #cross{position:absolute;left:50%;top:50%;width:0;height:0}
-#cross i{position:absolute;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.7)}
+#cross i{position:absolute;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.7)}#cross #c0{left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;opacity:0}
 #hitm{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;opacity:0}
 #hitm i{position:absolute;left:12px;top:-2px;width:2px;height:9px;background:#fff;transform-origin:1px 15px}
 #hitm.k i{background:var(--r)}
@@ -60,7 +60,7 @@ button.mid{font:inherit;font-size:16px;padding:10px 22px;border:0;border-radius:
 <canvas id="ov"></canvas>
 <div id="dmg"></div>
 <div class="hud" id="hud" hidden>
-  <div id="cross"><i id="c1"></i><i id="c2"></i><i id="c3"></i><i id="c4"></i></div>
+  <div id="cross"><i id="c0"></i><i id="c1"></i><i id="c2"></i><i id="c3"></i><i id="c4"></i></div>
   <div id="hitm"><i style="transform:rotate(45deg)"></i><i style="transform:rotate(135deg)"></i><i style="transform:rotate(225deg)"></i><i style="transform:rotate(315deg)"></i></div>
   <div id="score" class="out"><div><small>YOU</small><b id="sMe">0</b></div><div><small id="sTimeL">TIME</small><b id="sTime">8:00</b></div><div><small>LEADER</small><b id="sLead">0</b></div></div>
   <div id="feed"></div>
@@ -518,13 +518,15 @@ function update(dt){if(state!=='play')return;T+=dt;matchT-=dt;msgT-=dt;flashT-=d
   for(const f of feed)f.t-=dt;if(feed.some(f=>f.t<=0)){feed=feed.filter(f=>f.t>0);renderFeed()}for(const d of dmgDir)d.t-=dt;dmgDir=dmgDir.filter(d=>d.t>0);
   const lead=Math.max(...players.map(p=>p.k));if(lead>=SCORE_LIM||matchT<=0)endMatch()}
 /* ================= HUD ================= */
-let hudT=0;
+let hudT=0,xk=0;
 function hud(){updLockUI();if(state!=='play'||!me)return;const c=curW(me),W=WEP[c.id];
   $('sMe').textContent=me.k;$('sLead').textContent=Math.max(...players.filter(p=>p!==me).map(p=>p.k),0);const mt=Math.max(0,matchT);$('sTime').textContent=`${Math.floor(mt/60)}:${String(Math.floor(mt%60)).padStart(2,'0')}`;
   $('aMag').textContent=c.rl>0?'—':c.mag;$('aRes').textContent='/ '+c.res;$('wName').textContent=c.rl>0?'RELOADING…':W.n;$('aMag').style.color=c.mag<=W.mag*.25?'#ff6b5a':'#fff';
   $('hpBar').style.width=Math.max(0,me.hp)+'%';$('hpBar').style.background=me.hp<35?'#ff4b3a':'linear-gradient(90deg,#e8e2d6,#fff)';
-  const spr=lerp(W.hip,W.ads,adsK)*(Math.hypot(me.vx,me.vz)>1?1.5:1)+recoil*.4,g=Math.max(3,spr/Math.tan(S.fov*Math.PI/360)*innerHeight*.5),op=me.dead||me.sprint?0:1-adsK;
-  const cs=[[0,-g-10,2,10],[0,g,2,10],[-g-10,0,10,2],[g,0,10,2]];['c1','c2','c3','c4'].forEach((id,i)=>{const e=$(id),[x,y,w,h]=cs[i];e.style.left=(x-w/2+(i>1?w/2:0))+'px';e.style.top=(y-h/2+(i<2?h/2:0))+'px';e.style.width=w+'px';e.style.height=h+'px';e.style.opacity=op});
+  const spr=lerp(W.hip,W.ads,adsK)*(Math.hypot(me.vx,me.vz)>1?1.5:1)+recoil*.4,g0=Math.max(3,spr/Math.tan(S.fov*Math.PI/360)*innerHeight*.5),hidden=me.dead||me.sprint;
+  const xdt=Math.min(.1,(performance.now()-(window._xT||0))/1000);window._xT=performance.now();xk+=(adsK-xk)*Math.min(1,xdt*(adsK>xk?16:5));
+  const L=Math.max(0,10*(1-xk)),g=g0*(1-xk),op=hidden?0:Math.min(1,(1-xk)*1.6);const d=$('c0');d.style.opacity=hidden?0:Math.min(1,xk*1.6);
+  const cs=[[0,-g-L,2,L],[0,g,2,L],[-g-L,0,L,2],[g,0,L,2]];['c1','c2','c3','c4'].forEach((id,i)=>{const e=$(id),[x,y,w,h]=cs[i];e.style.left=(x-w/2+(i>1?w/2:0))+'px';e.style.top=(y-h/2+(i<2?h/2:0))+'px';e.style.width=w+'px';e.style.height=h+'px';e.style.opacity=op});
   const hm=$('hitm');hm.style.opacity=hitT>0?Math.min(1,hitT*8):0;hm.classList.toggle('k',hitK);
   $('msg').style.opacity=msgT>0?Math.min(1,msgT*2):0;$('sub').style.opacity=$('msg').style.opacity;
   $('dmg').style.boxShadow=`inset 0 0 ${120+ (100-me.hp)*2}px rgba(150,0,0,${cl((100-me.hp)/100*.8+(dmgT>0?dmgT*.6:0),0,.85)})`;
