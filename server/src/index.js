@@ -63,7 +63,7 @@ export class Room extends DurableObject {
     if (typeof msg !== "string" || msg.length > 16000) return;
     this.broadcast(msg, ws);
   }
-  async webSocketClose(ws) { this.left(ws); }
+  async webSocketClose(ws, code) { this.left(ws); try { ws.close(1000, "bye"); } catch (e) {} }
   async webSocketError(ws) { this.left(ws); }
   left(ws) {
     const a = ws.deserializeAttachment() || {};
