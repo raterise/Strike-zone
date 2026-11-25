@@ -137,6 +137,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
     <div class="row">
       <div><h4>LOADOUT</h4><div class="chips" id="prim"></div><div id="stk" style="font-size:13px;color:var(--dim);margin-top:8px;letter-spacing:.5px"></div></div>
       <div><h4>BOTS</h4><div class="chips" id="diff"></div><div class="chips" id="bcount" style="margin-top:8px"></div></div>
+      <div><h4>MAP</h4><div class="chips" id="mapc"></div><div id="mapd" style="font-size:13px;color:var(--dim);margin-top:8px"></div></div>
       <div><h4>GRAPHICS</h4><div class="chips" id="gfx"></div></div>
     </div>
     <div class="row" style="margin-top:6px">
@@ -154,7 +155,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 <section class="screen" id="lobby" hidden><div class="card" style="width:min(720px,100%)"><h1 class="logo out" style="font-size:60px">LOB<span>BY</span></h1>
   <p class="tagl">Room code <b id="lbCode" style="color:var(--y);font-size:24px;letter-spacing:3px">----</b></p>
   <div class="onrow"><input id="lbLink" readonly style="flex:1"><button class="mid" id="lbCopy" style="margin:0">Copy invite link</button></div>
-  <div class="row" style="margin-top:6px"><div><h4>PLAYERS</h4><div id="lbPlayers"></div></div><div><h4>MODE</h4><div class="chips" id="lbMode"></div><h4>BOTS</h4><div class="chips" id="lbFill"></div><div class="chips" id="lbDiff" style="margin-top:6px"></div></div></div>
+  <div class="row" style="margin-top:6px"><div><h4>PLAYERS</h4><div id="lbPlayers"></div></div><div><h4>MODE</h4><div class="chips" id="lbMode"></div><h4>MAP</h4><div class="chips" id="lbMap"></div><h4>BOTS</h4><div class="chips" id="lbFill"></div><div class="chips" id="lbDiff" style="margin-top:6px"></div></div></div>
   <p id="lbMsg" style="color:#ff8a7a;min-height:1em"></p><button class="big" id="lbStart">START MATCH</button><p class="tagl" id="lbWait">Waiting for the host to start…</p><button class="mid" id="lbLeave">Leave room</button></div></section>
 <section class="screen" id="loadout" hidden><div class="card" style="width:min(720px,100%)"><h1 class="logo out" style="font-size:60px">LOAD<span>OUT</span></h1><p class="tagl" id="loNote">Your new primary is equipped when you next spawn.</p><div id="loGrid"></div><button class="big" id="loOk">CONFIRM</button></div></section>
 <section class="screen" id="over" hidden><div class="card res" style="width:min(520px,100%)"><h1 class="logo out" id="oTitle" style="font-size:52px">MATCH OVER</h1><p class="tagl" id="oSub"></p><div id="oTable"></div><button class="big" id="again">PLAY AGAIN</button><br><button class="mid" id="toMenu">Menu</button></div></section>
@@ -235,7 +236,7 @@ function box(a,x,y,z,sx,sy,sz,c,ct,ry){const hx=sx/2,hz=sz/2,co=Math.cos(ry||0),
   quad(a,p[2],p[1],p[5],p[6],N(1,0),c.map(v=>v*.86));quad(a,p[0],p[3],p[7],p[4],N(-1,0),c.map(v=>v*.96))}
 function flat(a,x0,z0,x1,z1,y,c){VM=matFor(c);quad(a,[x0,y,z0],[x0,y,z1],[x1,y,z1],[x1,y,z0],[0,1,0],c)}
 /* ================= Map: "Ashfall", a ruined city block ================= */
-const MAP=75;let COLL=[],SPAWNS=[],FIRES=[],SMOKE=[],HILLS=[],hillMesh=[],SITES=[],siteMesh=null,staticMesh=null,glowMesh=null;
+let MAP=75,MAPID='';let COLL=[],SPAWNS=[],FIRES=[],SMOKE=[],HILLS=[],hillMesh=[],SITES=[],siteMesh=null,staticMesh=null,glowMesh=null;
 const PAL={asph:[.27,.26,.25],asph2:[.24,.23,.23],dirt:[.42,.35,.27],side:[.48,.45,.41],conc:[.56,.53,.48],conc2:[.47,.44,.4],brick:[.52,.33,.25],brick2:[.44,.28,.22],rust:[.55,.3,.16],rust2:[.38,.24,.16],dark:[.12,.11,.1],soot:[.2,.18,.17],
   metal:[.42,.43,.44],green:[.3,.36,.24],sand:[.6,.52,.38],line:[.55,.5,.32],wood:[.45,.32,.2],ash:[.33,.31,.3]};
 const RS=(a,b)=>a+rnd()*(b-a);
@@ -269,7 +270,9 @@ function barrier(a,x,z,ry){rotSolid(a,x,0,z,.7,1.05,3,PAL.conc,PAL.conc,ry);box(
 function sandbags(a,x,z,len,ry){const co=Math.cos(ry),si=Math.sin(ry);for(let r=0;r<2;r++)for(let k=0;k<Math.round(len/1.1);k++){const u=-len/2+.55+k*1.1+(r?.5:0);if(u>len/2-.4)continue;box(a,x+u*co,r*.42,z-u*si,1,.42,.6,PAL.sand,PAL.sand.map(v=>v*1.08),ry)}
   box(a,x,0,z,len,.84,.6,PAL.sand,PAL.sand,ry);rotColl(x,0,.84,z,len,.6,ry)}
 function barrel(a,g,x,z,fire){solid(a,x,0,z,.7,1,.7,PAL.rust,PAL.rust2);if(fire){box(g,x,1,z,.5,.5,.5,[1.8,.9,.3]);box(g,x,1.3,z,.3,.5,.3,[1.9,1.4,.4]);FIRES.push([x,1.4,z])}}
-function genMap(){seed=4021;MAT=2;COLL=[];SPAWNS=[];FIRES=[];SMOKE=[];const a=[],g=[];
+const MAPS={ashfall:{n:'ASHFALL',d:'Ruined city block. Long streets, rooftops, mixed ranges.'},yard:{n:'STACKYARD',d:'Tiny container yard. Non-stop close-range chaos.'}};
+function genMap(id){id=MAPS[id]?id:'ashfall';MAPID=id;if(id==='yard')genYard();else genAshfall()}
+function genAshfall(){MAP=75;seed=4021;MAT=2;COLL=[];SPAWNS=[];FIRES=[];SMOKE=[];const a=[],g=[];
   /* ground: dirt base, cracked asphalt avenues, sidewalks */
   flat(a,-140,-140,140,140,-.01,[.3,.26,.2]);flat(a,-MAP,-MAP,MAP,MAP,0,PAL.dirt);
   for(const[x0,z0,x1,z1]of[[-MAP,-7,MAP,7],[-7,-MAP,7,MAP],[-MAP,-MAP,MAP,-MAP+8],[-MAP,MAP-8,MAP,MAP],[-MAP,-MAP,-MAP+8,MAP],[MAP-8,-MAP,MAP,MAP]]){flat(a,x0,z0,x1,z1,.01,PAL.asph)}
@@ -330,13 +333,13 @@ function roofBuilding(a,cx,cz,s){const H=ROOF_Y,c=PAL.conc,c2=PAL.conc2;MAT=2;
   beam(a,[cx+s*2.5,H,cz-2.8],[cx+s*2.5,H+1.4,cz-2.8],.18,PAL.rust);beam(a,[cx+s*2.5,H+1.4,cz-2.8],[cx+s*2.9,H+1.4,cz-2.8],.18,PAL.rust);
   MAT=2}
 /* ---------- bomb sites for Search & Destroy: a supply crate stack plus a letter sign (letters only drawn in that mode) ---------- */
-function bombSites(a){SITES=[{n:'A',x:30,z:26,y:0,r:4.2},{n:'B',x:-30,z:26,y:0,r:4.2}];const L={A:['.#.','#.#','###','#.#','#.#'],B:['##.','#.#','##.','#.#','##.']},g=[];
+function bombSites(a,list){SITES=list||[{n:'A',x:30,z:26,y:0,r:4.2},{n:'B',x:-30,z:26,y:0,r:4.2}];const L={A:['.#.','#.#','###','#.#','#.#'],B:['##.','#.#','##.','#.#','##.']},g=[];
   for(const st of SITES){MAT=6;solid(a,st.x,0,st.z,1.5,.95,1.1,PAL.wood,PAL.wood.map(v=>v*1.12));box(a,st.x+.2,.95,st.z,.9,.6,.8,[.3,.34,.24],[.36,.4,.28]);MAT=2;
     const sx=st.x+1.4,sz=st.z-.9;beam(a,[sx,0,sz],[sx,2.6,sz],.08,PAL.metal);box(a,sx,1.55,sz,1.05,1.15,.05,[.12,.11,.1]);
     L[st.n].forEach((row,ri)=>[...row].forEach((ch,ci)=>{if(ch==='#')box(g,sx-.3+ci*.3,2.4-ri*.2-.18,sz,.27,.17,.09,[2.2,1.4,.4])}))}
   siteMesh=mkVBO(g);MAT=2}
 /* ---------- hardpoint zones and their glowing outlines ---------- */
-function buildHills(){HILLS=[{n:'INTERSECTION',x:2,z:2,w:10,d:10,y:0},{n:'WEST ROOFTOP',x:-52,z:24,w:6.6,d:6.6,y:ROOF_Y},{n:'EAST RUIN',x:30,z:26,w:12,d:8,y:0},{n:'EAST ROOFTOP',x:52,z:-24,w:6.6,d:6.6,y:ROOF_Y},{n:'WEST RUIN',x:-30,z:-26,w:12,d:8,y:0}];
+function buildHills(list){HILLS=list||[{n:'INTERSECTION',x:2,z:2,w:10,d:10,y:0},{n:'WEST ROOFTOP',x:-52,z:24,w:6.6,d:6.6,y:ROOF_Y},{n:'EAST RUIN',x:30,z:26,w:12,d:8,y:0},{n:'EAST ROOFTOP',x:52,z:-24,w:6.6,d:6.6,y:ROOF_Y},{n:'WEST RUIN',x:-30,z:-26,w:12,d:8,y:0}];
   hillMesh=HILLS.map(h=>{const a=[],y=h.y+.03,c=[1.25,1.25,1.25],x0=h.x-h.w/2,x1=h.x+h.w/2,z0=h.z-h.d/2,z1=h.z+h.d/2,t=.16;
     for(let u=x0;u<x1-.01;u+=1.2){const e=Math.min(u+.8,x1);box(a,(u+e)/2,y,z0,e-u,.05,t,c);box(a,(u+e)/2,y,z1,e-u,.05,t,c)}
     for(let v=z0;v<z1-.01;v+=1.2){const e=Math.min(v+.8,z1);box(a,x0,y,(v+e)/2,t,.05,e-v,c);box(a,x1,y,(v+e)/2,t,.05,e-v,c)}
@@ -396,11 +399,11 @@ function rayBox(o,d,b,maxT){let t0=0,t1=maxT;for(let i=0;i<3;i++){const mn=i===0
 function rayWorld(o,d,maxT){let best=maxT,hb=null;for(const b of COLL){const t=rayBox(o,d,b,best);if(t>=0&&t<best){best=t;hb=b}}if(o[1]+d[1]*best<0&&d[1]<0){const tg=-o[1]/d[1];if(tg<best){best=tg;hb='ground'}}return{t:best,b:hb}}
 function los(a,b){const d=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],L=Math.hypot(...d);if(L<.01)return true;const n=d.map(v=>v/L);return rayWorld(a,n,L).t>=L-.05}
 /* ---------- nav grid for bots ---------- */
-const NC=1,NN=Math.ceil(2*MAP/NC);let NAV=null,NAVH=null,NAVS=null;
+const NC=1;let NN=Math.ceil(2*MAP/NC),NAV=null,NAVH=null,NAVS=null;
 /* each cell gets a floor height, so roofs and stairs are walkable for bots */
-function buildNav(){NAV=new Uint8Array(NN*NN);NAVH=new Float32Array(NN*NN);NAVS=new Uint8Array(NN*NN);
+function buildNav(){NN=Math.ceil(2*MAP/NC);NAV=new Uint8Array(NN*NN);NAVH=new Float32Array(NN*NN);NAVS=new Uint8Array(NN*NN);
   for(let i=0;i<NN;i++)for(let j=0;j<NN;j++){const x=-MAP+(i+.5)*NC,z=-MAP+(j+.5)*NC;let h=0,st=0;
-    for(const b of COLL)if(x>b.x0-.05&&x<b.x1+.05&&z>b.z0-.05&&z<b.z1+.05&&b.y1>h&&b.y1<6){h=b.y1;st=b.stair?1:0}
+    /* floor = top of the stack of boxes you can step onto from below (ignores roofs overhead) */for(let ch=1;ch;){ch=0;for(const b of COLL)if(x>b.x0-.05&&x<b.x1+.05&&z>b.z0-.05&&z<b.z1+.05&&b.y0<=h+.45&&b.y1>h&&b.y1<6){h=b.y1;st=b.stair?1:0;ch=1}}
     const k=i*NN+j;NAVH[k]=h;NAVS[k]=st;NAV[k]=blockedAt(x,z,h>.5?.5:.45,h+.45,h+1.6)?1:0}}
 const cellOf=(x,z)=>[cl(Math.floor((x+MAP)/NC),0,NN-1),cl(Math.floor((z+MAP)/NC),0,NN-1)];
 function navPath(x0,z0,x1,z1){const[si,sj]=cellOf(x0,z0),[ti,tj]=cellOf(x1,z1);if(NAV[ti*NN+tj])return null;const N=NN*NN,g=new Float32Array(N).fill(1e9),from=new Int32Array(N).fill(-1),cl2=new Uint8Array(N);
@@ -414,8 +417,69 @@ function navPath(x0,z0,x1,z1){const[si,sj]=cellOf(x0,z0),[ti,tj]=cellOf(x1,z1);i
   return null}
 /* a reachable random point inside a zone */
 function navToZone(x,z,h){for(let t=0;t<8;t++){const p=navPath(x,z,h.x+R(-h.w/2+.8,h.w/2-.8),h.z+R(-h.d/2+.8,h.d/2-.8));if(p)return p}return null}
+/* ================= Map 2: "Stackyard", an original small container yard ================= */
+const CCOL=[[.55,.2,.14],[.2,.32,.42],[.26,.36,.22],[.62,.48,.14],[.45,.45,.42],[.5,.28,.12]];
+/* one shipping container: 6 m x 2.5 m x 2.6 m, ribbed sides, door end. dir 'x' = long side along x.
+   hollow containers are open at both ends so you can run through them */
+function container(a,x,y,z,dir,col,hollow,doorEnd){const L=6,W=2.5,H=2.6,c=col,dark=c.map(v=>v*.6),rib=c.map(v=>v*.82),ax=dir==='x';MAT=5;
+  const B=(cx,cy,cz,sx,sy,sz,cc,coll)=>{if(coll)solid(a,cx,cy,cz,ax?sx:sz,sy,ax?sz:sx,cc,cc.map(v=>v*1.05));else box(a,cx,cy,cz,ax?sx:sz,sy,ax?sz:sx,cc,cc.map(v=>v*1.05))};
+  const P=(u,w)=>ax?[x+u,z+w]:[x+w,z+u];
+  if(!hollow){const[cx,cz]=P(0,0);B(cx,y,cz,L,H,W,c,true)}
+  else{for(const s of[-1,1]){const[cx,cz]=P(0,s*(W/2-.08));B(cx,y,cz,L,H,.16,c,true)}const[rx,rz]=P(0,0);B(rx,y+H-.12,rz,L,.12,W,c,true);B(rx,y,rz,L,.06,W,dark,false)}
+  /* ribs along both long sides and the roof edge */
+  for(let u=-L/2+.3;u<L/2-.2;u+=.42)for(const s of[-1,1]){const[cx,cz]=P(u,s*(W/2+.025));B(cx,y+.12,cz,.12,H-.24,.05,rib,false)}
+  for(const s of[-1,1]){const[cx,cz]=P(0,s*(W/2+.03));B(cx,y+H-.12,cz,L+.04,.12,.08,dark,false);B(cx,y,cz,L+.04,.12,.08,dark,false)}
+  /* corner posts and a door end with locking bars */
+  for(const su of[-1,1])for(const sw of[-1,1]){const[cx,cz]=P(su*(L/2-.06),sw*(W/2-.06));B(cx,y,cz,.14,H,.14,dark,false)}
+  if(!hollow){const e=doorEnd||1,[dx,dz]=P(e*(L/2+.02),0);B(dx,y+.1,dz,.04,H-.2,W-.2,c.map(v=>v*.9),false);for(const w of[-.8,-.35,.35,.8]){const[bx,bz]=P(e*(L/2+.06),w);B(bx,y+.15,bz,.05,H-.3,.05,[.15,.15,.15],false)}}
+  /* faded stencil stripe */
+  const[sx,sz]=P(-.6,(W/2+.03));B(sx,y+1.7,sz,2.2,.28,.03,[.75,.72,.62].map(v=>v*.8),false);MAT=2}
+function crate2(a,x,z,s,ry){MAT=6;solid(a,x,0,z,s,s,s,PAL.wood,PAL.wood.map(v=>v*1.12));for(const o of[-1,1])box(a,x,s*.15,z+o*(s/2+.01),s*.96,.08,.02,[.3,.2,.12]);MAT=2}
+function pallet(a,x,z,ry,h){MAT=6;for(let k=0;k<h;k++){box(a,x,k*.16,z,1.2,.14,1,[.5,.38,.24],null,ry)}rotColl(x,0,h*.16,z,1.2,1,ry);MAT=2}
+function genYard(){MAP=28;seed=777;MAT=2;COLL=[];SPAWNS=[];FIRES=[];SMOKE=[];const a=[],g=[];
+  /* ground: stained concrete pad with painted bay lines */
+  flat(a,-160,-160,160,160,-.01,[.24,.22,.2]);flat(a,-MAP,-MAP,MAP,MAP,0,PAL.conc2);
+  for(let i=-MAP+4;i<MAP;i+=8){flat(a,i-.07,-MAP,i+.07,MAP,.012,[.62,.52,.2]);}
+  for(let k=0;k<40;k++){const x=RS(-MAP+2,MAP-2),z=RS(-MAP+2,MAP-2),r=RS(.6,2.2);flat(a,x-r,z-r*.6,x+r,z+r*.6,.016+k*.0002,k%3?[.2,.19,.18]:[.17,.19,.21])}
+  /* perimeter: corrugated fence with stacked containers behind it */
+  for(const s of[-1,1]){solid(a,0,0,s*(MAP+.3),2*MAP+1.2,4.2,.6,[.36,.35,.33],[.3,.29,.27]);solid(a,s*(MAP+.3),0,0,.6,4.2,2*MAP+1.2,[.36,.35,.33],[.3,.29,.27])}
+  for(let u=-MAP;u<=MAP;u+=.6)for(const s of[-1,1]){box(a,u,0,s*(MAP-.02),.08,4.2,.06,[.3,.29,.27]);box(a,s*(MAP-.02),0,u,.06,4.2,.08,[.3,.29,.27])}
+  let ci=0;for(let u=-MAP-4;u<=MAP+4;u+=6.6)for(const s of[-1,1])for(let h=0;h<1+(Math.abs(u*7+s)%3);h++){container(a,u,h*2.62,s*(MAP+2.2),'x',CCOL[(ci++)%6],false);container(a,s*(MAP+2.2),h*2.62,u,'z',CCOL[(ci++)%6],false)}
+  /* the yard: an original, point-symmetric layout so neither side has an edge */
+  const L=[ /* x, z, dir, colour, stack height, hollow */
+    [0,0,'x',3,1,true],            /* run-through container in the middle */
+    [-8,-4,'z',0,2],[8,4,'z',1,2], /* two tall stacks either side of it */
+    [-17,-11,'x',2,1],[17,11,'x',2,1],
+    [-19,6,'z',4,1],[19,-6,'z',4,1],
+    [-6,-15,'z',5,1,true],[6,15,'z',5,1,true],
+    [7,-11,'x',1,1],[-7,11,'x',0,1],
+    [-14,18,'x',3,2],[14,-18,'x',3,2]];
+  for(const[x,z,d,c,h,hol]of L)for(let k=0;k<h;k++)container(a,x,k*2.62,z,d,CCOL[c],hol&&k===0,k?-1:1);
+  /* a container knocked off its stack, lying at an angle */
+  {const ry=.42;MAT=5;box(a,-1,0,-21,6,2.6,2.5,CCOL[1].map(v=>v*.9),CCOL[1],ry);rotColl(-1,0,2.6,-21,6,2.5,ry);box(a,1,0,21,6,2.6,2.5,CCOL[0].map(v=>v*.9),CCOL[0],ry);rotColl(1,0,2.6,21,6,2.5,ry);MAT=2}
+  /* low cover: crates, pallets, barrels with fire */
+  for(const[x,z,sz2]of[[-3,6,1.1],[3,-6,1.1],[-12,0,1],[12,0,1],[-22,-20,1.2],[22,20,1.2],[0,-9,.9],[0,9,.9]]){crate2(a,x,z,sz2)}
+  for(const[x,z,ry,h]of[[-11,-21,.3,3],[11,21,.3,3],[-23,12,0,2],[23,-12,0,2],[14,6,1.2,4],[-14,-6,1.2,4]])pallet(a,x,z,ry,h);
+  for(const[x,z,f]of[[-21,-3,1],[21,3,1],[4,-23,1],[-4,23,1],[-10,15,0],[10,-15,0]])barrel(a,g,x,z,f);
+  /* a forklift parked by one stack */
+  MAT=5;solid(a,-12.5,0,-2.6,1.4,1.3,2.4,[.75,.55,.12],[.7,.5,.1]);box(a,-12.5,1.3,-2.3,1.2,1.1,1.4,[.15,.15,.15]);beam(a,[-12.5,0,-4.1],[-12.5,2.6,-4.1],.12,PAL.metal);box(a,-12.5,.1,-4.6,1.1,.08,1,PAL.metal);MAT=2;
+  box(a,12.5,0,2.6,1.4,1.3,2.4,[.75,.55,.12],[.7,.5,.1]);rotColl(12.5,0,1.3,2.6,1.4,2.4,0);box(a,12.5,1.3,2.3,1.2,1.1,1.4,[.15,.15,.15]);
+  /* floodlight masts in the corners and a gantry crane over one end (out of reach) */
+  for(const[x,z]of[[-MAP+1.2,-MAP+1.2],[MAP-1.2,MAP-1.2],[MAP-1.2,-MAP+1.2],[-MAP+1.2,MAP-1.2]]){beam(a,[x,0,z],[x,11,z],.3,PAL.metal);colBox(x,z,.25,.25,11);box(a,x,11,z,1.8,.5,.5,[.2,.2,.2]);box(g,x,10.95,z,1.6,.08,.42,[2.2,2.1,1.6])}
+  for(const s of[-1,1]){beam(a,[s*9,0,-MAP-3],[s*9,16,-MAP-3],.7,[.62,.42,.12]);beam(a,[s*9,0,-MAP-11],[s*9,16,-MAP-11],.7,[.62,.42,.12])}
+  box(a,0,16,-MAP-7,22,1.2,1.2,[.62,.42,.12]);box(a,0,16,-MAP-3,22,1.2,1,[.62,.42,.12]);box(a,0,16,-MAP-11,22,1.2,1,[.62,.42,.12]);beam(a,[2,16,-MAP-7],[2,9,-MAP-7],.06,[.1,.1,.1]);container(a,2,6.4,-MAP-7,'x',CCOL[3],false);
+  /* distant skyline */
+  for(let k=0;k<40;k++){const t=k/40*6.283,r=RS(70,110),x=Math.cos(t)*r,z=Math.sin(t)*r,w=RS(10,20),h=RS(18,55);box(a,x,0,z,w,h,w*RS(.7,1.2),[.24,.22,.21],[.2,.18,.17])}
+  for(const f of FIRES)SMOKE.push({x:f[0],y:f[1]+.2,z:f[2],h:9,s:1.5,n:7,r:.11});for(const[x,z]of[[-90,40],[70,-80],[30,100]])SMOKE.push({x,y:0,z,h:80,s:18,n:12,r:.035});
+  /* objectives: bomb sites near the south side (defenders spawn south), five hardpoints */
+  bombSites(a,[{n:'A',x:21,z:15.5,y:0,r:3.6},{n:'B',x:-21,z:16.5,y:0,r:3.6}]);
+  /* spawns: a grid of open points, spread apart */
+  const cand=[];for(let x=-MAP+2.5;x<=MAP-2.5;x+=2.5)for(let z=-MAP+2.5;z<=MAP-2.5;z+=2.5)if(!blockedAt(x,z,.9,0,2))cand.push([x,z]);
+  for(const c of cand.sort(()=>rnd()-.5)){if(SPAWNS.every(s=>Math.hypot(s[0]-c[0],s[1]-c[1])>7))SPAWNS.push(c);if(SPAWNS.length>=26)break}
+  MAT=0;buildHills([{n:'CENTRE TUNNEL',x:0,z:0,w:7,d:5,y:0},{n:'NORTH-WEST BAY',x:-13,z:-17,w:6,d:5,y:0},{n:'EAST LANE',x:22,z:-1,w:5,d:7,y:0},{n:'SOUTH-EAST BAY',x:13,z:17,w:6,d:5,y:0},{n:'WEST LANE',x:-22,z:1,w:5,d:7,y:0}]);
+  staticMesh=mkVBO(a);glowMesh=mkVBO(g);buildNav()}
 /* ================= Settings & save ================= */
-const KEY='strikeZone1';let S={sens:7,fov:90,prim:'ar',diff:'normal',bots:7,best:0,gfx:'high',mode:'ffa'};
+const KEY='strikeZone1';let S={sens:7,fov:90,prim:'ar',diff:'normal',bots:7,best:0,gfx:'high',mode:'ffa',map:'ashfall'};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)Object.assign(S,s)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 /* ================= Weapons ================= */
@@ -515,7 +579,7 @@ function botThink(b,dt){const A=b.ai,D=DIFF[S.diff];A.t-=dt;A.strT-=dt;
   if(b.wantAct&&!A.tgt){mx=mz=0;b.crouch=true}
   const L=Math.hypot(mx,mz)||1;moveBody(b,dt,mx/L*(mx||mz?1:0),mz/L*(mx||mz?1:0),sp*WEP[curW(b).id].spd,false)}
 /* ================= Match flow ================= */
-function startMatch(){genMapOnce();streakReset();MODE=MODES[S.mode]||MODES.ffa;SCORE_LIM=MODE.lim;MATCH_LEN=MODE.len;tScore=[0,0];hill={i:0,t:HILL_T,own:-1,state:'neutral',contest:false,pt:0};
+function startMatch(){genMapOnce(S.map);streakReset();MODE=MODES[S.mode]||MODES.ffa;SCORE_LIM=MODE.lim;MATCH_LEN=MODE.len;tScore=[0,0];hill={i:0,t:HILL_T,own:-1,state:'neutral',contest:false,pt:0};
   players=[];me=mkPlayer('You',false,[.95,.7,.2],S.prim);me.prim=S.prim;me.team=0;players.push(me);const prims=['ar','smg','sg','dmr','ar','smg'];
   const mates=MODE.team?Math.floor(S.bots/2):0;
   for(let i=0;i<S.bots;i++){const b=mkPlayer(NAMES[i%NAMES.length],true,COLS[i%COLS.length],prims[i%prims.length]);b.prim=b.w[0].id;b.team=MODE.team?(i<mates?0:1):1;b.obj=i%4!==3;players.push(b)}
@@ -528,7 +592,7 @@ function hillTick(dt){const h=HILLS[hill.i];hill.t-=dt;const inA=players.filter(
   if(prev!==hill.state){if(hill.state==='ours'&&inHill(me,h))pop('HARDPOINT SECURED','#4fa3ff');if(hill.state==='contested'&&inHill(me,h))pop('CONTESTED','#ffb02e')}
   if(hill.state==='ours'||hill.state==='theirs'){const tm=hill.state==='ours'?0:1;hill.pt+=dt;while(hill.pt>=1){hill.pt-=1;tScore[tm]++;for(const p of inA)if(p.team===tm)p.htime=(p.htime||0)+1;if(tm===me.team&&inHill(me,h)&&!me.dead&&tScore[tm]%5===0)pop('+50  HARDPOINT','#4fa3ff')}}else hill.pt=0;
   if(hill.t<=0){hill.i=(hill.i+1)%HILLS.length;hill.t=HILL_T;hill.pt=0;msg('HARDPOINT MOVED',HILLS[hill.i].n,2.2,true);sfx('swap')}else if(Math.abs(hill.t-10)<dt)msg('HARDPOINT MOVING IN 10','',1.6,true)}
-let mapReady=false;function genMapOnce(){if(!mapReady){genMap();mapReady=true}}
+function genMapOnce(id){id=id||S.map||'ashfall';if(MAPID!==id)genMap(id)}
 function endMatch(){if(NET.on&&NET.host)netSend({t:'end',g:gameState()});state='over';document.exitPointerLock&&document.exitPointerLock();const L=players.slice().sort((a,b)=>b.k-a.k||a.d-b.d),pos=L.indexOf(me)+1;if(me.k>S.best){S.best=me.k;save()}
   if(MODE.team){const w=tScore[0]>tScore[1]?0:tScore[1]>tScore[0]?1:-1;$('oTitle').textContent=w===0?'VICTORY':w===1?'DEFEAT':'DRAW';$('oSub').textContent=`${TEAMS[0].n} ${tScore[0]} – ${tScore[1]} ${TEAMS[1].n}${MODE.snd?' (rounds)':''}`}
   else{$('oTitle').textContent=pos===1?'VICTORY':'MATCH OVER';$('oSub').textContent=pos===1?'You topped the lobby.':`You finished #${pos} of ${L.length}.`}
@@ -612,7 +676,7 @@ function sndBot(b,A){const B=snd.bomb;if(snd.phase!=='live')return true;const at
 /* The Cloudflare room relays messages. The host's browser runs bots and match rules;
    every player sends their own movement and reports their own hits (favour the shooter). */
 const SERVER_URL='https://strike-zone-server.lachiejrobertson3.workers.dev';
-const NET={ping:0,on:false,ws:null,id:null,host:false,hostId:null,code:'',peers:{},lobby:{mode:'tdm',diff:'normal',fill:8},sendT:0,botT:0,gT:0,shots:[],last:null,inMatch:false};
+const NET={ping:0,on:false,ws:null,id:null,host:false,hostId:null,code:'',peers:{},lobby:{mode:'tdm',diff:'normal',fill:8,map:'ashfall'},sendT:0,botT:0,gT:0,shots:[],last:null,inMatch:false};
 const netEnabled=()=>!!(window.SZ_SERVER||SERVER_URL);
 function netSend(o){if(NET.ws&&NET.ws.readyState===1)try{NET.ws.send(JSON.stringify(o))}catch(e){}}
 const byNid=id=>players.find(p=>p.nid===id);
@@ -664,6 +728,7 @@ function renderLobby(){if($('lobby').hidden)return;const L=NET.lobby,host=NET.ho
   const ps=lobbyPlayers();$('lbPlayers').innerHTML=ps.map(p=>`<div class="lbp ${p.me?'me':''}">${esc(p.name)}${p.id===NET.hostId?' <em>HOST</em>':''}${p.me?' <em>YOU</em>':''}</div>`).join('')+(L.fill>ps.length?`<div class="lbp bot">+ ${L.fill-ps.length} bots</div>`:'');
   const opt=(id,arr,key)=>{$(id).innerHTML=arr.map(([v,t])=>`<button class="chip" data-v="${v}" aria-pressed="${L[key]==v}" ${host?'':'disabled'}>${t}</button>`).join('');$(id).onclick=e=>{const b=e.target.closest('button');if(!b||!host)return;L[key]=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;hostLobbySync()}};
   opt('lbMode',[['ffa','Free for All'],['tdm','Team Deathmatch'],['hp','Hardpoint'],['snd','Search & Destroy']],'mode');
+  opt('lbMap',[['ashfall','Ashfall'],['yard','Stackyard']],'map');
   opt('lbFill',[[0,'No bots'],[6,'Fill to 6'],[8,'Fill to 8'],[10,'Fill to 10'],[12,'Fill to 12']],'fill');
   opt('lbDiff',[['easy','Easy'],['normal','Normal'],['hard','Hard']],'diff');
   $('lbStart').hidden=!host;$('lbWait').hidden=host||!NET.on;$('lbWait').textContent=NET.inMatch?'Match in progress…':'Waiting for the host to start…'}
@@ -677,16 +742,16 @@ function makePlayers(R){players=[];for(const r of R){const isMe=r.n===NET.id,p=m
     p.nid=r.n;p.team=MODE.team?r.tm:(isMe?0:1);p.ffaTeam=r.tm;p.isBot=!!r.b;p.remote=!isMe&&!(r.b&&NET.host);p.prim=r.b?r.pr:S.prim;p.L=0;p.snaps=[];p.obj=r.b?(players.length%4!==3):false;
     if(isMe){me=p;p.prim=S.prim;p.w=[mkWep(S.prim),mkWep('pis')]}if(MODE.team)p.col=TEAMS[p.team].c;players.push(p)}
   if(!MODE.team)players.forEach((p,i)=>{p.team=i})}/* every player is their own team in FFA */
-function hostStart(){if(!NET.host)return;const L=NET.lobby;S.diff=L.diff;S.mode=L.mode;const R=buildRoster();NET.roster=R;startOnline(L.mode,R);
-  const sp=players.map(p=>[p.nid,r2(p.x),r2(p.z),r2(p.yaw)]);netSend({t:'start',mode:L.mode,diff:L.diff,roster:R,sp,mt:matchT,g:gameState()})}
-function startOnline(mode,R,sp){genMapOnce();streakReset();MODE=MODES[mode];SCORE_LIM=MODE.lim;MATCH_LEN=MODE.len;tScore=[0,0];hill={i:0,t:HILL_T,own:-1,state:'neutral',contest:false,pt:0};
+function hostStart(){if(!NET.host)return;const L=NET.lobby;S.diff=L.diff;S.mode=L.mode;const R=buildRoster();NET.roster=R;startOnline(L.mode,R,null,L.map);
+  const sp=players.map(p=>[p.nid,r2(p.x),r2(p.z),r2(p.yaw)]);netSend({t:'start',mode:L.mode,map:L.map,diff:L.diff,roster:R,sp,mt:matchT,g:gameState()})}
+function startOnline(mode,R,sp,map){genMapOnce(map||'ashfall');streakReset();MODE=MODES[mode];SCORE_LIM=MODE.lim;MATCH_LEN=MODE.len;tScore=[0,0];hill={i:0,t:HILL_T,own:-1,state:'neutral',contest:false,pt:0};
   makePlayers(R);matchT=MATCH_LEN;T=0;parts=[];tracers=[];feed=[];nades=[];picks=[];renderFeed();NET.inMatch=true;
   if(NET.host){if(MODE.snd)sndStart();else for(const p of players)spawn(p,true)}
   else if(sp)applySpawns(sp);
   state='play';$('lobby').hidden=true;$('menu').hidden=true;$('over').hidden=true;$('hud').hidden=false;setupHud();
   if(!MODE.snd)msg(MODE.n,MODE===MODES.hp?'Hardpoint: '+HILLS[0].n:MODE.sub,2.6);lockMouse();audio()}
 function applySpawns(sp){for(const[n,x,z,yaw]of sp){const p=byNid(n);if(!p)continue;p.x=x;p.z=z;p.y=0;p.yaw=yaw;p.vx=p.vz=p.vy=0;p.snaps=[];if(p===me){me.dead=false;me.hp=100;me.L++;me.pitch=0;me.w=[mkWep(S.prim),mkWep('pis')];me.wi=0;me.nades=2;me.slideT=0;me.crouch=false}else{p.dead=false;p.hp=100}}}
-function clientStart(m){if(m.mid&&m.to!==NET.id)return;S.diff=m.diff;NET.roster=m.roster;startOnline(m.mode,m.roster,m.sp);if(m.mt!=null)matchT=m.mt;if(m.g)applyGame(m.g);
+function clientStart(m){if(m.mid&&m.to!==NET.id)return;S.diff=m.diff;NET.roster=m.roster;startOnline(m.mode,m.roster,m.sp,m.map);if(m.mt!=null)matchT=m.mt;if(m.g)applyGame(m.g);
   if(MODE.snd&&!m.mid){snd.phase='freeze';snd.t=FREEZE_T;msg(`ROUND ${snd.round}`,me.team===snd.att?'ATTACK · plant the bomb at A or B':'DEFEND · protect sites A and B',FREEZE_T,true)}
   if(m.mid){for(const p of players)if(p!==me&&m.dead&&m.dead.includes(p.nid))p.dead=true;if(MODE.snd){me.dead=true;me.hp=0;me.killedBy='joined mid-round'}else{me.dead=true;me.respT=.5;me.killedBy='—'}}}
 /* someone joined during a match: take over a bot slot if there is one, else add them */
@@ -697,7 +762,7 @@ function hostAddLate(id,name){const R=NET.roster;let slot=null;if(NET.lobby.fill
   if(slot){players=players.filter(p=>p!==slot);NET.roster=R.filter(r=>r.n!==slot.nid)}NET.roster.push(entry);
   const p=mkPlayer(name,false,MODE.team?TEAMS[entry.tm].c:COLS[players.length%COLS.length],'ar');p.nid=id;p.team=MODE.team?entry.tm:players.length;p.remote=true;p.L=0;p.snaps=[];p.dead=true;players.push(p);
   netSend({t:'add',e:entry,rm:slot?slot.nid:null});
-  netSend({t:'start',to:id,mid:1,mode:S.mode,diff:S.diff,roster:NET.roster,sp:players.filter(q=>!q.dead).map(q=>[q.nid,r2(q.x),r2(q.z),r2(q.yaw)]),dead:players.filter(q=>q.dead).map(q=>q.nid),mt:matchT,g:gameState()})}
+  netSend({t:'start',to:id,mid:1,mode:S.mode,map:MAPID,diff:S.diff,roster:NET.roster,sp:players.filter(q=>!q.dead).map(q=>[q.nid,r2(q.x),r2(q.z),r2(q.yaw)]),dead:players.filter(q=>q.dead).map(q=>q.nid),mt:matchT,g:gameState()})}
 function applyAdd(m){if(m.rm)players=players.filter(p=>p.nid!==m.rm);if(byNid(m.e.n))return;const e=m.e,p=mkPlayer(e.nm,false,MODE.team?TEAMS[e.tm].c:COLS[players.length%COLS.length],'ar');p.nid=e.n;p.isBot=!!e.b;p.team=MODE.team?e.tm:players.length;p.remote=true;p.L=0;p.snaps=[];p.dead=true;players.push(p);if(!e.b)pushNote(`${e.nm} joined`)}
 function hostReplaceLeaver(p){players=players.filter(q=>q!==p);NET.roster=NET.roster.filter(r=>r.n!==p.nid);if(!NET.lobby.fill)return;
   const bi=NET.roster.filter(r=>r.b).length+Math.floor(Math.random()*1000),e={n:'b'+bi,nm:NAMES[bi%NAMES.length],tm:p.team,b:1,pr:'ar'};NET.roster.push(e);
@@ -919,7 +984,7 @@ function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&
 function render(){specP=null;const W2=C.width,H2=C.height;gl.viewport(0,0,W2,H2);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   if(!staticMesh)return;let eye,yaw,pitch;
   if(state==='play'&&me){const rdt=Math.min(.05,(performance.now()-(window._rT||0))/1000);window._rT=performance.now();const cr=me.slideT>0?.92:me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,1-Math.exp(-rdt*16));const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH-landK*.13+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3;if(MODE.snd){const sp=specTarget();if(sp){specP=sp;const e2=eyeOf(sp);eye=[e2[0],e2[1]+.05,e2[2]];yaw=sp.yaw;pitch=sp.pitch}}}}
-  else{const t=performance.now()/9000;eye=[Math.cos(t)*40,14,Math.sin(t)*40];yaw=Math.atan2(eye[0],eye[2]);pitch=-.22}
+  else{const t=performance.now()/9000,rr=Math.min(40,MAP*.9);eye=[Math.cos(t)*rr,MAP<40?9:14,Math.sin(t)*rr];yaw=Math.atan2(eye[0],eye[2]);pitch=-.22}
   const W0=WEP[me&&!me.dead?curW(me).id:'ar'],fov=((S.fov+(state==='play'?fovK*5*(1-adsK):0))*Math.PI/180)/(1+(W0.zoom-1)*adsK);projV=persp(fov,W2/H2,.08,420);VP=mul(projV,viewM(eye,yaw,pitch));camE=eye;camY=yaw;camP=pitch;
   setWorld(VP,eye);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,I4);draw(staticMesh);gl.uniform1f(U.uEm,1);const fl=.85+Math.sin(T*23)*.1+Math.sin(T*7)*.08;gl.uniform3fv(U.uTint,[fl,fl,fl]);draw(glowMesh);gl.uniform1f(U.uEm,0);
   if(state==='play'&&MODE===MODES.hp&&hillMesh[hill.i]){const st=hill.state,pu=.75+.25*Math.sin(performance.now()/180);gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,I4);
@@ -1045,7 +1110,7 @@ function overlay(){const W2=OV.width,H2=OV.height,dp=devicePixelRatio||1;ox.clea
   
   for(const d of dmgDir){const a=wrapA(d.a-me.yaw)+Math.PI;ox.strokeStyle=`rgba(230,30,20,${Math.min(1,d.t)})`;ox.lineWidth=9*dp;ox.beginPath();ox.arc(W2/2,H2/2,110*dp,-Math.PI/2-a-.25,-Math.PI/2-a+.25);ox.stroke()}
   /* minimap */
-  const R0=84*dp,cx=16*dp+R0,cy=16*dp+R0,sc=R0/45;ox.save();ox.beginPath();ox.arc(cx,cy,R0,0,7);const mg=ox.createRadialGradient(cx,cy,0,cx,cy,R0);mg.addColorStop(0,'rgba(26,23,20,.78)');mg.addColorStop(1,'rgba(10,9,8,.82)');ox.fillStyle=mg;ox.fill();ox.clip();
+  const R0=84*dp,cx=16*dp+R0,cy=16*dp+R0,sc=R0/(MAP<40?26:45);ox.save();ox.beginPath();ox.arc(cx,cy,R0,0,7);const mg=ox.createRadialGradient(cx,cy,0,cx,cy,R0);mg.addColorStop(0,'rgba(26,23,20,.78)');mg.addColorStop(1,'rgba(10,9,8,.82)');ox.fillStyle=mg;ox.fill();ox.clip();
   ox.fillStyle='rgba(255,255,255,.06)';ox.beginPath();ox.moveTo(cx,cy);ox.arc(cx,cy,R0,-Math.PI/2-.62,-Math.PI/2+.62);ox.closePath();ox.fill();ox.translate(cx,cy);ox.rotate(me.yaw);ox.fillStyle='rgba(205,192,170,.42)';
   for(const b of COLL){if(b.y1<1.3)continue;const x=(b.x0-me.x)*sc,z=(b.z0-me.z)*sc;if(Math.abs(x)>R0*1.5||Math.abs(z)>R0*1.5)continue;ox.fillRect(x,z,(b.x1-b.x0)*sc,(b.z1-b.z0)*sc)}
   const uavOn=uavFor(me);for(const t of turrets){ox.fillStyle=foe(me,t.owner)?'#ff5a46':'#4fa3ff';ox.fillRect((t.x-me.x)*sc-3.5*dp,(t.z-me.z)*sc-3.5*dp,7*dp,7*dp)}
@@ -1104,7 +1169,7 @@ $('pLoad').onclick=()=>{$('pause').hidden=true;paused=false;openLoadout()};
 function chips(el,opts,key,fn){$(el).innerHTML=opts.map(([v,t])=>`<button class="chip" data-v="${v}" aria-pressed="${S[key]==v}">${t}</button>`).join('');$(el).onclick=e=>{const b=e.target.closest('button');if(!b)return;S[key]=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;save();chips(el,opts,key,fn);fn&&fn()}}
 function stkText(id){const W=WEP[id];if(id==='dmr')return'One-shot kill to the head or body at any range · 2 shots to arms and legs';if(W.pel>1)return'One-shot kill up to '+W.dr[0][0]+'m · two shots to '+W.dr[1][0]+'m · weak beyond '+W.dr[2][0]+'m';
   let lo=0;return W.dr.map(([r,d])=>{const t=Math.ceil(100/d)+' shots '+(r>1e8?lo+'m+':lo+'–'+r+'m');lo=r;return t}).join(' · ')}
-function renderMenu(){document.querySelectorAll('#modes .mode').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.mode===S.mode);b.onclick=()=>{if(b.disabled)return;S.mode=b.dataset.mode;save();renderMenu()}});chips('prim',[['ar','VK-12 Rifle'],['smg','Hornet SMG'],['sg','Breacher Shotgun'],['dmr','Longshot DMR']],'prim',()=>{$('stk').textContent=stkText(S.prim)});$('stk').textContent=stkText(S.prim);chips('diff',[['easy','Easy'],['normal','Normal'],['hard','Hard']],'diff');chips('bcount',[[3,'3 bots'],[5,'5 bots'],[7,'7 bots'],[9,'9 bots']],'bots');chips('gfx',[['high','High detail'],['low','Low (faster)']],'gfx',()=>{S.gfxUser=true;save()});
+function renderMenu(){document.querySelectorAll('#modes .mode').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.mode===S.mode);b.onclick=()=>{if(b.disabled)return;S.mode=b.dataset.mode;save();renderMenu()}});chips('prim',[['ar','VK-12 Rifle'],['smg','Hornet SMG'],['sg','Breacher Shotgun'],['dmr','Longshot DMR']],'prim',()=>{$('stk').textContent=stkText(S.prim)});$('stk').textContent=stkText(S.prim);chips('diff',[['easy','Easy'],['normal','Normal'],['hard','Hard']],'diff');chips('mapc',[['ashfall','Ashfall'],['yard','Stackyard']],'map',()=>{$('mapd').textContent=MAPS[S.map].d;genMapOnce(S.map)});$('mapd').textContent=MAPS[S.map||'ashfall'].d;chips('bcount',[[3,'3 bots'],[5,'5 bots'],[7,'7 bots'],[9,'9 bots']],'bots');chips('gfx',[['high','High detail'],['low','Low (faster)']],'gfx',()=>{S.gfxUser=true;save()});
   $('sens').value=S.sens;$('sensV').textContent=S.sens;$('fov').value=S.fov;$('fovV').textContent=S.fov+'°'}
 $('sens').oninput=e=>{S.sens=+e.target.value;$('sensV').textContent=S.sens;save()};$('fov').oninput=e=>{S.fov=+e.target.value;$('fovV').textContent=S.fov+'°';save()};
 $('play').onclick=()=>startMatch();$('again').onclick=()=>{if(NET.on){state='lobby';NET.inMatch=false;$('hud').hidden=true;showLobby()}else startMatch()};
@@ -1132,7 +1197,7 @@ function scopeOv(){if(window.__noScope||state!=='play'||!me||me.dead||!SIGHT[cur
   ox.fillStyle='rgba(255,40,30,.95)';ox.beginPath();ox.arc(cx,cy,Math.max(1.5,lw*1.1),0,6.283);ox.fill();ox.restore()}
 let perfN=0,perfS=0;function loop(now){const raw=(now-last)/1000,dt=Math.min(.05,raw);last=now;
   if(state==='play'&&!paused&&T>1&&T<5&&S.gfx!=='low'&&!S.gfxUser){perfN++;perfS+=raw;if(perfN>=60){if(perfS/perfN>.03){S.gfx='low';save();renderMenu();msg('GRAPHICS SET TO LOW','Your computer was struggling - change it on the main menu',3,true)}perfN=-1e9}}if(!paused||(NET.on&&NET.inMatch)){update(dt/2);update(dt/2)}render();hud();overlay();scopeOv();requestAnimationFrame(loop)}
-resize();buildMeshes();genMapOnce();renderMenu();requestAnimationFrame(loop);
+resize();buildMeshes();genMapOnce(S.map);renderMenu();requestAnimationFrame(loop);
 window.__sz={get st(){return state},get me(){return me},get P(){return players},step(n){for(let i=0;i<n;i++)update(1/60)},key(k,v){keys[k]=v},mouse,get COLL(){return COLL},start:startMatch,set pz(v){paused=v},fire:()=>fire(me),melee:()=>melee(me),nade:()=>throwNade(me),get nades(){return nades},get spawns(){return SPAWNS},S};
 </script>
 </body>
