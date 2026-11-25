@@ -403,30 +403,60 @@ function dropAmmo(q){picks.push({x:q.x,z:q.z,y:floorAt(q.x,q.z,.3,q.y+.3),t:25})
 function pickTick(dt){for(const k of picks){k.t-=dt;if(!me||me.dead)continue;if(Math.hypot(k.x-me.x,k.z-me.z)<1.4&&Math.abs(k.y-me.y)<1.5){let got=false;for(const w of me.w){const W=WEP[w.id];if(w.res<W.res){w.res=Math.min(W.res,w.res+Math.ceil(W.res*.5));got=true}}if(me.nades<2){me.nades++;got=true}if(got){k.t=0;pop('+ AMMO','#9fe06a');sfx('reload')}}}picks=picks.filter(k=>k.t>0)}
 /* ================= Meshes ================= */
 const M={};
-function buildMeshes(){let a;
-  a=[];box(a,0,-.85,0,.2,.85,.24,[.3,.29,.24]);box(a,0,-.85,-.02,.22,.18,.3,[.12,.11,.1]);M.leg=mkVBO(a);
-  a=[];box(a,0,.82,0,.5,.62,.3,[.34,.33,.28]);box(a,0,1.36,0,.16,.1,.16,[.55,.45,.38]);M.torso=mkVBO(a);
-  a=[];box(a,0,.9,0,.56,.42,.36,[1,1,1]);box(a,.31,1.18,0,.08,.14,.2,[1,1,1]);M.vest=mkVBO(a);
-  a=[];box(a,0,0,0,.3,.3,.3,[.62,.5,.42]);box(a,0,.18,0,.36,.2,.36,[.26,.27,.22]);box(a,0,.04,-.15,.22,.14,.06,[.12,.12,.12]);box(a,-.07,.12,-.16,.07,.05,.03,[.5,.75,.85]);box(a,.07,.12,-.16,.07,.05,.03,[.5,.75,.85]);M.head=mkVBO(a);
-  a=[];box(a,-.2,-.05,-.28,.11,.11,.42,[.3,.29,.24]);box(a,.2,-.05,-.22,.11,.11,.36,[.3,.29,.24]);M.arms=mkVBO(a);
-  for(const id in WEP){a=[];gunGeo(a,id);M['g_'+id]=mkVBO(a)}
+function buildMeshes(){let a;const P=[.3,.29,.24],P2=[.25,.24,.2],SH=[.36,.33,.27],SK=[.62,.5,.42],DK=[.11,.1,.09],BT=[.2,.15,.11],CV=[.36,.32,.24],OL=[.3,.32,.24],GL=[.5,.75,.85];
+  /* leg: origin at the hip, extends down */
+  a=[];box(a,0,-.47,0,.2,.47,.22,P);box(a,0,-.84,0,.18,.4,.2,P2);box(a,0,-.55,-.115,.16,.13,.045,DK);box(a,-.105,-.38,0,.02,.12,.12,P2);box(a,0,-.85,-.03,.21,.13,.31,BT);box(a,0,-.86,-.03,.22,.03,.32,DK);box(a,0,-.06,0,.21,.06,.23,DK);M.leg=mkVBO(a);
+  /* torso: hips, shirt, shoulders, backpack, bedroll */
+  a=[];box(a,0,.74,0,.42,.18,.26,P);box(a,0,.84,0,.44,.06,.28,DK);box(a,0,.9,0,.44,.48,.26,SH);box(a,0,1.36,0,.15,.1,.15,SK);
+  for(const s of[-1,1]){box(a,s*.27,1.12,0,.14,.26,.22,SH);box(a,s*.29,1.27,0,.16,.06,.24,SH.map(v=>v*.85))}
+  box(a,0,.92,.18,.36,.4,.13,CV);box(a,0,1.06,.25,.3,.16,.04,CV.map(v=>v*.85));box(a,0,.94,.25,.3,.08,.035,DK);for(const s of[-1,1])box(a,s*.13,.9,.13,.04,.45,.03,DK);
+  box(a,0,1.34,.2,.42,.11,.11,[.3,.36,.28]);box(a,.2,.78,.12,.08,.14,.08,[.26,.3,.22]);M.torso=mkVBO(a);
+  /* plate carrier: tinted with the player colour */
+  a=[];box(a,0,.92,0,.48,.4,.32,[1,1,1]);box(a,0,1.31,0,.38,.05,.3,[.85,.85,.85]);for(const x of[-.13,0,.13]){box(a,x,.93,-.165,.11,.15,.05,[.8,.8,.8]);box(a,x,1.07,-.19,.1,.02,.01,[.6,.6,.6])}
+  box(a,-.17,1.12,-.17,.08,.08,.04,[.75,.75,.75]);box(a,.2,1.2,-.12,.06,.13,.05,[.22,.22,.22]);box(a,.215,1.33,-.12,.012,.12,.012,[.15,.15,.15]);box(a,0,.95,.17,.44,.36,.02,[.9,.9,.9]);M.vest=mkVBO(a);
+  /* head: balaclava, gas mask with filter, goggles, helmet with brim and mount */
+  a=[];box(a,0,0,0,.27,.3,.28,[.24,.23,.2]);box(a,0,.13,-.142,.22,.08,.01,SK);box(a,0,-.03,-.15,.2,.15,.06,DK);box(a,0,-.01,-.2,.09,.09,.07,[.34,.33,.3]);box(a,0,.005,-.236,.07,.06,.005,DK);
+  box(a,-.07,.12,-.16,.085,.07,.03,DK);box(a,.07,.12,-.16,.085,.07,.03,DK);box(a,-.07,.128,-.177,.065,.052,.005,GL);box(a,.07,.128,-.177,.065,.052,.005,GL);box(a,0,.13,0,.285,.03,.29,DK);
+  box(a,0,.19,0,.33,.15,.35,OL);box(a,0,.18,0,.37,.035,.39,OL.map(v=>v*.85));box(a,0,.33,0,.26,.04,.28,OL);box(a,0,.25,-.18,.07,.06,.04,DK);for(const s of[-1,1])box(a,s*.17,.24,0,.02,.04,.14,DK);M.head=mkVBO(a);
+  /* third-person arms holding the gun */
+  a=[];box(a,.2,-.12,-.1,.12,.13,.22,SH);box(a,.15,-.1,-.3,.1,.1,.2,SH.map(v=>v*.9));box(a,.11,-.09,-.43,.095,.095,.08,DK);
+  box(a,-.2,-.1,-.12,.12,.13,.24,SH);box(a,-.13,-.07,-.36,.1,.1,.24,SH.map(v=>v*.9));box(a,-.06,-.05,-.52,.095,.095,.08,DK);M.arms=mkVBO(a);
+  for(const id in WEP){a=[];gunGeo(a,id);M['g_'+id]=mkVBO(a);a=[];magGeo(a,id);M['m_'+id]=a.length?mkVBO(a):null}
   a=[];box(a,0,-.5,0,1,1,1,[1,1,1]);M.cube=mkVBO(a);
-  a=[];box(a,0,0,0,.09,.09,.32,[.62,.5,.42]);box(a,0,0,.1,.11,.11,.16,[.25,.26,.22]);M.hand=mkVBO(a);
+  /* first-person hand: glove, wrist, cuff and sleeve */
+  a=[];box(a,0,-.045,-.13,.09,.09,.1,[.15,.13,.11]);box(a,0,-.035,-.17,.095,.03,.03,[.12,.1,.09]);box(a,0,-.04,-.04,.08,.08,.06,SK);box(a,0,-.06,.01,.125,.12,.04,[.25,.24,.2]);box(a,0,-.06,.03,.12,.12,.2,SH);M.hand=mkVBO(a);
   a=[];box(a,0,-.5,0,1,1,1,[2,1.6,.8]);box(a,0,-.2,0,.4,.4,1.6,[2,1.8,1]);M.flash=mkVBO(a)}
+/* magazines are separate meshes so they can drop out during a reload */
+function magGeo(a,id){const B=[.16,.16,.17],K=[.08,.08,.09],T=[.42,.36,.24];
+  if(id==='ar'){beam(a,[0,.01,-.08],[0,-.13,-.06],.055,B);beam(a,[0,-.13,-.06],[0,-.23,-.01],.055,B);box(a,0,-.255,-.005,.06,.025,.07,K)}
+  else if(id==='smg'){box(a,0,-.24,-.06,.038,.25,.055,B);box(a,0,-.255,-.06,.045,.02,.06,K)}
+  else if(id==='dmr'){box(a,0,-.15,-.08,.05,.16,.09,T);box(a,0,-.16,-.08,.055,.02,.095,K)}
+  else if(id==='pis'){box(a,0,-.165,.09,.04,.03,.055,K)}}
 const SIGHT={ar:{y:.165,ret:1},smg:{y:.165,ret:1},sg:{y:.15},dmr:{y:.175,ret:1,scope:1},pis:{y:.108}};
 function frameSight(a,z,cy,hw,hh,th,dp,c,bot){/* hollow rectangular window centred on (0,cy) */box(a,-hw-th/2,bot,z,th,cy+hh+th-bot,dp,c);box(a,hw+th/2,bot,z,th,cy+hh+th-bot,dp,c);box(a,0,cy+hh,z,hw*2+th*2,th,dp,c);box(a,0,bot,z,hw*2+th*2,cy-hh-bot,dp,c)}
-function gunGeo(a,id){const B=[.16,.16,.17],G=[.3,.3,.28],W=[.42,.3,.18],K=[.08,.08,.09],RED=[2.6,.35,.2];
-  if(id==='ar'){box(a,0,0,0,.07,.1,.5,B);box(a,0,.02,-.45,.035,.035,.42,G);box(a,0,-.12,-.04,.05,.16,.09,B);box(a,0,-.08,.32,.06,.11,.22,B);box(a,0,.05,-.6,.012,.06,.012,G);
-    /* reflex red dot */box(a,0,.1,.06,.05,.012,.1,K);frameSight(a,.06,.165,.034,.038,.009,.03,K,.112);box(a,0,.162,.06,.0065,.0065,.004,RED)}
-  else if(id==='smg'){box(a,0,0,0,.07,.11,.36,B);box(a,0,.02,-.3,.035,.035,.2,G);box(a,0,-.18,-.05,.045,.22,.06,B);box(a,0,-.04,.24,.04,.05,.18,G);
-    /* holographic sight with ring reticle */box(a,0,.11,.02,.07,.012,.12,K);frameSight(a,.02,.165,.045,.03,.011,.07,K,.122);
-    for(let k=0;k<14;k++){const t=k/14*6.283;box(a,Math.cos(t)*.0135,.165+Math.sin(t)*.0135-.00175,.02,.0035,.0035,.003,RED)}box(a,0,.1635,.02,.003,.003,.003,RED)}
-  else if(id==='sg'){box(a,0,0,0,.08,.1,.5,W);box(a,0,.03,-.5,.06,.06,.5,B);box(a,0,-.04,-.38,.07,.06,.2,W);box(a,0,-.08,.32,.06,.12,.22,W);
-    /* ghost ring rear sight and bead front sight */frameSight(a,-.02,.15,.03,.026,.007,.012,K,.1);box(a,0,.09,-.72,.009,.054,.009,K);box(a,0,.144,-.72,.012,.012,.012,[.5,2.4,.6])}
-  else if(id==='dmr'){box(a,0,0,0,.07,.1,.6,G);box(a,0,.02,-.55,.035,.035,.5,B);box(a,0,-.11,-.02,.05,.13,.08,B);box(a,0,-.08,.38,.06,.12,.24,G);
-    /* 4x scope */for(const z of[-.12,.1])box(a,0,.1,z,.03,.05,.03,K);box(a,0,.15,-.02,.05,.05,.38,K);box(a,0,.137,-.24,.076,.076,.08,K);box(a,0,.142,.2,.066,.066,.08,K);box(a,0,.142,-.282,.06,.066,.004,[.25,.4,.55]);box(a,.033,.165,-.02,.02,.02,.03,K)}
-  else{box(a,0,0,0,.05,.09,.22,B);box(a,0,-.13,.05,.045,.16,.07,B);
-    /* iron sights: rear notch and front post with dots */for(const x of[-.017,.017])box(a,x,.09,.09,.013,.018,.014,K);box(a,0,.09,-.095,.008,.018,.008,K);box(a,0,.1,-.1,.005,.005,.002,[1.6,1.6,1.3])}}
+function gunGeo(a,id){const B=[.16,.16,.17],G=[.3,.3,.28],W=[.42,.3,.18],K=[.08,.08,.09],RED=[2.6,.35,.2],T=[.42,.36,.24];
+  const grip=(z,c)=>{beam(a,[0,-.01,z],[0,-.15,z+.045],.05,c||B);box(a,0,-.04,z-.075,.012,.012,.09,K);box(a,0,-.06,z-.06,.008,.035,.008,K)};
+  if(id==='ar'){box(a,0,0,0,.065,.06,.3,B);box(a,0,.06,-.03,.07,.045,.4,G);box(a,.0355,.07,-.02,.003,.025,.07,K);box(a,0,.09,.16,.05,.012,.025,K);
+    box(a,0,.005,-.36,.078,.09,.3,B);for(let k=0;k<4;k++)for(const sx of[-1,1])box(a,sx*.04,.035,-.25-k*.06,.003,.025,.035,K);box(a,0,.095,-.36,.03,.012,.3,K);for(let k=0;k<8;k++)box(a,0,.107,-.24-k*.035,.03,.006,.012,K);
+    box(a,0,.04,-.62,.03,.03,.22,G);box(a,0,.028,-.76,.048,.054,.08,K);box(a,0,.05,-.5,.012,.05,.012,G);grip(.1);
+    box(a,0,.03,.22,.036,.036,.16,K);box(a,0,-.02,.33,.06,.1,.18,B);box(a,0,.06,.31,.04,.03,.12,B);box(a,0,-.05,.42,.066,.14,.02,K);box(a,0,-.1,.36,.012,.012,.012,G)}
+  else if(id==='smg'){box(a,0,0,0,.07,.11,.36,B);box(a,0,.03,-.26,.054,.054,.16,G);for(let k=0;k<3;k++)for(const sx of[-1,1])box(a,sx*.028,.045,-.21-k*.045,.003,.02,.02,K);
+    box(a,0,.025,-.4,.04,.04,.12,K);box(a,0,-.1,-.2,.035,.1,.035,B);grip(.07);box(a,.036,.05,-.06,.003,.03,.08,K);box(a,-.04,.07,-.1,.015,.015,.04,G);
+    for(const y of[.02,-.06])beam(a,[0,y,.18],[0,y,.38],.016,K);box(a,0,-.1,.37,.05,.15,.02,K)}
+  else if(id==='sg'){box(a,0,0,0,.075,.1,.32,K);box(a,0,.06,-.46,.04,.04,.6,G);box(a,0,.01,-.4,.046,.046,.5,K);box(a,0,-.005,-.42,.072,.072,.2,W);for(let k=0;k<4;k++)box(a,0,-.006,-.35-k*.045,.074,.074,.01,W.map(v=>v*.7));
+    box(a,0,.005,-.66,.05,.05,.02,G);box(a,.038,.04,-.02,.003,.035,.1,G);grip(.1,W);box(a,0,-.04,.27,.06,.11,.22,W);box(a,0,-.06,.385,.066,.14,.02,K);
+    for(let k=0;k<4;k++)box(a,-.04,.0,-.06+k*.035,.012,.03,.022,[.6,.12,.1])}
+  else if(id==='dmr'){box(a,0,0,-.05,.07,.1,.4,G);box(a,0,.01,-.42,.075,.08,.34,B);for(let k=0;k<5;k++)for(const sx of[-1,1])box(a,sx*.038,.03,-.3-k*.05,.003,.03,.025,K);
+    box(a,0,.04,-.7,.03,.03,.3,G);box(a,0,.026,-.87,.052,.058,.09,K);for(const sx of[-1,1])box(a,sx*.027,.045,-.87,.004,.02,.05,[.02,.02,.02]);for(const sx of[-1,1])beam(a,[sx*.02,-.02,-.55],[sx*.02,-.02,-.3],.016,K);
+    grip(.08);box(a,0,-.03,.3,.06,.12,.26,G);box(a,0,.09,.3,.05,.03,.18,B);box(a,0,-.05,.43,.066,.15,.02,K);box(a,.036,.06,-.02,.003,.02,.07,K);
+    for(const z of[-.12,.1])box(a,0,.1,z,.03,.05,.03,K);box(a,0,.15,-.02,.05,.05,.38,K);box(a,0,.137,-.24,.076,.076,.08,K);box(a,0,.142,.2,.066,.066,.08,K);box(a,0,.142,-.282,.06,.066,.004,[.25,.4,.55]);box(a,.033,.165,-.02,.02,.02,.03,K);box(a,0,.2,-.02,.022,.02,.022,K)}
+  else{box(a,0,.035,0,.05,.055,.22,[.22,.22,.23]);box(a,0,0,0,.048,.035,.2,B);beam(a,[0,0,.06],[0,-.14,.09],.048,B);box(a,0,-.035,-.02,.01,.01,.06,K);box(a,0,-.04,-.01,.007,.03,.007,K);
+    for(let k=0;k<4;k++)for(const sx of[-1,1])box(a,sx*.0255,.05,.06+k*.012,.002,.035,.005,K);box(a,0,.05,-.112,.02,.02,.005,K);box(a,.026,.06,-.01,.002,.02,.05,K)}
+  /* sights (unchanged so aiming lines up) */
+  if(id==='ar'){box(a,0,.1,.06,.05,.012,.1,K);frameSight(a,.06,.165,.034,.038,.009,.03,K,.112);box(a,0,.162,.06,.0065,.0065,.004,RED)}
+  else if(id==='smg'){box(a,0,.11,.02,.07,.012,.12,K);frameSight(a,.02,.165,.045,.03,.011,.07,K,.122);for(let k=0;k<14;k++){const t=k/14*6.283;box(a,Math.cos(t)*.0135,.165+Math.sin(t)*.0135-.00175,.02,.0035,.0035,.003,RED)}box(a,0,.1635,.02,.003,.003,.003,RED)}
+  else if(id==='sg'){frameSight(a,-.02,.15,.03,.026,.007,.012,K,.1);box(a,0,.09,-.72,.009,.054,.009,K);box(a,0,.144,-.72,.012,.012,.012,[.5,2.4,.6])}
+  else if(id==='pis'){for(const x of[-.017,.017])box(a,x,.09,.09,.013,.018,.014,K);box(a,0,.09,-.095,.008,.018,.008,K);box(a,0,.1,-.1,.005,.005,.002,[1.6,1.6,1.3])}}
 /* ================= Camera & render ================= */
 let VP=null,camE=[0,0,0],camY=0,camP=0,projV=null;
 const SKY=[.62,.5,.4],FOG=[.58,.48,.39];
@@ -460,7 +490,7 @@ function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&
   gl.uniformMatrix4fv(U.uM,false,base(x,by,z,yaw,0));draw(M.torso);gl.uniform3fv(U.uTint,p.col);draw(M.vest);gl.uniform3fv(U.uTint,[1,1,1]);
   gl.uniformMatrix4fv(U.uM,false,base(x,by+1.42,z,yaw,p.pitch*.6));draw(M.head);
   const up=base(x,by+1.24,z,yaw,p.pitch);gl.uniformMatrix4fv(U.uM,false,up);draw(M.arms);
-  gl.uniformMatrix4fv(U.uM,false,mul(up,modelM(.05,-.02,-.42,0,0)));draw(M['g_'+curW(p).id])}
+  const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(M['g_'+curW(p).id]);draw(M['m_'+curW(p).id])}
 function render(){const W2=C.width,H2=C.height;gl.viewport(0,0,W2,H2);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   if(!staticMesh)return;let eye,yaw,pitch;
   if(state==='play'&&me){const cr=me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,.2);const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3}}
@@ -476,8 +506,9 @@ function render(){const W2=C.width,H2=C.height;gl.viewport(0,0,W2,H2);gl.clearCo
   if(state==='play'&&me&&!me.dead){gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1f(U.uFireOn,0);gl.uniform1f(U.uDetail,0);const pv=persp(60*Math.PI/180,W2/H2,.02,10);gl.uniformMatrix4fv(U.uVP,false,pv);gl.uniform3fv(U.uCam,[0,0,0]);gl.uniform1f(U.uFogD,0);
     const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=me.sprint?1:0,bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WEP[c.id].rl-c.rl)/WEP[c.id].rl)*Math.PI):0;
     const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.75*SIGHT[c.id].y,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.5,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
-    const gm=modelM(gx,gy,gz,ry,rx,.75);const scoped=SIGHT[c.id].scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped)draw(M['g_'+c.id]);
-    if(!scoped)for(const[hx,hy,hz]of[[.0,-.12,.18],[-.02,-.05,-.28]]){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));draw(M.hand)}
+    const gm=modelM(gx,gy,gz,ry,rx,.75);const scoped=SIGHT[c.id].scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped)draw(M['g_'+c.id]);const rp=c.rl>0?1-c.rl/WEP[c.id].rl:0,mo=rp<=0||c.id==='sg'?0:rp<.3?-((rp/.3)**2)*.5:rp<.55?-.5:rp<.8?-.5*(1-(rp-.55)/.25):0,hasMag=M['m_'+c.id]&&!(rp>.3&&rp<.55);
+    if(hasMag&&!scoped){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,mo,mo*-.2,0,mo*-.6)));draw(M['m_'+c.id])}
+    const lh=rp>.05&&rp<.85&&c.id!=='sg'?Math.sin((rp-.05)/.8*Math.PI):0;if(!scoped)for(const[hx,hy,hz]of[[.0,-.12,.18],[-.02-lh*.02,-.05-lh*.22,-.28+lh*.2]]){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));draw(M.hand)}
     if(flashT>0){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,0,c.id==='pis'?-.18:c.id==='smg'?-.42:-.72,R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}}
 function muzzleWorld(){const f=dirOf(me.yaw,me.pitch),r=[Math.cos(me.yaw),0,-Math.sin(me.yaw)],e=camE,s=1-adsK;return[e[0]+f[0]*.9+r[0]*.22*s,e[1]+f[1]*.9-.16*s-.05,e[2]+f[2]*.9+r[2]*.22*s]}
 function project(p){const m=VP,w=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(w<=.05)return null;return[((m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12])/w*.5+.5)*OV.width,(1-((m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13])/w*.5+.5))*OV.height]}
