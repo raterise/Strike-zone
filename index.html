@@ -114,6 +114,7 @@ float n2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),
 float fb(vec2 p){return n2(p)*.6+n2(p*2.03+7.1)*.3+n2(p*4.1+3.3)*.1;}
 vec3 fogit(vec3 lit){vec3 v=normalize(vW-uCam);float sd=max(dot(v,uSun),0.);vec3 fc=mix(uFog,vec3(.9,.62,.38),pow(sd,5.)*.55);float f=1.-exp(-pow(distance(vW,uCam)*uFogD,1.6));return mix(lit,fc,clamp(f,0.,.94));}
 void main(){
+if(uMode>1.5){float a=(1.-smoothstep(.0,1.,abs(vC.y*2.-1.)))*vC.z;if(a<.004)discard;gl_FragColor=vec4(uPC,a);return;}
 if(uMode>.5){vec2 q=vC.xy*2.-1.;float a=(1.-smoothstep(.15,1.,length(q)))*vC.z;if(a<.004)discard;vec3 c=uPC*(uAmb*.8+uSunC*.35);gl_FragColor=vec4(fogit(c),a);return;}
 vec3 c=vC;float em=step(2.5,c.r+c.g+c.b);if(em>.5){c=c*.5;}vec3 n=normalize(vN);vec3 an=abs(n);
 float m=floor(vM+.5);
@@ -445,6 +446,11 @@ function partPass(eye,yaw,pitch){const rt=performance.now()/1000,cy=Math.cos(yaw
     if(y<0)continue;put(ash,x,y,z,a[4],.85,a[3]+rt)}
   gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.disable(gl.CULL_FACE);gl.uniform1f(U.uMode,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,I4);
   for(const[arr,col]of[[smoke,[.2,.19,.18]],[ash,[.78,.75,.72]]]){if(!arr.length)continue;gl.uniform3fv(U.uPC,col);gl.bindBuffer(gl.ARRAY_BUFFER,pbuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.DYNAMIC_DRAW);draw({b:pbuf,n:arr.length/10})}
+  /* bullet tracers: drawn in the world with depth testing so walls hide them */
+  const tr=[];for(const t of tracers){const A=t.a,B=t.b,d=[B[0]-A[0],B[1]-A[1],B[2]-A[2]],m=[(A[0]+B[0])/2-eye[0],(A[1]+B[1])/2-eye[1],(A[2]+B[2])/2-eye[2]];
+    let sd=[d[1]*m[2]-d[2]*m[1],d[2]*m[0]-d[0]*m[2],d[0]*m[1]-d[1]*m[0]];const sl=Math.hypot(...sd);if(sl<1e-6)continue;const w=.035;sd=sd.map(v=>v/sl*w);const al=Math.min(1,t.t*14);
+    const v=(P,k,side)=>tr.push(P[0]+sd[0]*side,P[1]+sd[1]*side,P[2]+sd[2]*side,0,1,0,k,(side+1)/2,al,0);v(A,0,-1);v(B,1,-1);v(B,1,1);v(A,0,-1);v(B,1,1);v(A,0,1)}
+  if(tr.length){gl.uniform1f(U.uMode,2);gl.uniform3fv(U.uPC,[1,.86,.55]);gl.bindBuffer(gl.ARRAY_BUFFER,pbuf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(tr),gl.DYNAMIC_DRAW);draw({b:pbuf,n:tr.length/10})}
   gl.uniform1f(U.uMode,0);gl.depthMask(true);gl.enable(gl.CULL_FACE);gl.disable(gl.BLEND)}
 function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&!dead?.32:0,sp=Math.hypot(p.vx,p.vz),ph=(p.walk=(p.walk||0)+sp*.016*1.6),sw=dead?0:Math.sin(ph)*Math.min(1,sp/4)*.6;
   const rx=dead?-1.45:0,by=y-cr;gl.uniform3fv(U.uTint,[1,1,1]);
@@ -465,7 +471,7 @@ function render(){const W2=C.width,H2=C.height;gl.viewport(0,0,W2,H2);gl.clearCo
   for(const n of nades){gl.uniform3fv(U.uTint,[.25,.28,.2]);gl.uniformMatrix4fv(U.uM,false,modelM(n.x,n.y,n.z,T*8,T*5,.18));draw(M.cube)}
   for(const k of picks){gl.uniform3fv(U.uTint,[.35,.4,.22]);gl.uniformMatrix4fv(U.uM,false,modelM(k.x,k.y+.35+Math.sin(T*3)*.08,k.z,T*1.5,0,.45));draw(M.cube);gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1.2,1,.3]);gl.uniformMatrix4fv(U.uM,false,modelM(k.x,k.y+.62+Math.sin(T*3)*.08,k.z,T*1.5,0,.15));draw(M.cube);gl.uniform1f(U.uEm,0)}
   for(const q of parts){gl.uniform3fv(U.uTint,q.c);gl.uniformMatrix4fv(U.uM,false,modelM(q.x,q.y,q.z,q.x,0,q.s));draw(M.cube)}
-  if(!window.__noPart)partPass(eye,yaw,pitch);
+  partPass(eye,yaw,pitch);
   /* viewmodel */
   if(state==='play'&&me&&!me.dead){gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1f(U.uFireOn,0);gl.uniform1f(U.uDetail,0);const pv=persp(60*Math.PI/180,W2/H2,.02,10);gl.uniformMatrix4fv(U.uVP,false,pv);gl.uniform3fv(U.uCam,[0,0,0]);gl.uniform1f(U.uFogD,0);
     const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=me.sprint?1:0,bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WEP[c.id].rl-c.rl)/WEP[c.id].rl)*Math.PI):0;
@@ -544,7 +550,7 @@ function hud(){updLockUI();if(state!=='play'||!me)return;const c=curW(me),W=WEP[
   if(!$('board').hidden&&T-hudT>.5){hudT=T;renderBoard()}}
 function renderBoard(){const L=players.slice().sort((a,b)=>b.k-a.k||a.d-b.d);$('board').innerHTML='<table><tr><th>#</th><th>PLAYER</th><th>KILLS</th><th>DEATHS</th><th>K/D</th></tr>'+L.map((p,i)=>`<tr class="${p===me?'me':''}"><td>${i+1}</td><td>${p.name}</td><td>${p.k}</td><td>${p.d}</td><td>${(p.k/Math.max(1,p.d)).toFixed(2)}</td></tr>`).join('')+'</table>'}
 function overlay(){const W2=OV.width,H2=OV.height,dp=devicePixelRatio||1;ox.clearRect(0,0,W2,H2);if(state!=='play'||!VP)return;
-  ox.lineCap='round';for(const t of tracers){const a=project(t.a),b=project(t.b);if(!a||!b)continue;ox.strokeStyle=`rgba(255,220,140,${t.t*10})`;ox.lineWidth=2*dp;ox.beginPath();ox.moveTo(a[0],a[1]);ox.lineTo(b[0],b[1]);ox.stroke()}
+  
   for(const d of dmgDir){const a=wrapA(d.a-me.yaw)+Math.PI;ox.strokeStyle=`rgba(230,30,20,${Math.min(1,d.t)})`;ox.lineWidth=9*dp;ox.beginPath();ox.arc(W2/2,H2/2,110*dp,-Math.PI/2-a-.25,-Math.PI/2-a+.25);ox.stroke()}
   /* minimap */
   const R0=78*dp,cx=16*dp+R0,cy=H2-150*dp-R0,sc=R0/45;ox.save();ox.beginPath();ox.arc(cx,cy,R0,0,7);ox.fillStyle='rgba(20,16,12,.72)';ox.fill();ox.clip();ox.translate(cx,cy);ox.rotate(me.yaw);ox.fillStyle='rgba(200,185,160,.55)';
