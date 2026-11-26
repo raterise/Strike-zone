@@ -786,7 +786,7 @@ function netRecv(m){
 /* ---------- lobby ---------- */
 function lobbyPlayers(){return[{id:NET.id,name:S.name||'Player',me:true},...Object.entries(NET.peers).map(([id,p])=>({id,name:p.name}))]}
 function hostLobbySync(){netSend({t:'lobby',l:NET.lobby});renderLobby()}
-function showLobby(){$('menu').hidden=true;$('over').hidden=true;$('lobby').hidden=false;renderLobby()}
+function showLobby(){$('menu').hidden=true;$('over').hidden=true;$('onM').hidden=true;$('setM').hidden=true;$('lobby').hidden=false;renderLobby()}
 function lobbyMsg(t){const e=$('lbMsg');if(e)e.textContent=t||''}
 function renderLobby(){if($('lobby').hidden)return;const L=NET.lobby,host=NET.host;$('lbCode').textContent=NET.code;
   $('lbLink').value=location.origin+location.pathname+'#room='+NET.code;
@@ -813,7 +813,7 @@ function startOnline(mode,R,sp,map){genMapOnce(map||'ashfall');streakReset();MOD
   makePlayers(R);matchT=MATCH_LEN;T=0;parts=[];tracers=[];feed=[];nades=[];picks=[];renderFeed();NET.inMatch=true;
   if(NET.host){if(MODE.snd)sndStart();else for(const p of players)spawn(p,true)}
   else if(sp)applySpawns(sp);
-  state='play';$('lobby').hidden=true;$('menu').hidden=true;$('over').hidden=true;$('hud').hidden=false;setupHud();
+  state='play';$('lobby').hidden=true;$('menu').hidden=true;$('over').hidden=true;$('onM').hidden=true;$('setM').hidden=true;$('hud').hidden=false;setupHud();
   if(!MODE.snd)msg(MODE.n,MODE===MODES.hp?'Hardpoint: '+HILLS[0].n:MODE.sub,2.6);lockMouse();audio()}
 function applySpawns(sp){for(const[n,x,z,yaw]of sp){const p=byNid(n);if(!p)continue;p.x=x;p.z=z;p.y=0;p.yaw=yaw;p.vx=p.vz=p.vy=0;p.snaps=[];if(p===me){me.dead=false;me.hp=100;me.L++;me.pitch=0;me.w=[mkWep(S.prim),mkWep('pis'),mkWep('kn')];me.wi=0;me.nades=2;me.slideT=0;me.crouch=false}else{p.dead=false;p.hp=100}}}
 function clientStart(m){if(m.mid&&m.to!==NET.id)return;S.diff=m.diff;NET.roster=m.roster;startOnline(m.mode,m.roster,m.sp,m.map);if(m.mt!=null)matchT=m.mt;if(m.g)applyGame(m.g);
