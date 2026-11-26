@@ -1332,6 +1332,7 @@ addEventListener('keydown',e=>{if(!rebinding)return;e.preventDefault();e.stopImm
 function openSettings(fromPause){setFromPause=fromPause;renderSettings();$('setM').hidden=false;if(fromPause)$('pause').hidden=true}
 let setFromPause=false;
 $('openSet').onclick=()=>openSettings(false);$('setOk').onclick=()=>{rebinding=null;$('setM').hidden=true;applySettings();if(setFromPause)$('pause').hidden=false};$('pSet').onclick=()=>openSettings(true);
+$('openOnline').onclick=()=>{$('onM').hidden=false;$('nmIn').focus()};$('onX').onclick=()=>{$('onM').hidden=true};
 $('stReset').onclick=()=>{S.binds={};save();renderSettings()};
 $('adsS').oninput=e=>{S.adsSens=+e.target.value/100;$('adsSV').textContent=e.target.value+'%';save()};$('vol').oninput=e=>{S.vol=+e.target.value;$('volV').textContent=S.vol+'%';applySettings()};
 addEventListener('keydown',e=>{if(state!=='menu'||$('menu').hidden||!$('setM').hidden||!$('onM').hidden)return;if(e.code==='Enter'){menuStep<2?goStep(menuStep+1):startMatch()}if(e.code==='Escape'&&menuStep>0)goStep(menuStep-1)});
