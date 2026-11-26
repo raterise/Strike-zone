@@ -715,7 +715,7 @@ function fire(p){const c=curW(p),W=WS(c);if(W.melee){if(c.cd>0||p.dead)return fa
     if(who&&who.prot>T){for(let i=0;i<3;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-1.5,1.5),vy:R(0,2),vz:R(-1.5,1.5),t:.3,c:[1.4,1.6,2],s:.08})}
     else if(who){const dmg=dmgAt(W,tB)*(hs?W.hs:leg?(W.limb||.85):1);any=true;if(damage(who,dmg,p,hs))kill=true;for(let i=0;i<4;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-2,2),vy:R(0,3),vz:R(-2,2),t:.4,c:[.6,.05,.05],s:.12})}
     else if(w.b){if(w.b.tur)damageTurret(w.b.tur,dmgAt(W,tB),p);decalHit(w.b,end);for(let i=0;i<3;i++)parts.push({x:end[0]-d[0]*.05,y:end[1]-d[1]*.05,z:end[2]-d[2]*.05,vx:R(-1.5,1.5),vy:R(.5,2.5),vz:R(-1.5,1.5),t:.5,c:[.55,.5,.42],s:.1})}}
-  if(p===me){recoil=Math.min(.12,recoil+W.rec);me.pitch+=W.rec*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=W.quiet?0:.05;sfx(W.quiet?'qshot':'shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
+  if(p===me){recoil=Math.min(.12,recoil+W.rec);me.pitch+=W.rec*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=W.quiet?0:.05;me.shotT=T;sfx(W.quiet?'qshot':'shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
   else{const d=Math.hypot(p.x-me.x,p.z-me.z);sfx('far',c.id,W.quiet?d*3:d,Math.atan2(p.x-me.x,p.z-me.z)-me.yaw);if(!W.quiet)p.lastShot=T}
   return true}
 function damage(q,dmg,from,hs){if(q.dead)return false;if(q.prot>T&&from!==q)return false;if(from&&from!==q&&!STREAK_DMG)(q.hitBy||(q.hitBy=new Map())).set(from,T);
@@ -724,7 +724,7 @@ function damage(q,dmg,from,hs){if(q.dead)return false;if(q.prot>T&&from!==q)retu
   if(q.bot&&!q.ai.tgt&&from)q.ai.alert=from;
   if(NET.on&&NET.host&&q.remote&&!q.isBot)netSend({t:'hp',i:q.nid,hp:Math.max(0,Math.round(q.hp)),f:from?from.nid:null});
   if(q.hp<=0){if(NET.on&&NET.host)netSend({t:'k',k:from?from.nid:null,v:q.nid,hs:hs?1:0,sk:STREAK_DMG||undefined});killFx(q,from,hs);return true}return false}
-function killFx(q,from,hs){if(q===me&&from&&from!==me&&!STREAK_DMG)kcStart(from);q.dead=true;q.hp=0;q.killedBy=from&&from!==q?from.name:from?'yourself':'the bomb';q.respT=MODE===MODES.hp?4:3;q.d++;dropAmmo(q);if(from&&from!==q){from.k++;if(MODE===MODES.tdm)tScore[from.team]++;scoreKill(q,from,hs);if(!STREAK_DMG)from.ks=(from.ks||0)+1;if(hasPerk(from,'scav')&&from.w){const w=from.w[0];if(w)w.res=Math.min(Math.round(WS(w).res*1.5),w.res+WS(w).mag);from.nades=Math.max(from.nades||0,1)}}q.ks=0;q.sp=0;q.got={};q.mk=0;if(q===me){if(me.drone)endDrone(true);me.msl=null}pushFeed(from,q,hs);
+function killFx(q,from,hs){if(q===me&&from&&from!==me&&!STREAK_DMG)kcStart(from);q.dead=true;q.hp=0;q.killedBy=from&&from!==q?from.name:from?'yourself':'the bomb';q.respT=MODE===MODES.hp?4:3;q.d++;dropAmmo(q);if(from&&from!==q){from.k++;if(MODE===MODES.tdm)tScore[from.team]++;scoreKill(q,from,hs);if(!STREAK_DMG)from.ks=(from.ks||0)+1;if(hasPerk(from,'scav')&&from.w&&!from.dead){for(const w of from.w){const W=WS(w);if(!W||W.melee)continue;w.res=Math.min(W.res*2,w.res+Math.ceil(W.mag*1.5))}from.nades=Math.min((LETHALS[from.lethal]||{c:1}).c,(from.nades||0)+1);from.tacs=Math.min((TACTICALS[from.tac]||{c:1}).c,(from.tacs||0)+1);if(from===me)pop('+ SCAVENGER','#9fe06a')}}q.ks=0;q.sp=0;q.got={};q.mk=0;if(q===me){if(me.drone)endDrone(true);me.msl=null}pushFeed(from,q,hs);
   if(from===me){msg(hs?'HEADSHOT':'ELIMINATED','',1.1,true);hitK=true;hitT=.2}
   for(let i=0;i<14;i++)parts.push({x:q.x,y:q.y+1,z:q.z,vx:R(-3,3),vy:R(1,5),vz:R(-3,3),t:.8,c:[.5,.05,.05],s:.14})}
 function reload(p){const c=curW(p),W=WS(c);if(W.melee||c.rl>0||c.mag>=W.mag||c.res<=0)return;c.rl=W.rl;if(p===me)sfx('reload')}
@@ -804,7 +804,7 @@ function explode(n){const c=[n.x,n.y+.3,n.z];if(n.y<4.5){const fy=floorAt(n.x,n.
   for(const t of turrets)if(t.alive&&Math.hypot(t.x-n.x,t.z-n.z)<5)damageTurret(t,150,n.from);
   if(n.remote&&NET.host)return;
   for(const q of players){if(q.dead||(q!==n.from&&!foe(n.from,q)))continue;const d=Math.hypot(q.x-n.x,q.y+.9-n.y,q.z-n.z);if(d>7)continue;if(!los(c,[q.x,q.y+1,q.z]))continue;const dm=d<2.2?150:150*(1-(d-2.2)/4.8);if(damage(q,dm,n.from,false)&&n.from===me&&q!==me)pop('GRENADE KILL','#ffb02e');if(n.from===me&&q!==me){hitT=.2;hitK=q.dead}}}
-function dropAmmo(q){picks.push({x:q.x,z:q.z,y:floorAt(q.x,q.z,.3,q.y+.3),t:25})}
+function dropAmmo(q){}
 function pickTick(dt){for(const k of picks){k.t-=dt;if(!me||me.dead)continue;if(Math.hypot(k.x-me.x,k.z-me.z)<1.4&&Math.abs(k.y-me.y)<1.5){let got=false;for(const w of me.w){const W=WS(w);if(w.res<W.res){w.res=Math.min(W.res,w.res+Math.ceil(W.res*.5));got=true}}if(me.nades<(LETHALS[me.lethal]||{c:1}).c){me.nades++;got=true}if(got){k.t=0;pop('+ AMMO','#9fe06a');sfx('reload')}}}picks=picks.filter(k=>k.t>0)}
 /* ================= Search & Destroy ================= */
 /* rounds, no respawns, one bomb; Ravens (team 0) attack first, sides swap at half time */
@@ -1631,7 +1631,7 @@ function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.
     worldPass(mul(persp(pp.fov,1,.08,420),viewM(eye,yaw,pitch)),eye,yaw,pitch,sv);gl.disable(gl.SCISSOR_TEST);gl.viewport(vr[0],vr[1],vr[2],vr[3])}}
   /* viewmodel */
   if(state==='play'&&me&&!me.dead&&!sv){gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1f(U.uFireOn,0);gl.uniform1f(U.uShOn,0);gl.uniform1f(U.uHF,0);gl.uniform1f(U.uDetail,0);const pv=persp(60*Math.PI/180,W2/H2,.02,10);gl.uniformMatrix4fv(U.uVP,false,pv);gl.uniform3fv(U.uCam,[0,0,0]);gl.uniform1f(U.uFogD,0);
-    const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=me.sprint?1:0,bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WS(c).rl-c.rl)/WS(c).rl)*Math.PI):0;
+    const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=(me.sprintK=lerp(me.sprintK||0,me.sprint&&!(T-(me.shotT||-9)<.45)&&!mouse.l?1:0,.25)),bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WS(c).rl-c.rl)/WS(c).rl)*Math.PI):0;
     const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.75*sightW(c).y,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.6,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
     const kn=c.id==='kn',gm=kn?modelM(.24+bx-ml*.1,-.24-by,-.5-ml*.32,.25-ml*.5,.15+ml*.4-sprint*.3,.95):modelM(gx,gy,gz,ry,rx,.75);const scoped=sightW(c).scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped){draw(gunMeshFor(c));drawAtts(c,gm);gl.uniformMatrix4fv(U.uM,false,gm)}const rp=c.rl>0?1-c.rl/WS(c).rl:0,mo=rp<=0||BASE(c.id)==='sg'&&c.id!=='sg2'?0:rp<.3?-((rp/.3)**2)*.5:rp<.55?-.5:rp<.8?-.5*(1-(rp-.55)/.25):0,hasMag=magMeshFor(c)&&!(rp>.3&&rp<.55);
     if(hasMag&&!scoped){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,mo*.9,mo*.05,0,mo*-.15)));draw(magMeshFor(c))}
@@ -1670,7 +1670,7 @@ const ATTS={
 const attOk=(wid,slot,a)=>{const A=ATTS[slot]&&ATTS[slot][a];if(!A)return false;if(WEP[wid].melee||SIDEARMS.includes(wid))return false;if(A.only&&!A.only.includes(BASE(wid)))return false;if(slot==='optic'&&BASE(wid)==='dmr')return false;return true};
 /* ---- perks ---- */
 const PERKS=[
-  {fasthands:{n:'FAST HANDS',d:'Reload 30% faster and swap weapons twice as fast.'},scav:{n:'SCAVENGER',d:'Kills refill some reserve ammo and your lethal.'},light:{n:'LIGHTWEIGHT',d:'Move 7% faster.'}},
+  {fasthands:{n:'FAST HANDS',d:'Reload 30% faster and swap weapons twice as fast.'},scav:{n:'SCAVENGER',d:'Every kill refills a mag and a half of ammo for each gun, plus a lethal and a tactical.'},light:{n:'LIGHTWEIGHT',d:'Move 7% faster.'}},
   {ghost:{n:'GHOST',d:'Hidden from enemy UAVs and recon drones.'},hardline:{n:'HARDLINE',d:'Scorestreaks cost 15% fewer points.'},cold:{n:'COLD-BLOODED',d:'Enemy turrets and helicopters ignore you.'}},
   {firesprint:{n:'FIRE & SPRINT',d:'Shoot without breaking your sprint.'},tacres:{n:'TAC RESIST',d:'Flashbangs and stuns wear off much faster.'},silence:{n:'DEAD SILENCE',d:'Enemies can’t hear your footsteps.'}}];
 const hasPerk=(p,k)=>!!(p&&p.perks&&p.perks.includes(k));
