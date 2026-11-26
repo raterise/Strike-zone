@@ -183,6 +183,47 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 .cled{position:absolute;right:10px;top:10px;font:700 12px var(--f);letter-spacing:2px;color:var(--dim);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:4px;padding:3px 8px;cursor:pointer}.cled:hover{color:#fff;border-color:var(--y)}
 #loadout .card{width:min(1160px,100%)!important}#loGrid.clg{display:grid;gap:8px}.lo.clc{position:relative;text-align:left}.lo.clc h3{margin:4px 0 4px;font:400 22px/1 'Black Ops One',var(--fn)}.lo.clc p{margin:0}.lo .cled{display:none}
 @media(max-width:1100px){.wslots{grid-template-columns:repeat(4,minmax(0,1fr))}.wtop{grid-template-columns:1fr}.clg{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* ---- WEAPONS tab v2: pages with Back ---- */
+#wTab{display:flex!important;flex-direction:column;gap:10px;min-height:0}#wTab[hidden]{display:none!important}
+.wbar{display:flex;align-items:center;gap:14px;min-height:40px}.wtitle{margin:0;font:400 34px/1 'Black Ops One',var(--fn);letter-spacing:1px}.wtitle small{font:700 14px var(--f);letter-spacing:2px;color:var(--dim);margin-left:10px}
+.wback{font:700 15px var(--f);letter-spacing:2.5px;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:5px;padding:9px 14px;cursor:pointer}.wback:hover{border-color:var(--y);color:var(--y)}.wback kbd{font-size:10px;margin-left:6px;opacity:.6}
+.wtoast{margin-left:auto;font-size:14px;letter-spacing:1.5px;color:#1b1309;background:var(--y);border-radius:4px;padding:7px 12px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none}.wtoast.on{opacity:1;transform:none}
+.ctabs{display:flex;gap:5px;align-items:center;overflow-x:auto;padding-bottom:2px}.ctab{flex:none;display:flex;align-items:center;gap:7px;font:700 14px var(--f);letter-spacing:1.5px;color:#d8cfc2;background:rgba(20,18,16,.85);border:1px solid var(--line);border-radius:4px;padding:8px 12px;cursor:pointer}
+.ctab u{text-decoration:none;color:var(--dim)}.ctab i{font-style:normal;color:var(--y)}.ctab:hover{border-color:rgba(255,255,255,.35)}.ctab.on{background:linear-gradient(180deg,#ffb02e,#e27a1a);color:#1b1309;border-color:#ffb02e}.ctab.on u,.ctab.on i{color:#1b1309}
+.ctab.add{color:var(--y);border-style:dashed;border-color:rgba(255,176,46,.5)}.csep{flex:none;font-size:11px;letter-spacing:2.5px;color:var(--dim);margin:0 4px 0 10px}
+.wbody{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,1fr);gap:16px}
+.lgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(110px,1fr);gap:8px;min-height:0}
+.lcard{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;text-align:left;font:inherit;color:var(--txt);border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(40,36,32,.94),rgba(16,14,12,.94));padding:10px 12px;cursor:pointer;overflow:hidden;transition:border-color .12s,transform .12s,box-shadow .12s}
+.lcard:hover{border-color:var(--y);transform:translateY(-2px);box-shadow:0 0 0 1px var(--y),0 10px 24px rgba(0,0,0,.45)}.lcard.w2{grid-column:span 2}.lcard.prim{background:linear-gradient(135deg,rgba(170,70,20,.85),rgba(60,24,10,.9))}
+.lcard .lab{position:absolute;left:12px;top:9px;font-size:11px;letter-spacing:2px;color:#e8dfd2;opacity:.8}.lcard b{font:400 20px/1 'Black Ops One',var(--fn);letter-spacing:.5px;z-index:1}.lcard em{position:absolute;right:10px;bottom:9px;font-style:normal;font-size:11px;letter-spacing:2px;color:var(--y);opacity:0;transition:opacity .12s}.lcard:hover em{opacity:1}
+.lcard img.snap{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:78%;max-height:78%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.lcard .ic.big{width:54px;height:54px;color:#e8dfd2;margin:auto auto 8px}.lcard .ic.perk{color:var(--y)}.lcard.fixed{cursor:default;opacity:.75}.lcard.fixed:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.lcard .atl{display:flex;flex-wrap:wrap;gap:4px;margin:20px 0 auto}.lcard .atl i{font-style:normal;font-size:11px;letter-spacing:1px;padding:3px 6px;border-radius:3px;background:rgba(255,255,255,.08);color:#e8dfd2}.lcard .atl i.no{color:var(--dim)}
+.lcard.smith b,.lcard.ksc b{font-size:15px;color:var(--y)}
+.wside{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto;padding-right:2px}.wname{margin:0;font:400 38px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#fff;background:none;border:0;border-bottom:1px dashed rgba(255,255,255,.25);padding:0 0 4px;width:100%;outline:0}h2.wname{border:0}input.wname:focus{border-bottom-color:var(--y)}
+.wdef{margin:0;font-size:13px;color:var(--dim);letter-spacing:.5px}
+.wprev{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#161412;flex:none}.wprev canvas,.stage canvas{display:block;width:100%;height:auto;position:static;cursor:grab}
+.winfo .wk{margin:0;font-size:11px;letter-spacing:2.5px;color:var(--y)}.winfo h3{margin:3px 0 5px;font:400 28px/1 'Black Ops One',var(--fn)}.winfo .wd{margin:0 0 8px;color:var(--dim);font-size:15px;line-height:1.3}.winfo .wm{margin:8px 0 0;font-size:12px;letter-spacing:2px;color:#d8cfc2}
+.winfo .wst{border:1px solid var(--line);border-radius:6px;background:rgba(14,13,12,.85);padding:8px 12px;display:flex;flex-direction:column;gap:5px}.wpg-class .winfo h3{font-size:24px}.wpg-class .winfo .wd{font-size:14px;margin-bottom:6px}
+.wbigic{display:grid;place-items:center;height:150px;border:1px solid var(--line);border-radius:8px;background:radial-gradient(circle,#2a241e,#141210);margin-bottom:10px}.ic.huge{width:96px;height:96px;color:var(--y)}
+.wact{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:auto;padding-top:4px}.wact .mid{margin:0}.wact .wuse{background:linear-gradient(180deg,#ffb02e,#e27a1a);color:#1b1309;border-color:#ffb02e}.wact .wdel:hover{border-color:#ff5a46;color:#ff8a7a}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:min-content;gap:8px;overflow:auto;padding-right:4px;align-content:start}.pgrid .wgrp{grid-column:1/-1;margin:6px 0 0;font-size:11px;letter-spacing:2.5px;color:var(--dim)}
+.popt{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;min-height:118px;font:inherit;color:var(--txt);border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(40,36,32,.94),rgba(16,14,12,.94));padding:10px;cursor:pointer;transition:border-color .12s,transform .12s}
+.pgrid.guns .popt{min-height:130px}.popt img.snap{width:92%;height:78px;object-fit:contain;pointer-events:none}.popt .ic.big{width:52px;height:52px;color:#e8dfd2}.popt .ic.perk{color:var(--y)}
+.popt b{font:400 16px/1.05 'Black Ops One',var(--fn);text-align:center}.popt:hover{border-color:var(--y);transform:translateY(-2px)}.popt.on{border-color:var(--y);background:linear-gradient(180deg,rgba(90,58,18,.92),rgba(26,20,14,.94))}.popt>i{position:absolute;right:8px;top:6px;font-style:normal;color:var(--y);font-size:16px}
+.popt .pc{font-size:11px;letter-spacing:1.5px;color:var(--dim)}
+.wbody.smb{grid-template-columns:minmax(0,1fr) 320px}.wbody.smb.att{grid-template-columns:280px minmax(0,1fr) 300px}
+.stage{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#161412;align-self:start}
+.sslot{position:absolute;transform:translateX(-50%);min-width:150px;text-align:left;font:inherit;color:var(--txt);background:rgba(14,13,12,.88);border:1px solid rgba(255,255,255,.18);border-left:3px solid rgba(255,255,255,.3);border-radius:5px;padding:7px 11px;cursor:pointer;transition:border-color .12s,background .12s}
+.sslot[style*="left:3%"]{transform:none}.sslot span{display:block;font-size:10px;letter-spacing:2px;color:var(--dim)}.sslot b{display:block;font:400 16px/1.1 'Black Ops One',var(--fn);margin-top:3px;color:rgba(255,255,255,.45)}
+.sslot.has{border-left-color:var(--y)}.sslot.has b{color:#fff}.sslot:hover{border-color:var(--y);background:rgba(60,42,16,.92)}.sslot.off{opacity:.35;cursor:default}.sslot.off:hover{border-color:rgba(255,255,255,.18);background:rgba(14,13,12,.88)}
+.scnt{position:absolute;left:14px;bottom:8px;margin:0;font-size:12px;letter-spacing:2px;color:var(--y)}.stage .whint,.wprev .whint{position:absolute;right:12px;bottom:8px;margin:0}
+.alist{display:flex;flex-direction:column;gap:6px;overflow:auto;padding-right:4px}.aopt{text-align:left;font:inherit;color:var(--txt);border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(40,36,32,.94),rgba(16,14,12,.94));padding:11px 12px;cursor:pointer}
+.aopt b{display:block;font:400 19px/1 'Black Ops One',var(--fn)}.aopt b i{font:700 11px var(--f);letter-spacing:1.5px;color:var(--y);margin-left:6px}.aopt span{display:block;margin-top:5px;font-size:13px;line-height:1.25;color:var(--dim)}
+.aopt:hover{border-color:var(--y)}.aopt.on{border-color:var(--y);background:linear-gradient(180deg,rgba(90,58,18,.92),rgba(26,20,14,.94))}.aopt.off{opacity:.38;cursor:default}.aopt.off:hover{border-color:var(--line)}
+@media(max-width:1380px){.ltabs button{font-size:21px;padding:6px 12px 8px}}
+@media(max-width:1100px){.wbody,.wbody.smb,.wbody.smb.att{grid-template-columns:1fr}.lgrid{grid-auto-rows:110px}.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -1632,7 +1673,10 @@ const DEF_CLASSES=[
   {n:'MARKSMAN',prim:'dmr2',att:{muzzle:'brake',stock:'heavy'},sec:'rev',lethal:'knife',tac:'smoke',perks:['scav','ghost','tacres']},
   {n:'BREACHER',prim:'sg',att:{under:'grip',mag:'ext'},sec:'shorty',lethal:'molotov',tac:'flash',perks:['fasthands','cold','firesprint']},
   {n:'STEALTH',prim:'ar2',att:{muzzle:'supp',optic:'scope4',under:'angled'},sec:'bpis',lethal:'knife',tac:'smoke',perks:['scav','ghost','silence']}];
-function classesInit(){if(!Array.isArray(S.classes)||S.classes.length!==3)S.classes=[0,1,2].map(i=>JSON.parse(JSON.stringify({...DEF_CLASSES[i],n:'CUSTOM '+(i+1),prim:i===0?(S.prim||'ar'):DEF_CLASSES[i].prim})));if(S.cls==null)S.cls='c0'}
+const CLS_MAX=10;
+function classesInit(){if(!Array.isArray(S.classes)||!S.classes.length)S.classes=[0,1,2].map(i=>JSON.parse(JSON.stringify({...DEF_CLASSES[i],n:'CUSTOM '+(i+1),prim:i===0?(S.prim||'ar'):DEF_CLASSES[i].prim})));
+  if(S.classes.length>CLS_MAX)S.classes.length=CLS_MAX;for(const c of S.classes){c.att=c.att||{};c.perks=c.perks||['fasthands','ghost','firesprint']}
+  if(S.cls==null||(S.cls[0]==='c'&&!S.classes[+S.cls.slice(1)]))S.cls='c0'}
 function classById(id){if(!id)id=S.cls;if(id&&id[0]==='d')return DEF_CLASSES[+id.slice(1)]||DEF_CLASSES[0];return(S.classes&&S.classes[+String(id).slice(1)])||DEF_CLASSES[0]}
 function curClass(){classesInit();return classById(S.cls)}
 /* effective stats for a weapon with attachments and its owner's perks */
@@ -1782,14 +1826,20 @@ const opOf=p=>OPS[p&&p.op]?p.op:(p&&p.bot?(p.op=OP_IDS[1+Math.floor(Math.random(
 return{OPS,OP_IDS,OP_DESC,opMesh,opOf,ell,tube,cap}})();
 const{OPS,OP_IDS,OP_DESC,opMesh,opOf}=OPAPI;
 /* ================= Lobby: PLAY / WEAPONS / OPERATORS / SETTINGS ================= */
-let lobTab='play',wSel=null,wPick=null,wRot=.6,wDrag=null,opSel=null,opRot=0;
+let lobTab='play',wSel=null,wRot=.6,wDrag=null,opSel=null,opRot=0;
+/* Weapons tab navigation: a stack of pages, each with a Back button */
+let wNav=[{pg:'class'}],wHover=null,wToastT=0;
 const ATT_MAX=5;
 const esc2=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const attName=(slot,a)=>a&&ATTS[slot]&&ATTS[slot][a]?ATTS[slot][a].n:'—';
-const perkName=k=>{for(const t of PERKS)if(t[k])return t[k].n;return'—'};
+const perkOf=k=>{for(let t=0;t<PERKS.length;t++)if(PERKS[t][k])return PERKS[t][k];return null};
+const perkName=k=>(perkOf(k)||{n:'—'}).n;
 const clsAtts=C=>ATT_SLOTS.map(([s])=>C.att&&C.att[s]&&attOk(C.prim,s,C.att[s])?ATTS[s][C.att[s]].n:null).filter(Boolean);
 const clsEditable=id=>id&&id[0]==='c';
-const clsIds=()=>{classesInit();return['c0','c1','c2','d0','d1','d2','d3','d4']};
+const clsIds=()=>{classesInit();return S.classes.map((_,i)=>'c'+i).concat(['d0','d1','d2','d3','d4'])};
+const WCLS={ar:'ASSAULT RIFLE',smg:'SMG',sg:'SHOTGUN',snp:'SNIPER'};
+const wKind=id=>SIDEARMS.includes(id)?'SECONDARY':WCLS[clsOf(id)]||'WEAPON';
+const wDesc=id=>(typeof LO_INFO!=='undefined'&&LO_INFO[id])?LO_INFO[id][0]:({pis:'Reliable semi-auto sidearm.',rev:'Six heavy rounds. Two body shots up close.',mpis:'Full-auto machine pistol. Shreds at short range.',bpis:'Three-round burst. Kills fast if you land it.',shorty:'Two-shell sawn-off. One shot up close.'}[id]||'');
 
 /* ---------- small summary card used in PLAY and the in-game loadout screen ---------- */
 function classCard(id,cardCls,on){const C=classById(id),at=clsAtts(C);
@@ -1799,6 +1849,33 @@ function classCard(id,cardCls,on){const C=classById(id),at=clsAtts(C);
     <div class="clp">${(C.perks||[]).map(perkName).join(' · ')}</div><button class="cled" data-ed="${id}">EDIT ›</button></div>`}
 function classGrid(sel,cardCls){return clsIds().map(id=>classCard(id,cardCls,id===sel)).join('')}
 
+/* ---------- simple line icons for equipment and perks ---------- */
+const IC={
+ frag:'<circle cx="30" cy="38" r="16"/><path d="M24 22h12v-6H24zM36 18l10-6M30 24v28M16 38h28"/>',
+ semtex:'<rect x="14" y="20" width="36" height="28" rx="5"/><path d="M14 30h36"/><circle cx="40" cy="40" r="3" fill="currentColor"/>',
+ molotov:'<path d="M26 26h12v6l4 6v18H22V38l4-6z"/><path d="M28 26v-8M32 6c4 4 4 8 0 10-4-2-4-6 0-10z"/>',
+ knife:'<path d="M10 50L44 16l8 2-2 8-34 30z"/><path d="M40 28l6 6"/>',
+ flash:'<rect x="22" y="18" width="20" height="34" rx="4"/><path d="M26 18v-6h12v6M32 28l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/>',
+ smoke:'<rect x="22" y="26" width="20" height="28" rx="4"/><path d="M26 26v-4h12v4M20 18a6 6 0 0 1 10-6 7 7 0 0 1 13 2 5 5 0 0 1 2 9"/>',
+ stun:'<rect x="22" y="18" width="20" height="34" rx="4"/><path d="M26 18v-6h12v6M34 24l-6 12h8l-6 12"/>',
+ fasthands:'<path d="M18 46V26a4 4 0 0 1 8 0v8M26 34V20a4 4 0 0 1 8 0v14M34 32v-8a4 4 0 0 1 8 0v18c0 8-6 12-12 12h-4c-6 0-8-4-8-8"/><path d="M48 14h8M46 22h10"/>',
+ scav:'<path d="M18 24h28v28H18zM24 24v-6h16v6M18 34h28"/><path d="M30 40h4"/>',
+ light:'<path d="M48 10C28 14 18 30 16 52 30 48 46 36 48 10zM16 52l20-24"/>',
+ ghost:'<path d="M16 54V30a16 16 0 0 1 32 0v24l-6-5-5 5-5-5-5 5-5-5z"/><circle cx="26" cy="30" r="2.5" fill="currentColor"/><circle cx="38" cy="30" r="2.5" fill="currentColor"/>',
+ hardline:'<path d="M16 34l16-14 16 14M16 48l16-14 16 14"/>',
+ cold:'<path d="M32 10v44M13 21l38 22M13 43l38-22M26 12l6 6 6-6M26 52l6-6 6 6"/>',
+ firesprint:'<circle cx="38" cy="14" r="5"/><path d="M34 22l-8 12 8 4-4 14M30 26l-12 4M26 34l-10 10M40 30l8 4"/>',
+ tacres:'<path d="M32 8l20 8v14c0 14-9 22-20 26-11-4-20-12-20-26V16z"/><path d="M24 32l6 6 12-12"/>',
+ silence:'<path d="M12 26h10l12-10v32L22 38H12z"/><path d="M42 24l12 16M54 24L42 40"/>',
+ melee:'<path d="M12 52l26-26M34 22l12-12 6 6-12 12zM26 34l6 6"/>',
+ ks:'<path d="M32 8l6 16h16l-13 10 5 16-14-10-14 10 5-16-13-10h16z"/>'};
+const icon=(k,cl)=>`<svg class="ic ${cl||''}" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${IC[k]||IC.ks}</svg>`;
+
+/* ---------- gun pictures for cards (rendered once, cached) ---------- */
+const SNAP={};
+const snapKey=(id,att)=>id+'|'+(att?ATT_SLOTS.map(([s])=>att[s]&&attOk(id,s,att[s])?att[s]:'').join(','):'');
+const gunImg=(id,att,cl)=>{const k=snapKey(id,att);return `<img class="snap ${cl||''}" data-g="${k}" ${SNAP[k]?`src="${SNAP[k]}"`:''} alt="">`};
+
 /* ---------- tab bar ---------- */
 function lobbyInit(){if($('ltabs'))return;
   const nav=document.createElement('nav');nav.id='ltabs';nav.className='ltabs';
@@ -1806,78 +1883,159 @@ function lobbyInit(){if($('ltabs'))return;
   const top=document.querySelector('#menu .mtop');top.insertBefore(nav,top.querySelector('.mbtns'));$('openSet').hidden=true;
   nav.onclick=e=>{const b=e.target.closest('button');if(!b)return;sfx('swap');lobbyTab(b.dataset.t)};
   const menu=$('menu');
-  const wt=document.createElement('div');wt.id='wTab';wt.className='ltab';wt.hidden=true;
-  wt.innerHTML=`<div class="wl" id="wList"></div><div class="wm"><div class="whead"><div><span class="wkind" id="wKind"></span><input id="wName" maxlength="18" spellcheck="false"><h2 id="wNameS"></h2></div><div class="wbt"><span class="weq" id="wEq">EQUIPPED</span><button class="mid" id="wUse">EQUIP CLASS</button><div class="wcopy" id="wCopy"></div></div></div>
-    <div class="wtop"><div class="wgun"><canvas id="wGun" width="720" height="270"></canvas><p class="wgn" id="wGunN"></p><p class="whint">drag to turn</p></div><div class="wst" id="wStats"></div></div>
-    <div class="wslots" id="wSlots"></div><div class="wpick" id="wPick"></div></div>`;
+  const wt=document.createElement('div');wt.id='wTab';wt.className='ltab';wt.hidden=true;menu.insertBefore(wt,menu.querySelector('.mfoot'));
   const ot=document.createElement('div');ot.id='oTab';ot.className='ltab';ot.hidden=true;
   ot.innerHTML=`<div class="ol" id="oList"></div><div class="om"><canvas id="oCv" width="560" height="620"></canvas><div class="oinfo"><h2 id="oName"></h2><p id="oDesc"></p><button class="big" id="oUse">EQUIP</button><p class="whint">drag to turn · placeholder models</p></div></div>`;
-  menu.insertBefore(wt,menu.querySelector('.mfoot'));menu.insertBefore(ot,menu.querySelector('.mfoot'));
-  const drag=(cv,get,set)=>{cv.onpointerdown=e=>{wDrag={x:e.clientX,r:get()};cv.setPointerCapture(e.pointerId)};cv.onpointermove=e=>{if(wDrag)set(wDrag.r+(e.clientX-wDrag.x)*.012)};cv.onpointerup=()=>wDrag=null};
-  drag($('wGun'),()=>wRot,v=>wRot=v);drag($('oCv'),()=>opRot,v=>opRot=v);
-  $('wUse').onclick=()=>{S.cls=wSel;save();sfx('swap');renderWeapons();renderMenu()};
-  $('wName').oninput=()=>{if(!clsEditable(wSel))return;classById(wSel).n=$('wName').value.toUpperCase().slice(0,18)||'CUSTOM';save();renderWList()};
+  menu.insertBefore(ot,menu.querySelector('.mfoot'));
+  const oc=$('oCv');oc.onpointerdown=e=>{wDrag={x:e.clientX,r:opRot};oc.setPointerCapture(e.pointerId)};oc.onpointermove=e=>{if(wDrag)opRot=wDrag.r+(e.clientX-wDrag.x)*.012};oc.onpointerup=()=>wDrag=null;
   $('oUse').onclick=()=>{S.op=opSel;save();sfx('swap');renderOps()};
+  wt.addEventListener('click',wClick);wt.addEventListener('mouseover',wOver);wt.addEventListener('input',wInput);
+  wt.addEventListener('pointerdown',e=>{const cv=e.target.closest('canvas#wCv');if(!cv)return;wDrag={x:e.clientX,r:wRot};cv.setPointerCapture(e.pointerId)});
+  wt.addEventListener('pointermove',e=>{if(wDrag&&e.target.id==='wCv')wRot=wDrag.r+(e.clientX-wDrag.x)*.012});wt.addEventListener('pointerup',()=>wDrag=null);
+  addEventListener('keydown',e=>{if(e.code==='Escape'&&lobTab==='weapons'&&!$('menu').hidden&&$('setM').hidden&&wNav.length>1){e.preventDefault();e.stopPropagation();wBack()}},true);
   lobbyTab('play')}
 function lobbyTab(t){if(t==='settings'){openSettings(false);return}lobTab=t;
   document.querySelectorAll('#ltabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   const play=t==='play';$('crumbs').hidden=!play;for(let i=0;i<3;i++)$('step'+i).hidden=!play||i!==menuStep;document.querySelector('#menu .mfoot').style.visibility=play?'':'hidden';
   $('wTab').hidden=t!=='weapons';$('menu').classList.toggle('cmp',!play||menuStep===2);$('oTab').hidden=t!=='operators';
-  if(t==='weapons'){if(!wSel)wSel=S.cls||'c0';wPick=null;renderWeapons()}if(t==='operators'){opSel=opSel||S.op||'soldier';renderOps()}}
+  if(t==='weapons'){if(!wSel||(clsEditable(wSel)&&!S.classes[+wSel.slice(1)]))wSel=S.cls||'c0';wNav=[{pg:'class'}];wHover=null;renderWeapons()}if(t==='operators'){opSel=opSel||S.op||'soldier';renderOps()}}
 
-/* ---------- WEAPONS: class list, gun preview, stats, slots, picker ---------- */
-function renderWList(){$('wList').innerHTML=`<h4>CUSTOM CLASSES</h4>`+['c0','c1','c2'].map(row).join('')+`<h4>DEFAULT CLASSES</h4>`+['d0','d1','d2','d3','d4'].map(row).join('');
-  function row(id){const C=classById(id);return `<button class="wrow ${id===wSel?'on':''}" data-cl="${id}"><b>${esc2(C.n)}</b><span>${WEP[C.prim].n}</span>${id===S.cls?'<i>●</i>':''}</button>`}
-  $('wList').onclick=e=>{const b=e.target.closest('[data-cl]');if(!b)return;wSel=b.dataset.cl;wPick=null;sfx('swap');renderWeapons()}}
-function statRows(C){const W=WEP[C.prim],ws=deriveWS(C.prim,C.att,C.perks),info=(typeof LO_INFO!=='undefined'&&LO_INFO[C.prim])?LO_INFO[C.prim][1]:[.5,.5,.5,.5],cl=v=>Math.max(.03,Math.min(1,v));
-  const ctrl0=.5,ctrl=cl(ctrl0*Math.pow(W.rec/ws.rec,1.4)*Math.pow(W.hip/ws.hip,.4)),hand0=.5,hand=cl(hand0*Math.pow(W.rl/ws.rl,.9)*(ws.adsMul||1));
-  return[['DAMAGE',info[0],info[0]],['FIRE RATE',info[1],info[1]],['RANGE',info[2],cl(info[2]*ws.range/W.range)],['MOBILITY',info[3],cl(info[3]*Math.pow(ws.spd/W.spd,3))],['CONTROL',ctrl0,ctrl],['HANDLING',hand0,hand]]}
-function renderWeapons(){classesInit();renderWList();const C=classById(wSel),ed=clsEditable(wSel);
-  $('wKind').textContent=ed?'CUSTOM CLASS · click a slot to change it':'DEFAULT CLASS · copy it to a custom slot to edit';$('wName').hidden=!ed;$('wNameS').hidden=ed;$('wName').value=C.n;$('wNameS').textContent=C.n;
-  $('wEq').hidden=S.cls!==wSel;$('wUse').hidden=S.cls===wSel;
-  $('wCopy').innerHTML=`<span>COPY TO</span>`+['c0','c1','c2'].filter(id=>id!==wSel).map(id=>`<button class="chip" data-cp="${id}">${esc2(classById(id).n)}</button>`).join('');
-  $('wCopy').onclick=e=>{const b=e.target.closest('[data-cp]');if(!b)return;const i=+b.dataset.cp.slice(1),src=JSON.parse(JSON.stringify(C));src.n=clsEditable(wSel)?src.n+' 2':src.n;S.classes[i]=src;save();wSel=b.dataset.cp;wPick=null;sfx('swap');renderWeapons()};
-  const ws=deriveWS(C.prim,C.att,C.perks);$('wGunN').innerHTML=`${WEP[C.prim].n} <small>${ws.mag} ROUNDS · ${ws.rl.toFixed(1)}s RELOAD${ws.quiet?' · SUPPRESSED':''}</small>`;
-  $('wStats').innerHTML=statRows(C).map(([n,b,v])=>{const lo=Math.min(b,v),d=v-b;return `<div class="wsr"><span>${n}</span><i><u style="width:${lo*100}%"></u>${d?`<em class="${d>0?'up':'dn'}" style="left:${lo*100}%;width:${Math.abs(d)*100}%"></em>`:''}</i></div>`}).join('');
-  const nAtt=Object.values(C.att||{}).filter(Boolean).length;
-  const tiles=[['prim','PRIMARY',WEP[C.prim].n,1]].concat(ATT_SLOTS.map(([s,n])=>{const ok=Object.keys(ATTS[s]).some(a=>attOk(C.prim,s,a));return['att:'+s,n,ok?attName(s,C.att&&C.att[s]):'NOT AVAILABLE',0,!ok]}),
-    [['sec','SECONDARY',WEP[C.sec]?WEP[C.sec].n:'—',1],['lethal','LETHAL',(LETHALS[C.lethal]||{}).n||'—',0],['tac','TACTICAL',(TACTICALS[C.tac]||{}).n||'—',0],['perk:0','PERK 1',perkName(C.perks[0]),0],['perk:1','PERK 2',perkName(C.perks[1]),0],['perk:2','PERK 3',perkName(C.perks[2]),0]]);
-  $('wSlots').innerHTML=tiles.map(([k,n,v,big,off])=>`<button class="wsl ${big?'wbig':''} ${wPick===k?'on':''} ${off?'off':''} ${v==='—'?'empty':''}" data-k="${k}"><span>${n}${k.startsWith('att:')?'':''}</span><b>${v}</b></button>`).join('')+`<p class="wcnt">ATTACHMENTS ${nAtt}/${ATT_MAX}</p>`;
-  $('wSlots').onclick=e=>{const b=e.target.closest('[data-k]');if(!b||b.classList.contains('off'))return;wPick=wPick===b.dataset.k?null:b.dataset.k;sfx('swap');renderWeapons()};
-  renderPick(C,ed)}
-function renderPick(C,ed){const el=$('wPick');if(!wPick){el.innerHTML='';el.hidden=true;return}el.hidden=false;
-  if(!ed){el.innerHTML=`<p class="wro">Default classes are fixed. Use <b>COPY TO</b> above to make an editable copy in one of your custom slots.</p>`;return}
-  let title='',opts=[];const k=wPick;
-  if(k==='prim'){title='PRIMARY WEAPON';opts=PRIMS.map(id=>({v:id,n:WEP[id].n,d:(typeof LO_INFO!=='undefined'&&LO_INFO[id]?LO_INFO[id][0]:''),g:{ar:'ASSAULT RIFLES',smg:'SMGS',sg:'SHOTGUNS',snp:'SNIPERS'}[clsOf(id)],on:C.prim===id}))}
-  else if(k==='sec'){title='SECONDARY';opts=SIDEARMS.map(id=>({v:id,n:WEP[id].n,d:stkText(id),on:C.sec===id}))}
-  else if(k==='lethal'){title='LETHAL';opts=Object.entries(LETHALS).map(([id,L])=>({v:id,n:L.n,d:L.d+(L.c>1?` Carry ${L.c}.`:''),on:C.lethal===id}))}
-  else if(k==='tac'){title='TACTICAL';opts=Object.entries(TACTICALS).map(([id,L])=>({v:id,n:L.n,d:L.d+(L.c>1?` Carry ${L.c}.`:''),on:C.tac===id}))}
-  else if(k.startsWith('perk:')){const t=+k[5];title='PERK '+(t+1);opts=Object.entries(PERKS[t]).map(([id,P])=>({v:id,n:P.n,d:P.d,on:C.perks[t]===id}))}
-  else if(k.startsWith('att:')){const s=k.slice(4);title=ATT_SLOTS.find(([q])=>q===s)[1];const nAtt=Object.entries(C.att||{}).filter(([q,v])=>v&&q!==s).length;
-    opts=[{v:'',n:'NONE',d:'Leave this slot empty.',on:!(C.att&&C.att[s])}].concat(Object.entries(ATTS[s]).map(([id,A])=>({v:id,n:A.n,d:A.d,on:C.att&&C.att[s]===id,off:!attOk(C.prim,s,id)?'Not for this weapon':nAtt>=ATT_MAX?`${ATT_MAX} attachments max`:''})))}
-  let g0=null;el.innerHTML=`<h4>${title}</h4><div class="wopts">`+opts.map(o=>{let h='';if(o.g&&o.g!==g0){g0=o.g;h=`<p class="wgrp">${o.g}</p>`}return h+`<button class="wop ${o.on?'on':''} ${o.off?'off':''}" data-v="${o.v}"><b>${o.n}</b><span>${o.off||o.d}</span></button>`}).join('')+`</div>`;
-  el.onclick=e=>{const b=e.target.closest('[data-v]');if(!b||b.classList.contains('off'))return;const v=b.dataset.v;
-    if(k==='prim'){C.prim=v;for(const[s]of ATT_SLOTS)if(C.att&&C.att[s]&&!attOk(v,s,C.att[s]))delete C.att[s]}
-    else if(k==='sec')C.sec=v;else if(k==='lethal')C.lethal=v;else if(k==='tac')C.tac=v;else if(k.startsWith('perk:'))C.perks[+k[5]]=v;
-    else{const s=k.slice(4);C.att=C.att||{};if(v)C.att[s]=v;else delete C.att[s]}
-    save();sfx('swap');if(!k.startsWith('att:')&&k!=='prim')wPick=null;renderWeapons();renderMenu()}}
+/* ================= WEAPONS ================= */
+const wPage=()=>wNav[wNav.length-1];
+function wGo(p){wNav.push(p);wHover=null;sfx('swap');renderWeapons()}
+function wBack(){if(wNav.length>1){wNav.pop();wHover=null;sfx('swap');renderWeapons()}}
+function wToast(t){wToastT=performance.now();const el=$('wToast');if(el){el.textContent=t;el.classList.add('on');setTimeout(()=>{const e2=$('wToast');if(e2&&performance.now()-wToastT>2400)e2.classList.remove('on')},2500)}}
+/* editing a default class makes an editable copy first */
+function wEditable(){if(clsEditable(wSel))return classById(wSel);if(S.classes.length>=CLS_MAX){wToast('All '+CLS_MAX+' custom slots are full · delete one first');return null}
+  const c=JSON.parse(JSON.stringify(classById(wSel)));S.classes.push(c);wSel='c'+(S.classes.length-1);save();setTimeout(()=>wToast('Copied to a new custom class · '+c.n),0);return c}
+function wNewClass(){if(S.classes.length>=CLS_MAX){wToast('You can have up to '+CLS_MAX+' custom classes');return}const c=JSON.parse(JSON.stringify(DEF_CLASSES[0]));c.n='CUSTOM '+(S.classes.length+1);S.classes.push(c);wSel='c'+(S.classes.length-1);save();wNav=[{pg:'class'}];sfx('swap');renderWeapons();renderMenu()}
+function wDelete(){if(!clsEditable(wSel))return;if(S.classes.length<=1){wToast('Keep at least one custom class');return}const i=+wSel.slice(1);S.classes.splice(i,1);
+  if(S.cls&&S.cls[0]==='c'){const j=+S.cls.slice(1);if(j===i)S.cls='c0';else if(j>i)S.cls='c'+(j-1)}wSel='c'+Math.max(0,i-1);save();sfx('swap');renderWeapons();renderMenu()}
+
+function wTop(title,back){return `<div class="wbar">${back?`<button class="wback" data-a="back">‹ BACK <kbd>Esc</kbd></button>`:''}<h2 class="wtitle">${title}</h2><div class="wtoast" id="wToast"></div></div>`}
+function wTabs(){const t=id=>{const C=classById(id),i=+id.slice(1);return `<button class="ctab ${id===wSel?'on':''}" data-cl="${id}">${id===S.cls?'<i>★</i>':''}${id[0]==='c'?`<u>${String(i+1).padStart(2,'0')}</u>`:''}<span>${esc2(C.n)}</span></button>`};
+  return `<div class="ctabs">${S.classes.map((_,i)=>t('c'+i)).join('')}${S.classes.length<CLS_MAX?'<button class="ctab add" data-a="new" title="New custom class">+ NEW CLASS</button>':''}<span class="csep">DEFAULTS</span>${['d0','d1','d2','d3','d4'].map(t).join('')}</div>`}
+
+function renderWeapons(){classesInit();const P=wPage(),el=$('wTab');el.className='ltab wpg-'+P.pg;
+  if(P.pg==='class')el.innerHTML=pgClass();else if(P.pg==='pick')el.innerHTML=pgPick(P.slot);else if(P.pg==='smith')el.innerHTML=pgSmith();else if(P.pg==='att')el.innerHTML=pgAtt(P.slot);
+  wInfo()}
+
+/* ---- page 1: the class, CoD-style card grid ---- */
+function pgClass(){const C=classById(wSel),ed=clsEditable(wSel),at=clsAtts(C),L=LETHALS[C.lethal]||LETHALS.frag,Tc=TACTICALS[C.tac]||TACTICALS.flash;
+  const card=(k,lab,body,cl)=>`<button class="lcard ${cl||''}" data-k="${k}"><span class="lab">${lab}</span>${body}</button>`;
+  return wTop('LOADOUTS')+wTabs()+`<div class="wbody"><div class="lgrid">
+    ${card('prim',wKind(C.prim),`${gunImg(C.prim,C.att)}<b>${WEP[C.prim].n}</b><em>CHANGE ›</em>`,'w2 prim')}
+    ${card('smith','GUNSMITH',`<div class="atl">${at.length?at.map(a=>`<i>${a}</i>`).join(''):'<i class="no">No attachments yet</i>'}</div><b>${at.length}/${ATT_MAX} ATTACHMENTS</b><em>CUSTOMISE ›</em>`,'smith')}
+    ${card('sec','SECONDARY',`${gunImg(C.sec)}<b>${WEP[C.sec].n}</b><em>CHANGE ›</em>`,'w2')}
+    ${card('melee','MELEE',`${icon('melee','big')}<b>COMBAT KNIFE</b>`,'fixed')}
+    ${card('tac','TACTICAL',`${icon(C.tac,'big')}<b>${Tc.n}</b>`)}
+    ${card('lethal','LETHAL',`${icon(C.lethal,'big')}<b>${L.n}</b>`)}
+    ${card('ks','SCORESTREAKS',`<div class="atl">${(S.streaks||DEF_STREAKS).map(k=>`<i>${SK[k].n}</i>`).join('')}</div><em>CHANGE ›</em>`,'ksc')}
+    ${[0,1,2].map(t=>card('perk'+t,'PERK '+(t+1),`${icon(C.perks[t],'big perk')}<b>${perkName(C.perks[t])}</b>`,'perkc')).join('')}
+  </div><div class="wside">${ed?`<input id="wClsName" class="wname" maxlength="18" spellcheck="false" value="${esc2(C.n)}" title="Click to rename">`:`<h2 class="wname">${esc2(C.n)}</h2><p class="wdef">Default class · changing anything makes an editable copy</p>`}
+    <div class="wprev"><canvas id="wCv" width="640" height="230"></canvas><p class="whint">drag to turn</p></div><div class="winfo" id="wInfo"></div>
+    <div class="wact">${S.cls===wSel?'<span class="weq">★ ACTIVE CLASS</span>':'<button class="mid wuse" data-a="use">USE THIS CLASS</button>'}
+      <button class="mid" data-a="dup">DUPLICATE</button>${ed&&S.classes.length>1?'<button class="mid wdel" data-a="del">DELETE</button>':''}</div></div></div>`}
+
+/* ---- page 2: choose something for a slot ---- */
+function pickOpts(slot,C){if(slot==='prim')return PRIMS.map(id=>({v:id,n:WEP[id].n,g:WCLS[clsOf(id)]+'S',img:gunImg(id),on:C.prim===id}));
+  if(slot==='sec')return SIDEARMS.map(id=>({v:id,n:WEP[id].n,img:gunImg(id),on:C.sec===id}));
+  if(slot==='lethal')return Object.entries(LETHALS).map(([id,L])=>({v:id,n:L.n,img:icon(id,'big'),on:C.lethal===id}));
+  if(slot==='tac')return Object.entries(TACTICALS).map(([id,L])=>({v:id,n:L.n,img:icon(id,'big'),on:C.tac===id}));
+  if(slot.startsWith('perk')){const t=+slot[4];return Object.entries(PERKS[t]).map(([id,P])=>({v:id,n:P.n,img:icon(id,'big perk'),on:C.perks[t]===id}))}
+  if(slot==='ks')return SK_IDS.map(id=>({v:id,n:SK[id].n,img:icon('ks','big'),on:(S.streaks||DEF_STREAKS).includes(id),cost:SK[id].c}));return[]}
+const SLOT_T={prim:'PRIMARY WEAPON',sec:'SECONDARY',lethal:'LETHAL',tac:'TACTICAL',perk0:'PERK 1',perk1:'PERK 2',perk2:'PERK 3',ks:'SCORESTREAKS · PICK 3'};
+function pgPick(slot){const C=classById(wSel);let g0=null;
+  return wTop(SLOT_T[slot]+` <small>${slot==='ks'?'ALL CLASSES':esc2(C.n)}</small>`,1)+`<div class="wbody"><div class="pgrid ${slot==='prim'||slot==='sec'?'guns':''}">`+pickOpts(slot,C).map(o=>{let h='';if(o.g&&o.g!==g0){g0=o.g;h=`<p class="wgrp">${o.g}</p>`}
+    return h+`<button class="popt ${o.on?'on':''}" data-v="${o.v}">${o.img}<b>${o.n}</b>${o.cost?`<span class="pc">${o.cost} PTS</span>`:''}${o.on?'<i>✓</i>':''}</button>`}).join('')+
+    `</div><div class="wside">${slot==='prim'||slot==='sec'?'<div class="wprev"><canvas id="wCv" width="640" height="280"></canvas></div>':''}<div class="winfo" id="wInfo"></div>${slot==='ks'?'<p class="wdef">They unlock in order of cost. Picking a fourth swaps out your oldest pick.</p>':''}</div></div>`}
+
+/* ---- page 3: gunsmith — the gun big in the middle, slots around it ---- */
+const SMITH_POS={optic:[50,4],laser:[22,4],muzzle:[3,44],under:[22,84],mag:[50,84],stock:[80,44]};
+function pgSmith(){const C=classById(wSel),n=Object.entries(C.att).filter(([s,v])=>v&&attOk(C.prim,s,v)).length;
+  return wTop(`GUNSMITH <small>${WEP[C.prim].n} · ${esc2(C.n)}</small>`,1)+`<div class="wbody smb"><div class="stage"><canvas id="wCv" width="1000" height="460"></canvas>
+    ${ATT_SLOTS.map(([s,nm])=>{const ok=Object.keys(ATTS[s]).some(a=>attOk(C.prim,s,a)),cur=C.att[s]&&attOk(C.prim,s,C.att[s])?ATTS[s][C.att[s]].n:null,[x,y]=SMITH_POS[s];
+      return `<button class="sslot ${cur?'has':''} ${ok?'':'off'}" data-k="att:${s}" style="left:${x}%;top:${y}%"><span>${nm}</span><b>${ok?cur||'EMPTY':'NOT AVAILABLE'}</b></button>`}).join('')}
+    <p class="scnt">${n}/${ATT_MAX} ATTACHMENTS</p><p class="whint">drag to turn</p></div><div class="wside"><div class="winfo" id="wInfo"></div></div></div>`}
+
+/* ---- page 4: choose an attachment for one slot ---- */
+function pgAtt(slot){const C=classById(wSel),nm=ATT_SLOTS.find(([q])=>q===slot)[1],others=Object.entries(C.att).filter(([q,v])=>v&&q!==slot&&attOk(C.prim,q,v)).length,cur=C.att[slot]||'';
+  const opts=[{v:'',n:'NONE',d:'Remove the attachment from this slot.'}].concat(Object.entries(ATTS[slot]).map(([id,A])=>({v:id,n:A.n,d:A.d,off:!attOk(C.prim,slot,id)?'Not available for this weapon':others>=ATT_MAX&&cur!==id?`Already ${ATT_MAX} attachments · remove one first`:''})));
+  return wTop(`${nm} <small>${WEP[C.prim].n}</small>`,1)+`<div class="wbody smb att"><div class="alist">${opts.map(o=>`<button class="aopt ${cur===o.v?'on':''} ${o.off?'off':''}" data-v="${o.v}"><b>${o.n}${cur===o.v?' <i>✓ EQUIPPED</i>':''}</b><span>${o.off||o.d}</span></button>`).join('')}</div>
+    <div class="stage"><canvas id="wCv" width="900" height="460"></canvas><p class="whint">hover to preview · drag to turn</p></div><div class="wside"><div class="winfo" id="wInfo"></div></div></div>`}
+
+/* ---- the info panel: stats, descriptions, hover previews ---- */
+function statRows(prim,att,perks,base){const W=WEP[prim],ws=deriveWS(prim,att,perks),b=base?deriveWS(prim,base.att,base.perks):ws,info=(typeof LO_INFO!=='undefined'&&LO_INFO[prim])?LO_INFO[prim][1]:[.5,.5,.5,.5],cl=v=>Math.max(.03,Math.min(1,v));
+  const f=w=>[info[0],info[1],cl(info[2]*w.range/W.range),cl(info[3]*Math.pow(w.spd/W.spd,3)),cl(.5*Math.pow(W.rec/w.rec,1.4)*Math.pow(W.hip/w.hip,.4)),cl(.5*Math.pow(W.rl/w.rl,.9)*(w.adsMul||1))];
+  const a=f(b),v=f(ws);return['DAMAGE','FIRE RATE','RANGE','MOBILITY','CONTROL','HANDLING'].map((n,i)=>[n,a[i],v[i]])}
+function statsHtml(rows){return `<div class="wst">${rows.map(([n,b,v])=>{const lo=Math.min(b,v),d=v-b;return `<div class="wsr"><span>${n}</span><i><u style="width:${lo*100}%"></u>${Math.abs(d)>.004?`<em class="${d>0?'up':'dn'}" style="left:${lo*100}%;width:${Math.abs(d)*100}%"></em>`:''}</i></div>`}).join('')}</div>`}
+function wPrevGun(){const P=wPage(),C=classById(wSel);if(P.pg==='class'){if(wHover==='sec')return{id:C.sec,att:{}};return{id:C.prim,att:C.att}}
+  if(P.pg==='pick'){if(P.slot==='prim'||P.slot==='sec'){const v=wHover||(P.slot==='prim'?C.prim:C.sec);return{id:v,att:P.slot==='prim'&&v===C.prim?C.att:{}}}return null}
+  if(P.pg==='att'){const att=Object.assign({},C.att);if(wHover!=null){if(wHover)att[P.slot]=wHover;else delete att[P.slot]}return{id:C.prim,att}}return{id:C.prim,att:C.att}}
+function wInfo(){const el=$('wInfo');if(!el)return;const P=wPage(),C=classById(wSel);let h='';
+  const gunInfo=(id,att,base)=>{const ws=deriveWS(id,att,C.perks);return `<p class="wk">${wKind(id)}</p><h3>${WEP[id].n}</h3><p class="wd">${wDesc(id)}</p>${SIDEARMS.includes(id)?`<p class="wd">${stkText(id)}</p>`:statsHtml(statRows(id,att,C.perks,base))}<p class="wm">${ws.mag} ROUNDS · ${ws.rl.toFixed(1)}s RELOAD${ws.quiet?' · SUPPRESSED':''}</p>`};
+  const item=(k,n,d,icn)=>`<div class="wbigic">${icon(icn,'huge')}</div><p class="wk">${k}</p><h3>${n}</h3><p class="wd">${d}</p>`;
+  if(P.pg==='class'){const k=wHover||'prim';
+    if(k==='prim'||k==='smith')h=gunInfo(C.prim,C.att);else if(k==='sec')h=gunInfo(C.sec,{});
+    else if(k==='lethal'){const L=LETHALS[C.lethal];h=item('LETHAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),C.lethal)}else if(k==='tac'){const L=TACTICALS[C.tac];h=item('TACTICAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),C.tac)}
+    else if(k.startsWith('perk')){const p=perkOf(C.perks[+k[4]]);h=item('PERK '+(+k[4]+1),p.n,p.d,C.perks[+k[4]])}else if(k==='melee')h=item('MELEE','COMBAT KNIFE','One hit kill up close. Press 3, or quick-melee with V.','melee')
+    else if(k==='ks')h=item('SCORESTREAKS',(S.streaks||DEF_STREAKS).map(id=>SK[id].n).join(' · '),'Shared by all your classes.','ks')}
+  else if(P.pg==='pick'){const s=P.slot,v=wHover||null;
+    if(s==='prim'||s==='sec'){const id=v||(s==='prim'?C.prim:C.sec);h=gunInfo(id,s==='prim'&&id===C.prim?C.att:{})}
+    else if(s==='lethal'){const id=v||C.lethal,L=LETHALS[id];h=item('LETHAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),id)}else if(s==='tac'){const id=v||C.tac,L=TACTICALS[id];h=item('TACTICAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),id)}
+    else if(s.startsWith('perk')){const id=v||C.perks[+s[4]],p=perkOf(id);h=item(SLOT_T[s],p.n,p.d,id)}
+    else if(s==='ks'){const id=v||(S.streaks||DEF_STREAKS)[0],k=SK[id];h=item('SCORESTREAK · '+k.c+' POINTS',k.n,k.d||'','ks')}}
+  else if(P.pg==='smith'){h=gunInfo(C.prim,C.att)+`<p class="wd">Click a slot around the gun to change or remove an attachment. Up to ${ATT_MAX} at once.</p>`}
+  else if(P.pg==='att'){const att=Object.assign({},C.att);let d='';if(wHover!=null){if(wHover){att[P.slot]=wHover;d=ATTS[P.slot][wHover].d}else{delete att[P.slot];d='Empty slot.'}}
+    h=(d?`<p class="wk">PREVIEW · ${wHover?ATTS[P.slot][wHover].n:'NONE'}</p><p class="wd">${d}</p>`:'')+gunInfo(C.prim,att,{att:C.att,perks:C.perks})}
+  el.innerHTML=h}
+
+/* ---- input ---- */
+function wOver(e){const P=wPage();let k=null;
+  if(P.pg==='class'){const b=e.target.closest('.lcard[data-k]');if(b)k=b.dataset.k}else{const b=e.target.closest('.popt[data-v],.aopt[data-v]');if(b&&!b.classList.contains('off'))k=b.dataset.v}
+  if(k===wHover)return;wHover=k;wInfo()}
+function wInput(e){if(e.target.id!=='wClsName'||!clsEditable(wSel))return;classById(wSel).n=e.target.value.toUpperCase().slice(0,18)||'CUSTOM';save();
+  const t=document.querySelector('.ctab.on span');if(t)t.textContent=classById(wSel).n;renderMenu()}
+function wClick(e){const P=wPage(),a=e.target.closest('[data-a]');
+  if(a){const A=a.dataset.a;if(A==='back')wBack();else if(A==='new')wNewClass();else if(A==='del')wDelete();
+    else if(A==='use'){S.cls=wSel;save();sfx('swap');renderWeapons();renderMenu()}
+    else if(A==='dup'){if(S.classes.length>=CLS_MAX){wToast('All '+CLS_MAX+' custom slots are full');return}const c=JSON.parse(JSON.stringify(classById(wSel)));c.n=(c.n+' 2').slice(0,18);S.classes.push(c);wSel='c'+(S.classes.length-1);save();sfx('swap');renderWeapons();renderMenu()}return}
+  const tab=e.target.closest('.ctab[data-cl]');if(tab){wSel=tab.dataset.cl;wNav=[{pg:'class'}];sfx('swap');renderWeapons();return}
+  if(P.pg==='class'){const c=e.target.closest('.lcard[data-k]');if(!c)return;const k=c.dataset.k;if(k==='melee')return;
+    if(k==='ks'){wGo({pg:'pick',slot:'ks'});return}if(!wEditable())return;
+    if(k==='smith')wGo({pg:'smith'});else wGo({pg:'pick',slot:k});return}
+  if(P.pg==='pick'){const o=e.target.closest('.popt[data-v]');if(!o)return;const v=o.dataset.v,s=P.slot;
+    if(s==='ks'){toggleStreak(v);sfx('swap');renderWeapons();renderMenu();return}
+    const C=wEditable();if(!C)return;
+    if(s==='prim'){if(C.prim!==v){C.prim=v;for(const[q]of ATT_SLOTS)if(C.att[q]&&!attOk(v,q,C.att[q]))delete C.att[q]}}else if(s==='sec')C.sec=v;else if(s==='lethal')C.lethal=v;else if(s==='tac')C.tac=v;else if(s.startsWith('perk'))C.perks[+s[4]]=v;
+    save();renderMenu();wBack();return}
+  if(P.pg==='smith'){const sl=e.target.closest('.sslot[data-k]');if(!sl||sl.classList.contains('off'))return;wGo({pg:'att',slot:sl.dataset.k.slice(4)});return}
+  if(P.pg==='att'){const o=e.target.closest('.aopt[data-v]');if(!o||o.classList.contains('off'))return;const C=wEditable();if(!C)return;const v=o.dataset.v;if(v)C.att[P.slot]=v;else delete C.att[P.slot];save();renderMenu();wBack()}}
 
 /* ---------- OPERATORS ---------- */
 function renderOps(){$('oList').innerHTML=OP_IDS.map(id=>`<button class="orow ${id===opSel?'on':''}" data-op="${id}"><b>${OPS[id].n}</b>${id===S.op?'<i>EQUIPPED</i>':''}</button>`).join('');
   $('oList').onclick=e=>{const b=e.target.closest('[data-op]');if(!b)return;opSel=b.dataset.op;sfx('swap');renderOps()};
   $('oName').textContent=OPS[opSel].n;$('oDesc').textContent=OP_DESC[opSel]||'';$('oUse').textContent=S.op===opSel?'EQUIPPED':'EQUIP';$('oUse').disabled=S.op===opSel}
 
-/* ---------- live 3D previews, drawn into 2D canvases before the main render each frame ---------- */
+/* ---------- live 3D previews and card pictures, drawn before the main render each frame ---------- */
 const PV_BG=[.085,.078,.07];
 function pvBegin(w,h){gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,w,h);gl.enable(gl.SCISSOR_TEST);gl.scissor(0,0,w,h);gl.clearColor(PV_BG[0],PV_BG[1],PV_BG[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.disable(gl.SCISSOR_TEST);
   gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.disable(gl.BLEND);gl.uniform1f(U.uShOn,0);gl.uniform1f(U.uAOOn,0);gl.uniform1f(U.uHF,0);gl.uniform1f(U.uFireOn,0)}
 function pvEnd(cv){const g=cv.getContext('2d');g.drawImage(C,0,C.height-cv.height,cv.width,cv.height,0,0,cv.width,cv.height)}
+function pvGun(id,att,w,h,ry,pitch,zm){const bb=gunBB(id)||{zf:-.75,zb:.35};const len=bb.zb-bb.zf,cz=(bb.zf+bb.zb)/2,asp=w/h,d=len*.5/(Math.tan(.25)*Math.min(asp,2.4))*(asp>1.9?1.55:1.2)*(zm||1)+.25;const eye=[d,.1,0];
+  const vp=mul(persp(.5,asp,.05,20),viewM(eye,Math.atan2(eye[0],eye[2]),pitch==null?-.08:pitch));setWorld(vp,eye);gl.uniform1f(U.uDetail,0);gl.uniform3fv(U.uTint,[1.3,1.3,1.3]);
+  const gm=mul(modelM(0,0,0,ry,0),modelM(0,.03,-cz,0,0));gl.uniformMatrix4fv(U.uM,false,gm);draw(M['g_'+id]);
+  if(M['m_'+id]){const ext=att&&att.mag==='ext'&&attOk(id,'mag','ext');gl.uniformMatrix4fv(U.uM,false,ext?mul(gm,new Float32Array([1,0,0,0,0,1.45,0,0,0,0,1,0,0,0,0,1])):gm);draw(M['m_'+id])}
+  if(att)drawAtts({id,att,ws:deriveWS(id,att,[]),wsId:id},gm)}
+let snapCv=null;
 function lobbyPreview(){if(state!=='menu'&&state!=='over'||$('menu').hidden||!staticMesh)return;try{
-  if(lobTab==='weapons'&&!$('wTab').hidden){const cv=$('wGun'),w=cv.width,h=cv.height;if(C.width<w||C.height<h)return;const Cl=classById(wSel),bb=gunBB(Cl.prim)||{zf:-.75,zb:.35,yt:.08};
-    if(!wDrag)wRot+=.004;pvBegin(w,h);const len=bb.zb-bb.zf,cz=(bb.zf+bb.zb)/2,d=Math.max(.9,len*1.05);const eye=[d,.12,0];const vp=mul(persp(.5,w/h,.05,20),viewM(eye,Math.atan2(-(0-eye[0]),-(0-eye[2])),-.09));
-    setWorld(vp,eye);gl.uniform1f(U.uDetail,0);gl.uniform3fv(U.uTint,[1.3,1.3,1.3]);const gm=mul(modelM(0,0,0,wRot,0),modelM(0,-.02,-cz,0,0));gl.uniformMatrix4fv(U.uM,false,gm);draw(M['g_'+Cl.prim]);
-    if(M['m_'+Cl.prim]){const ext=Cl.att&&Cl.att.mag==='ext'&&attOk(Cl.prim,'mag','ext');gl.uniformMatrix4fv(U.uM,false,ext?mul(gm,new Float32Array([1,0,0,0,0,1.45,0,0,0,0,1,0,0,0,0,1])):gm);draw(M['m_'+Cl.prim])}
-    drawAtts({id:Cl.prim,att:Cl.att||{},ws:deriveWS(Cl.prim,Cl.att,Cl.perks),wsId:Cl.prim},gm);pvEnd(cv)}
+  if(lobTab==='weapons'&&!$('wTab').hidden){
+    /* card pictures: a few per frame, background made transparent */
+    let n=0;for(const img of document.querySelectorAll('#wTab img.snap:not([src])')){const k=img.dataset.g;if(!SNAP[k]){if(n++>=3)break;const[id,ac2]=k.split('|'),att={};(ac2||'').split(',').forEach((v,i)=>{if(v)att[ATT_SLOTS[i][0]]=v});
+        const w=320,h=130;if(C.width<w||C.height<h)break;if(!snapCv){snapCv=document.createElement('canvas');snapCv.getContext('2d',{willReadFrequently:true})}snapCv.width=w;snapCv.height=h;pvBegin(w,h);pvGun(id,att,w,h,0,-.02,.62);pvEnd(snapCv);
+        const g=snapCv.getContext('2d'),im=g.getImageData(0,0,w,h),d=im.data,bg=PV_BG.map(v=>Math.round(v*255));for(let i=0;i<d.length;i+=4)if(Math.abs(d[i]-bg[0])<4&&Math.abs(d[i+1]-bg[1])<4&&Math.abs(d[i+2]-bg[2])<4)d[i+3]=0;g.putImageData(im,0,0);SNAP[k]=snapCv.toDataURL()}
+      img.src=SNAP[k]}
+    const cv=$('wCv');if(cv){const w=cv.width,h=cv.height;if(C.width<w||C.height<h)return;const G=wPrevGun();if(!wDrag)wRot+=.004;pvBegin(w,h);if(G)pvGun(G.id,G.att,w,h,wRot);pvEnd(cv)}}
   if(lobTab==='operators'&&!$('oTab').hidden){const cv=$('oCv'),w=cv.width,h=cv.height;if(C.width<w||C.height<h)return;if(!wDrag)opRot+=.006;pvBegin(w,h);const eye=[0,1.15,3.6];const vp=mul(persp(.62,w/h,.05,30),viewM(eye,0,-.04));
     setWorld(vp,eye);gl.uniform1f(U.uDetail,0);gl.uniform3fv(U.uAmb,[.3,.3,.32]);gl.uniform3fv(U.uSunC,[.95,.8,.65]);const fake={x:0,y:0,z:0,yaw:Math.PI+opRot,vx:0,vz:0,pitch:0,col:[1,.69,.18],dead:false,crouch:false,prot:0,op:opSel,w:[{id:'ar',att:{}}],wi:0};drawChar(fake);pvEnd(cv)}
   }catch(e){console.warn('preview',e)}}
