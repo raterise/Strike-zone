@@ -156,7 +156,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 .orow{padding:13px 12px}
 .wm{display:flex;flex-direction:column;gap:12px;min-width:0;overflow:auto;padding-right:4px}
 .whead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}.wkind{font-size:12px;letter-spacing:2px;color:var(--dim)}
-.whead h2,#wName{margin:2px 0 0;font:400 40px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#fff;background:none;border:0;border-bottom:1px dashed transparent;padding:0;width:min(420px,60vw);outline:0}#wName{border-bottom-color:rgba(255,255,255,.25)}#wName:focus{border-bottom-color:var(--y)}
+.whead h2{margin:2px 0 0;font:400 40px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#fff;background:none;border:0;border-bottom:1px dashed transparent;padding:0;width:min(420px,60vw);outline:0}
 .wbt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.weq{font-size:14px;letter-spacing:2.5px;color:var(--y);padding:8px 12px;border:1px solid var(--y);border-radius:4px}.wbt .mid{margin:0}
 .wcopy{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.wcopy span{font-size:12px;letter-spacing:2px;color:var(--dim)}.wcopy .chip{padding:5px 9px;font-size:12px}
 .wtop{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:12px}
@@ -201,7 +201,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 .lcard .ic.big{width:54px;height:54px;color:#e8dfd2;margin:auto auto 8px}.lcard .ic.perk{color:var(--y)}.lcard.fixed{cursor:default;opacity:.75}.lcard.fixed:hover{transform:none;box-shadow:none;border-color:var(--line)}
 .lcard .atl{display:flex;flex-wrap:wrap;gap:4px;margin:20px 0 auto}.lcard .atl i{font-style:normal;font-size:11px;letter-spacing:1px;padding:3px 6px;border-radius:3px;background:rgba(255,255,255,.08);color:#e8dfd2}.lcard .atl i.no{color:var(--dim)}
 .lcard.smith b,.lcard.ksc b{font-size:15px;color:var(--y)}
-.wside{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto;padding-right:2px}.wname{margin:0;font:400 38px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#fff;background:none;border:0;border-bottom:1px dashed rgba(255,255,255,.25);padding:0 0 4px;width:100%;outline:0}h2.wname{border:0}input.wname:focus{border-bottom-color:var(--y)}
+.wside{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto;padding-right:2px}.wcname{margin:0;font:400 38px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#fff;background:none;border:0;border-bottom:1px dashed rgba(255,255,255,.25);padding:0 0 4px;width:100%;outline:0}h2.wcname{border:0}input.wcname:focus{border-bottom-color:var(--y)}
 .wdef{margin:0;font-size:13px;color:var(--dim);letter-spacing:.5px}
 .wprev{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#161412;flex:none}.wprev canvas,.stage canvas{display:block;width:100%;height:auto;position:static;cursor:grab}
 .winfo .wk{margin:0;font-size:11px;letter-spacing:2.5px;color:var(--y)}.winfo h3{margin:3px 0 5px;font:400 28px/1 'Black Ops One',var(--fn)}.winfo .wd{margin:0 0 8px;color:var(--dim);font-size:15px;line-height:1.3}.winfo .wm{margin:8px 0 0;font-size:12px;letter-spacing:2px;color:#d8cfc2}
@@ -1506,7 +1506,7 @@ function buildMeshes(){let a;const P=[.3,.29,.24],P2=[.25,.24,.2],SH=[.36,.33,.2
   a=[];box(a,0,0,0,.42,.16,.3,[.24,.26,.2]);box(a,0,.16,-.03,.22,.04,.16,[.08,.08,.08]);box(a,-.08,.16,.09,.08,.03,.05,[.6,.1,.08]);for(const x of[-.12,0,.12])box(a,x,.03,.15,.06,.1,.02,[.5,.45,.3]);beam(a,[.15,.16,0],[.24,.42,.05],.012,[.1,.1,.1]);M.bomb=mkVBO(a);
   /* first-person hand: glove, wrist, cuff and sleeve */
   a=[];box(a,0,-.045,-.13,.09,.09,.1,[.15,.13,.11]);box(a,0,-.035,-.17,.095,.03,.03,[.12,.1,.09]);box(a,0,-.04,-.04,.08,.08,.06,SK);box(a,0,-.06,.01,.125,.12,.04,[.25,.24,.2]);box(a,0,-.06,.03,.12,.12,.2,SH);M.hand=mkVBO(a);
-  a=[];box(a,0,-.5,0,1,1,1,[2,1.6,.8]);box(a,0,-.2,0,.4,.4,1.6,[2,1.8,1]);M.flash=mkVBO(a)}
+  a=[];box(a,0,-.5,0,1,1,1,[2,1.6,.8]);box(a,0,-.2,0,.4,.4,1.6,[2,1.8,1]);M.flash=mkVBO(a);if(typeof buildGuns2==='function')buildGuns2()}
 /* variants reuse their class's base gun (so sights line up), recoloured and with their own parts */
 const VAR={ar2:[1.3,1.18,.86],ar3:[.82,.88,1.05],smg2:[1.08,1.08,1.25],smg3:[1.32,1.16,.82],sg2:[.62,.62,.68],sg3:[1.18,1,.88],dmr2:[1.25,1.12,.84],snp2:[.8,1.02,.78]};
 function tintFrom(a,i0,t){for(let i=i0;i<a.length;i+=10){const r=a[i+6],g=a[i+7],b=a[i+8];if(r+g+b>2.5)continue;a[i+6]=r*t[0];a[i+7]=g*t[1];a[i+8]=b*t[2]}}
@@ -1589,17 +1589,17 @@ function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&
   const rx=dead?-1.45:0,by=y-cr,pr=!dead&&p.prot>T?1.35+.35*Math.sin(performance.now()/70):1,W1=[pr,pr,pr*1.15];gl.uniform3fv(U.uTint,W1);
   const base=(px,py,pz,ry2,rx2)=>modelM(px,py,pz,ry2,rx2);
   const om=opMesh(opOf(p));if(om){if(dead){gl.uniformMatrix4fv(U.uM,false,modelM(x,y+.25,z,yaw,-1.5));draw(om.torso);gl.uniform3fv(U.uTint,p.col);draw(om.band);return}
-    const co=Math.cos(yaw),si=Math.sin(yaw);for(const s of[-1,1]){const lx=x+s*.115*co,lz=z-s*.115*si;gl.uniformMatrix4fv(U.uM,false,base(lx,by+.85,lz,yaw,s*sw));draw(om.leg)}
+    const co=Math.cos(yaw),si=Math.sin(yaw);for(const s of[-1,1]){const lx=x+s*.13*co,lz=z-s*.13*si;gl.uniformMatrix4fv(U.uM,false,base(lx,by+.85,lz,yaw,s*sw));draw(om.leg)}
     gl.uniformMatrix4fv(U.uM,false,base(x,by,z,yaw,0));draw(om.torso);gl.uniform3fv(U.uTint,pr>1?p.col.map(v=>v*pr):p.col);draw(om.band);gl.uniform3fv(U.uTint,W1);
     if(om.head){gl.uniformMatrix4fv(U.uM,false,base(x,by+1.42,z,yaw,p.pitch*.6));draw(om.head)}
     const up=base(x,by+1.24,z,yaw,p.pitch);gl.uniformMatrix4fv(U.uM,false,up);draw(om.arms);
-    const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(M['g_'+curW(p).id]);draw(M['m_'+curW(p).id]);drawAtts(curW(p),gw);return}
+    const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw);return}
   if(dead){const m=modelM(x,y+.25,z,yaw,-1.5);gl.uniformMatrix4fv(U.uM,false,m);draw(M.torso);gl.uniform3fv(U.uTint,p.col);draw(M.vest);return}
   const co=Math.cos(yaw),si=Math.sin(yaw);for(const s of[-1,1]){const lx=x+s*.13*co,lz=z-s*.13*si;gl.uniformMatrix4fv(U.uM,false,base(lx,by+.85,lz,yaw,s*sw));draw(M.leg)}
   gl.uniformMatrix4fv(U.uM,false,base(x,by,z,yaw,0));draw(M.torso);gl.uniform3fv(U.uTint,pr>1?p.col.map(v=>v*pr):p.col);draw(M.vest);gl.uniform3fv(U.uTint,W1);
   gl.uniformMatrix4fv(U.uM,false,base(x,by+1.42,z,yaw,p.pitch*.6));draw(M.head);
   const up=base(x,by+1.24,z,yaw,p.pitch);gl.uniformMatrix4fv(U.uM,false,up);draw(M.arms);
-  const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(M['g_'+curW(p).id]);draw(M['m_'+curW(p).id]);drawAtts(curW(p),gw)}
+  const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw)}
 function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,W2,H2);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   if(!staticMesh)return;let eye,yaw,pitch;
   if(state==='play'&&me){const rdt=Math.min(.05,(performance.now()-(window._rT||0))/1000);window._rT=performance.now();const cr=me.slideT>0?.92:me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,1-Math.exp(-rdt*16));const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH-landK*.13+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3;if(MODE.snd){const sp=specTarget();if(sp){specP=sp;const e2=eyeOf(sp);eye=[e2[0],e2[1]+.05,e2[2]];yaw=sp.yaw;pitch=sp.pitch}}}}
@@ -1626,10 +1626,10 @@ function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.
   if(state==='play'&&me&&!me.dead&&!sv){gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1f(U.uFireOn,0);gl.uniform1f(U.uShOn,0);gl.uniform1f(U.uHF,0);gl.uniform1f(U.uDetail,0);const pv=persp(60*Math.PI/180,W2/H2,.02,10);gl.uniformMatrix4fv(U.uVP,false,pv);gl.uniform3fv(U.uCam,[0,0,0]);gl.uniform1f(U.uFogD,0);
     const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=me.sprint?1:0,bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WS(c).rl-c.rl)/WS(c).rl)*Math.PI):0;
     const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.75*sightW(c).y,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.5,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
-    const kn=c.id==='kn',gm=kn?modelM(.24+bx-ml*.1,-.24-by,-.5-ml*.32,.25-ml*.5,.15+ml*.4-sprint*.3,.95):modelM(gx,gy,gz,ry,rx,.75);const scoped=sightW(c).scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped){draw(M['g_'+c.id]);drawAtts(c,gm);gl.uniformMatrix4fv(U.uM,false,gm)}const rp=c.rl>0?1-c.rl/WS(c).rl:0,mo=rp<=0||BASE(c.id)==='sg'&&c.id!=='sg2'?0:rp<.3?-((rp/.3)**2)*.5:rp<.55?-.5:rp<.8?-.5*(1-(rp-.55)/.25):0,hasMag=M['m_'+c.id]&&!(rp>.3&&rp<.55);
-    if(hasMag&&!scoped){gl.uniformMatrix4fv(U.uM,false,mul(mul(gm,modelM(0,mo,mo*-.2,0,mo*-.6)),c.att&&c.att.mag==='ext'&&attOk(c.id,'mag','ext')?new Float32Array([1,0,0,0,0,1.45,0,0,0,0,1,0,0,0,0,1]):I4));draw(M['m_'+c.id])}
+    const kn=c.id==='kn',gm=kn?modelM(.24+bx-ml*.1,-.24-by,-.5-ml*.32,.25-ml*.5,.15+ml*.4-sprint*.3,.95):modelM(gx,gy,gz,ry,rx,.75);const scoped=sightW(c).scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped){draw(gunMeshFor(c));drawAtts(c,gm);gl.uniformMatrix4fv(U.uM,false,gm)}const rp=c.rl>0?1-c.rl/WS(c).rl:0,mo=rp<=0||BASE(c.id)==='sg'&&c.id!=='sg2'?0:rp<.3?-((rp/.3)**2)*.5:rp<.55?-.5:rp<.8?-.5*(1-(rp-.55)/.25):0,hasMag=magMeshFor(c)&&!(rp>.3&&rp<.55);
+    if(hasMag&&!scoped){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,mo*.9,mo*.05,0,mo*-.15)));draw(magMeshFor(c))}
     const lh=rp>.05&&rp<.85&&(BASE(c.id)!=='sg'||c.id==='sg2')?Math.sin((rp-.05)/.8*Math.PI):0;if(!scoped)for(const[hx,hy,hz]of(c.id==='kn'?[[.0,-.03,.18]]:[[.0,-.12,.18],[-.02-lh*.02,-.05-lh*.22,-.28+lh*.2]])){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));{const om=opMesh(opOf(me));draw(om&&om.hand||M.hand)}}
-    if(flashT>0&&c.id!=='kn'){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,0,c.id==='pis'?-.18:BASE(c.id)==='smg'?(c.id==='smg3'?-.62:-.42):c.id==='ar2'?-.86:c.id==='snp2'?-1.02:-.72,R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}fxEnd()}
+    if(flashT>0&&c.id!=='kn'){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,GUNM[c.id]&&GUNM[c.id].muzzle?GUNM[c.id].muzzle[1]:0,muzzleZ(c),R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}fxEnd()}
 function muzzleWorld(){const f=dirOf(me.yaw,me.pitch),r=[Math.cos(me.yaw),0,-Math.sin(me.yaw)],e=camE,s=1-adsK;return[e[0]+f[0]*.9+r[0]*.22*s,e[1]+f[1]*.9-.16*s-.05,e[2]+f[2]*.9+r[2]*.22*s]}
 function project(p){const m=VP,w=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(w<=.05)return null;return[((m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12])/w*.5+.5)*OV.width,(1-((m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13])/w*.5+.5))*OV.height]}
 /* ================= Loadouts: classes, attachments, perks, equipment, sidearms ================= */
@@ -1721,109 +1721,189 @@ function smokeFill(put,arr,rt){for(const s of smokes){const fade=Math.min(1,s.t/
 /* ---- other players' footsteps ---- */
 function footTick(dt){if(!me||me.dead)return;for(const p of players){if(p===me||p.dead||p.silent||!p.ground)continue;const sp=Math.hypot(p.vx,p.vz);if(sp<2.2)continue;const d=Math.hypot(p.x-me.x,p.z-me.z);if(d>22)continue;
     p.stepAcc=(p.stepAcc||0)+sp*dt;if(p.stepAcc>(p.sprint?2.4:2)){p.stepAcc=0;sfx('estep',null,d,Math.atan2(p.x-me.x,p.z-me.z)-me.yaw)}}}
-/* ---- attachments you can see on the gun ---- */
-let ATT_M=null;const GUN_BB={};
-function attMeshes(){if(ATT_M)return;const K=[.08,.08,.09],B=[.16,.16,.17],G=[.3,.3,.28];let a;ATT_M={};
-  a=[];beam(a,[0,0,0],[0,0,-.24],.06,K);box(a,0,-.032,-.24,.064,.064,.012,[.2,.2,.2]);ATT_M.supp=mkVBO(a);
-  a=[];beam(a,[0,0,0],[0,0,-.08],.045,B);for(let i=0;i<3;i++)box(a,0,.016,-.015-i*.022,.02,.012,.01,[.03,.03,.03]);ATT_M.comp=mkVBO(a);
-  a=[];beam(a,[0,0,0],[0,0,-.1],.05,G);for(let i=0;i<2;i++)box(a,0,-.03,-.03-i*.04,.056,.06,.012,K);ATT_M.brake=mkVBO(a);
-  a=[];box(a,0,-.12,0,.04,.12,.045,B);box(a,0,-.13,0,.046,.016,.05,K);ATT_M.grip=mkVBO(a);
-  a=[];beam(a,[0,0,.04],[0,-.07,-.04],.04,B);ATT_M.angled=mkVBO(a);
-  a=[];box(a,0,-.025,0,.035,.05,.1,K);box(a,0,-.003,-.052,.016,.016,.006,[2.4,.25,.2]);ATT_M.tac=mkVBO(a);
-  a=[];beam(a,[0,.05,.1],[0,.05,-.16],.06,K);box(a,0,.05-.04,-.168,.07,.08,.03,K);box(a,0,.02-.035,-.169,.05,.05,.004,[.3,.55,.8]);for(const z of[-.06,.04])box(a,0,0,z,.03,.03,.03,B);ATT_M.scope4=mkVBO(a);
-  a=[];box(a,0,-.05,0,.06,.1,.18,[.45,.33,.2]);ATT_M.light=mkVBO(a);a=[];box(a,0,-.07,0,.08,.14,.2,[.13,.13,.13]);ATT_M.heavy=mkVBO(a)}
-function gunBB(id){if(GUN_BB[id])return GUN_BB[id];const m=M['g_'+id];if(!m)return null;const buf=window.GBB&&GBB[id];GUN_BB[id]=buf||{zf:-.75,yt:.08,zb:.35};return GUN_BB[id]}
-/* draw a weapon's attachments with the gun's matrix (gm) */
-function drawAtts(c,gm,noOptic){if(!c||!c.att||WS(c).melee)return;attMeshes();const bb=gunBB(c.id)||{zf:-.75,yt:.08,zb:.35},A=c.att;gl.uniform3fv(U.uTint,[1,1,1]);
-  const at=(mesh,x,y,z)=>{if(!mesh)return;gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(x,y,z,0,0)));draw(mesh)};
-  if(A.muzzle&&attOk(c.id,'muzzle',A.muzzle))at(ATT_M[A.muzzle],0,bb.ym!=null?bb.ym:.02,bb.zf+.01);
-  if(A.under&&attOk(c.id,'under',A.under))at(ATT_M[A.under],0,-.02,bb.zf*.55);
-  if(A.laser&&attOk(c.id,'laser',A.laser))at(ATT_M.tac,.045,0,bb.zf*.6);
-  if(A.optic==='scope4'&&!noOptic&&attOk(c.id,'optic','scope4'))at(ATT_M.scope4,0,bb.yt-.012,-.05);
-  if(A.stock&&attOk(c.id,'stock',A.stock))at(ATT_M[A.stock],0,-.01,bb.zb);gl.uniform3fv(U.uTint,[1,1,1])}
+function gunBB(id){return(window.GBB&&GBB[id])||{zf:-.75,yt:.08,zb:.35}}
 let VM_GM=null;
 
-const sightW=c=>{if(c&&WS(c).scopeAtt){const bb=gunBB(c.id)||{yt:.08};return{y:bb.yt+.038,ret:1,scope:1}}return sightOf(c?c.id:'ar')};
+const sightW=c=>sightOfW(c);
 const seeLos=(a,b)=>los(a,b)&&!smokeBlocks(a,b);
 const fuseT=k=>k==='frag'?2.3:k==='semtex'?1.6:k==='flash'||k==='stun'?1.3:k==='smoke'?1.5:8;
 const skCost=(p,id)=>Math.round(SK[id].c*(hasPerk(p,'hardline')?.85:1));
-/* ================= Operators: smooth placeholder characters ================= */
+/* ================= Weapons v2: bevelled models with fixed attachment mount points ================= */
+/* chamfered box: y is the bottom, centred on x and z. ax='y' makes a vertical prism (height sy) */
+function cbox(a,x,y,z,sx,sy,sz,c,b,ax){const vert=ax==='y',hx=sx/2,hy=vert?sz/2:sy/2,hl=vert?sy/2:sz/2,cy=y+sy/2;b=b==null?Math.min(sx,vert?sz:sy)*.18:Math.min(b,hx*.9,hy*.9);
+  const oct=[[-hx+b,-hy],[hx-b,-hy],[hx,-hy+b],[hx,hy-b],[hx-b,hy],[-hx+b,hy],[-hx,hy-b],[-hx,-hy+b]];
+  const P=(u,v,w)=>vert?[x+u,cy+w,z+v]:[x+u,cy+v,z+w],N=(u,v,w)=>vert?[u,w,v]:[u,v,w];VM=0;
+  for(let i=0;i<8;i++){const p=oct[i],q=oct[(i+1)%8],ex=q[0]-p[0],ey=q[1]-p[1],L=Math.hypot(ex,ey);let n=[ey/L,-ex/L,0];const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;if(n[0]*mx+n[1]*my<0)n=[-n[0],-n[1],0];
+    const wn=N(...n),sh=.8+.28*Math.max(0,wn[1])+.08*wn[0]-.1*Math.max(0,-wn[1]);quad(a,P(p[0],p[1],-hl),P(q[0],q[1],-hl),P(q[0],q[1],hl),P(p[0],p[1],hl),wn,c.map(v=>v*sh))}
+  for(const s of[-1,1]){const n=N(0,0,s),col=c.map(v=>v*(vert?(s>0?1.12:.6):(s<0?.95:.85)));for(let i=1;i<7;i++){const A=oct[0],B=oct[i],Cc=oct[i+1];tri(a,P(A[0],A[1],s*hl),P(B[0],B[1],s*hl),P(Cc[0],Cc[1],s*hl),n,col)}}}
+const gcyl=(a,p,q,r,c)=>beam(a,p,q,r*2,c);
+const GK=[.07,.07,.075],GG1=[.15,.15,.16],GG2=[.24,.24,.25],GUP=[.29,.29,.31],GTAN=[.46,.38,.26],GOD=[.27,.29,.21],GWOOD=[.36,.24,.14],GSTEEL=[.5,.51,.53],GRED=[2.6,.3,.2],GGLASS=[.25,.5,.7];
+/* smooth magazine: an octagonal section swept down an arc (curve>0 bends forward) */
+function curvedMag(a,len,curve,wx,dz,c,segs){segs=segs||12;const hx=wx/2,hz=dz/2,b=Math.min(hx,hz)*.35,oct=[[-hx+b,-hz],[hx-b,-hz],[hx,-hz+b],[hx,hz-b],[hx-b,hz],[-hx+b,hz],[-hx,hz-b],[-hx,-hz+b]];
+  const Cn=t=>[0,-len*t,-curve*t*t],Tn=t=>{const d=[0,-len,-2*curve*t],l=Math.hypot(...d);return d.map(v=>v/l)};
+  const ring=t=>{const c0=Cn(t),tn=Tn(t),n2=[0,-tn[2],tn[1]];return oct.map(([u,v])=>[c0[0]+u,c0[1]+n2[1]*v,c0[2]+n2[2]*v])};const R=[];for(let i=0;i<=segs;i++)R.push(ring(i/segs));VM=0;
+  for(let i=0;i<segs;i++)for(let k=0;k<8;k++){const k2=(k+1)%8,p0=R[i][k],p1=R[i][k2],q0=R[i+1][k],q1=R[i+1][k2],e1=[p1[0]-p0[0],p1[1]-p0[1],p1[2]-p0[2]],e2=[q0[0]-p0[0],q0[1]-p0[1],q0[2]-p0[2]];
+    let n=[e1[1]*e2[2]-e1[2]*e2[1],e1[2]*e2[0]-e1[0]*e2[2],e1[0]*e2[1]-e1[1]*e2[0]];const l=Math.hypot(...n)||1;n=n.map(v=>v/l);const mid=Cn((i+.5)/segs),cx=(p0[0]+p1[0])/2-mid[0],cy=(p0[1]+p1[1])/2-mid[1],cz=(p0[2]+p1[2])/2-mid[2];if(n[0]*cx+n[1]*cy+n[2]*cz<0)n=n.map(v=>-v);
+    quad(a,p0,p1,q1,q0,n,c.map(v=>v*(.82+.2*Math.max(0,n[1])+.08*n[0])))}
+  const end=R[segs],tn=Tn(1);for(let k=1;k<7;k++)tri(a,end[0],end[k],end[k+1],tn,c.map(v=>v*.7));
+  const bp=Cn(1);cbox(a,0,bp[1]-.02,bp[2]+.004,wx+.008,.022,dz+.012,GK,.006,'y');for(const t of[.35,.65]){const q=Cn(t);box(a,0,q[1]-.004,q[2]-hz-.001,wx*.6,.008,.004,c.map(v=>v*.6))}}
+/* trigger housing, guard and trigger: joined to the receiver above and the grip behind */
+function tguard(a,yb,zf,zr,col){const D=.045;cbox(a,0,yb-.028,(zf+zr)/2,.05,.03,zr-zf,col||GG2,.008);const y0=yb-.028;
+  box(a,0,y0-D,zf,.012,D+.002,.012,GG1);box(a,0,y0-D-.008,(zf+zr+.03)/2,.012,.01,zr-zf+.03,GG1);box(a,0,y0-D*.75,zr+.02,.012,D*.75,.012,GG1);beam(a,[0,y0,(zf+zr)/2+.01],[0,y0-D*.6,(zf+zr)/2-.008],.008,GSTEEL)}
+function reddot(a,y,z){cbox(a,0,y,z,.05,.018,.08,GG1,.005);const cy=y+.05,hw=.024,hh=.021,t=.009;
+  for(const zz of[z-.03,z+.02]){const d=zz<z?.022:.012;box(a,-hw-t/2,y+.016,zz,t,cy+hh+t-(y+.016),d,GG1);box(a,hw+t/2,y+.016,zz,t,cy+hh+t-(y+.016),d,GG1);box(a,0,cy+hh,zz,hw*2+t*2,t,d,GG1);box(a,0,y+.016,zz,hw*2+t*2,cy-hh-(y+.016),d,GG1)}
+  box(a,0,cy+hh+t,z-.005,hw*2+t*2,.006,.06,GG2);box(a,hw+t+.004,cy-.01,z-.005,.006,.02,.02,GG2)}
+function railTop(a,y,z0,z1){cbox(a,0,y,(z0+z1)/2,.03,.012,z1-z0,GG1,.004);for(let z=z1-.02;z>z0+.01;z-=.033)box(a,0,y+.012,z,.034,.007,.014,GK)}
+
+/* one builder per base gun; variants (o.v) change parts and colours. Returns the mount points */
+const GUNB={
+ ar(a,o){const v=o.v,F=v==='ar2'?GWOOD:v==='ar3'?GOD:GTAN,lng=v==='ar2'?1:0;
+  cbox(a,0,.03,-.04,.07,.056,.42,GUP,.012);cbox(a,0,-.035,.04,.064,.068,.24,GG2,.012);cbox(a,0,-.075,-.06,.062,.045,.11,GG2,.01);
+  box(a,.0362,.045,-.02,.002,.026,.1,GK);box(a,.037,.04,.08,.004,.016,.016,GG1);gcyl(a,[.032,.065,.12],[.05,.065,.12],.009,GG1);cbox(a,0,.07,.2,.03,.016,.04,GG1,.004);
+  railTop(a,.086,-.52-lng*.08,.08);const hgL=.42+lng*.12,hgZ=-.47-lng*.06;cbox(a,0,-.008,hgZ,.08,.094,hgL,F,.022);
+  for(const sx of[-1,1])for(let k=0;k<4+lng;k++)box(a,sx*.0405,.012,-.34-k*.075,.004,.034,.05,F.map(c=>c*.45));box(a,0,-.0095,hgZ,.05,.004,hgL-.06,F.map(c=>c*.6));
+  if(v==='ar3')for(const sx of[-1,1])cbox(a,sx*.045,.02,-.47,.01,.02,.34,GG1,.003);
+  const bz=-.86-lng*.12;gcyl(a,[0,.035,hgZ-hgL/2+.02],[0,.035,bz],.015,GG1);cbox(a,0,.012,hgZ-hgL/2-.02,.036,.044,.04,GG2,.008);cbox(a,0,.016,bz-.02,.04,.04,.06,GK,.01);for(let k=0;k<3;k++)box(a,0,.05,bz-.005-k*.014,.012,.006,.006,GG2);
+  if(!o.noStock){gcyl(a,[0,.045,.17],[0,.045,.42],.02,GG1);cbox(a,0,-.03,.36,.052,.1,.15,F,.014);cbox(a,0,.045,.37,.044,.028,.11,F,.01);cbox(a,0,-.06,.445,.06,.135,.02,GK,.006)}
+  beam(a,[0,-.05,.1],[0,-.19,.15],.052,F,.048);for(let k=0;k<3;k++)beam(a,[.026,-.08-k*.035,.11+k*.013],[.026,-.095-k*.035,.115+k*.013],.006,F.map(c=>c*.6));tguard(a,-.035,-.02,.07);
+  if(!o.noSight){reddot(a,.098,-.02);cbox(a,0,.098,-.6-lng*.1,.02,.04,.02,GG1,.004)}
+  return{muzzle:[0,.035,bz-.05],rail:[.098,-.2],under:[0,-.008,-.52-lng*.06],side:[.042,.035,-.56-lng*.06],stock:[0,.045,.17],mag:[0,-.075,-.06],mg:v==='ar2'?[.2,0,.058,.092]:[.22,.055,.05,.085],mgx:v==='ar2'?[.32,0,.058,.092]:[.36,.1,.05,.085],sightY:.148}},
+ smg(a,o){const v=o.v,F=v==='smg3'?GWOOD:GG1,sh=v==='smg2'?1:0;
+  cbox(a,0,-.06,-.02+sh*.04,.07,.13,.38-sh*.08,GG2,.014);box(a,.036,.02,-.04,.002,.03,.1,GK);for(let k=0;k<4;k++)box(a,.036,-.03,-.16-k*.03+sh*.06,.002,.04,.012,GK);
+  railTop(a,.07,-.24+sh*.08,.14);cbox(a,0,-.04,-.31+sh*.06,.06,.09,.2-sh*.06,F,.014);
+  let mz=-.52+sh*.08;if(v==='smg3'){gcyl(a,[0,.01,-.4],[0,.01,-.66],.034,GK);for(let k=0;k<4;k++)gcyl(a,[0,.01,-.44-k*.055],[0,.01,-.45-k*.055],.0355,GG2);mz=-.66}else gcyl(a,[0,.01,-.4+sh*.06],[0,.01,mz],.018,GG1);
+  if(!o.noStock&&!sh){for(const y of[.03,-.05])gcyl(a,[0,y,.17],[0,y,.38],.01,GG1);cbox(a,0,-.1,.38,.05,.16,.02,GK,.006)}if(sh&&!o.noStock){cbox(a,0,-.1,.19,.04,.1,.04,GG1,.008)}
+  beam(a,[0,-.08,.07],[0,-.22,.11],.05,GG1,.046);tguard(a,-.06,-.07,.04,GG1);
+  if(!o.noSight)reddot(a,.082,-.02);
+  return{muzzle:[0,.01,mz],rail:[.082,-.06],under:[0,-.04,-.33+sh*.06],side:[.032,-.005,-.32+sh*.06],stock:[0,0,.17],mag:[0,-.06,-.16],mg:sh?[.3,0,.036,.05]:[.24,0,.042,.06],mgx:sh?[.42,0,.036,.05]:[.36,0,.042,.06],sightY:.131}},
+ sg(a,o){const v=o.v,F=v==='sg2'?GG1:GWOOD;
+  if(v==='sg3'){for(const sx of[-1,1])gcyl(a,[sx*.024,.03,-.08],[sx*.024,.03,-.78],.023,GG1);cbox(a,0,.0,-.42,.09,.03,.5,F,.01);cbox(a,0,-.02,0,.08,.1,.2,GK,.014);box(a,0,.055,-.78,.006,.01,.006,GSTEEL)}
+  else{cbox(a,0,-.03,0,.075,.1,.3,v==='sg2'?GG2:GK,.016);gcyl(a,[0,.05,-.12],[0,.05,-.82],.022,GG1);gcyl(a,[0,.0,-.12],[0,.0,-.72],.018,GG1);box(a,0,.073,-.8,.006,.012,.006,GSTEEL);
+   cbox(a,0,-.025,-.42,.072,.07,.22,F,.018);for(let k=0;k<5;k++)box(a,0,-.027,-.34-k*.04,.076,.074,.008,F.map(c=>c*.65));box(a,.038,.02,-.02,.002,.04,.12,GK)}
+  if(!o.noStock){cbox(a,0,-.06,.24,.064,.13,.24,F,.016);cbox(a,0,-.075,.365,.07,.155,.02,GK,.006)}
+  beam(a,[0,-.03,.12],[0,-.17,.16],.052,F,.048);tguard(a,-.03,-.03,.09,GG1);if(!o.noSight){for(const sx of[-1,1])box(a,sx*.012,.07,.02,.008,.035,.02,GK);box(a,0,.09,-.8,.008,.012,.008,[2.2,1.8,.6]);box(a,0,.072,-.8,.012,.02,.012,GK)}
+  return{muzzle:[0,v==='sg3'?.03:.05,-.82],under:[0,v==='sg3'?0:-.025,-.44],side:[.04,.02,-.3],stock:[0,0,.13],mag:v==='sg2'?[0,-.03,-.06]:null,mg:[.14,0,.06,.09],mgx:[.24,0,.06,.09],sightY:.1}},
+ dmr(a,o){const v=o.v,F=v==='snp2'?GOD:v==='dmr2'?GTAN:GWOOD,big=v==='snp2'?1:0;
+  cbox(a,0,-.03,-.05,.07+big*.01,.1+big*.01,.42,GG2,.014);cbox(a,0,-.02,-.44-big*.06,.076,.085,.36+big*.1,F,.02);const bz=-.98-big*.12;gcyl(a,[0,.03,-.6],[0,.03,bz],.017+big*.004,GG1);
+  if(big){cbox(a,0,.0,bz-.06,.07,.065,.12,GK,.012);for(const sx of[-1,1])box(a,sx*.036,.012,bz-.06,.006,.04,.07,GG2);for(const sx of[-1,1])beam(a,[sx*.02,-.02,-.66],[sx*.12,-.3,-.7],.02,GK)}else cbox(a,0,.01,bz,.05,.05,.08,GK,.01);
+  cbox(a,0,.065,-.1,.03,.012,.4,GG1,.004);if(v!=='dmr2'){box(a,.045,.04,.06,.05,.012,.012,GSTEEL);gcyl(a,[.07,.045,.06],[.07,.045,.08],.012,GSTEEL)}
+  if(!o.noStock){cbox(a,0,-.06,.3,.06,.13,.32,F,.016);cbox(a,0,.06,.24,.05,.03,.16,F,.01);cbox(a,0,-.08,.465,.068,.17,.02,GK,.006)}
+  beam(a,[0,-.05,.1],[0,-.18,.14],.05,F,.048);tguard(a,-.03,-.03,.07,F);
+  if(!o.noSight){for(const z of[-.16,.04])cbox(a,0,.077,z,.03,.04,.026,GK,.006);gcyl(a,[0,.145,.14],[0,.145,-.26],.026,GG1);gcyl(a,[0,.145,-.24],[0,.145,-.32],.036,GG1);gcyl(a,[0,.145,.12],[0,.145,.2],.032,GG1);box(a,0,.111,-.32,.06,.066,.002,GGLASS);gcyl(a,[0,.17,-.06],[0,.18,-.06],.012,GG2)}
+  return{muzzle:[0,.03,bz-(big?.12:.04)],rail:[.077,-.1],under:[0,-.02,-.5-big*.05],side:[.04,.02,-.5],stock:[0,0,.16],mag:[0,-.03,-.06],mg:big?[.14,0,.07,.11]:[.1,0,.05,.08],mgx:big?[.22,0,.07,.11]:[.17,0,.05,.08],sightY:.145}},
+ pis(a,o){const v=o.v;
+  if(v==='rev'){gcyl(a,[0,.03,-.06],[0,.03,-.24],.016,GG2);cbox(a,0,.045,-.15,.02,.01,.18,GG2,.004);gcyl(a,[0,.02,-.06],[0,.02,.02],.042,[.3,.3,.31]);for(let k=0;k<6;k++){const an=k/6*6.283;box(a,Math.cos(an)*.036,.02+Math.sin(an)*.036-.006,-.02,.012,.012,.085,GG1)}cbox(a,0,.0,.06,.04,.05,.08,GG2,.01);box(a,0,.06,.08,.012,.02,.02,GG1)}
+  else if(v==='shorty'){for(const sx of[-1,1])gcyl(a,[sx*.02,.03,0],[sx*.02,.03,-.26],.02,GG1);cbox(a,0,.0,-.12,.07,.02,.2,GWOOD,.008);cbox(a,0,-.01,.05,.07,.08,.1,GK,.012)}
+  else{cbox(a,0,.0,-.04,.044,.05,.22,v==='bpis'?[.3,.29,.27]:GG2,.01);for(let k=0;k<6;k++)box(a,.023,.012,.04-k*.012,.002,.03,.004,GK);cbox(a,0,-.025,-.04,.04,.03,.2,GG1,.006);box(a,0,.05,-.14,.006,.012,.008,GK);box(a,0,.05,.05,.02,.012,.008,GK);gcyl(a,[0,.025,-.15],[0,.025,-.16],.009,GK);
+   if(v==='mpis'){cbox(a,0,.0,-.17,.04,.04,.06,GG1,.008);for(let k=0;k<2;k++)box(a,0,.04,-.16-k*.02,.012,.006,.008,GK)}if(v==='bpis')box(a,.024,.03,-.04,.004,.008,.16,[.55,.45,.2])}
+  const G=v==='shorty'?GWOOD:v==='rev'?GWOOD:GG1;beam(a,[0,-.02,.05],[0,-.15,.08],.046,G,.044);box(a,0,-.072,-.035,.01,.008,.07,GG1);box(a,0,-.072,-.07,.01,.05,.01,GG1);beam(a,[0,-.025,-.01],[0,-.055,-.02],.008,GSTEEL);
+  if(v==='rev'){box(a,0,.055,-.235,.006,.014,.01,GK);box(a,0,.06,.06,.024,.012,.01,GK)}if(v==='shorty'){box(a,0,.053,-.25,.008,.01,.008,GSTEEL);box(a,0,.05,.0,.02,.012,.012,GK)}
+  return{muzzle:[0,.025,v==='rev'?-.25:v==='shorty'?-.27:v==='mpis'?-.2:-.16],mag:v==='rev'||v==='shorty'?null:[0,-.03,.07],mg:v==='mpis'?[.24,0,.034,.05]:[.15,0,.034,.048],magTilt:1,sightY:v==='rev'?.068:v==='shorty'?.064:.064}}};
+/* attachments, built around their own mount point */
+const ATT2={
+ supp:a=>{gcyl(a,[0,0,.0],[0,0,-.26],.032,GG1);for(let k=0;k<3;k++)gcyl(a,[0,0,-.02-k*.1],[0,0,-.03-k*.1],.0335,GK);gcyl(a,[0,0,-.26],[0,0,-.27],.024,GK)},
+ comp:a=>{cbox(a,0,-.022,-.045,.044,.044,.09,GG2,.01);for(let k=0;k<3;k++)box(a,0,.015,-.015-k*.025,.02,.008,.012,GK)},
+ brake:a=>{cbox(a,0,-.028,-.06,.07,.056,.12,GG2,.014);for(let k=0;k<2;k++)for(const sx of[-1,1])box(a,sx*.036,-.018,-.03-k*.05,.004,.036,.026,GK)},
+ grip:a=>{box(a,0,-.012,0,.05,.012,.07,GG2);cbox(a,0,-.13,0,.038,.12,.042,GG1,.01,'y');for(let k=0;k<3;k++)box(a,0,-.1+k*.03,-.022,.03,.008,.003,GK);cbox(a,0,-.142,0,.046,.016,.05,GK,.006,'y')},
+ angled:a=>{box(a,0,-.012,0,.05,.012,.11,GG2);beam(a,[0,-.01,.05],[0,-.07,-.04],.04,GG1)},
+ tac:a=>{cbox(a,.016,-.024,0,.032,.048,.1,GK,.008);box(a,.016,-.002,-.051,.016,.016,.003,GRED);box(a,0,-.02,0,.012,.03,.04,GG2)},
+ scope4:a=>{for(const z of[-.08,.04])cbox(a,0,0,z,.03,.045,.028,GK,.006);gcyl(a,[0,.075,.12],[0,.075,-.2],.026,GG1);gcyl(a,[0,.075,-.18],[0,.075,-.28],.037,GG1);gcyl(a,[0,.075,.1],[0,.075,.18],.033,GG1);gcyl(a,[0,.105,-.04],[0,.115,-.04],.012,GG2);gcyl(a,[.026,.075,-.04],[.04,.075,-.04],.012,GG2);box(a,0,.04,-.282,.062,.07,.002,GGLASS)},
+ light:a=>{beam(a,[0,0,0],[0,0,.1],.03,GG1);cbox(a,0,-.05,.12,.05,.08,.16,GTAN,.014);cbox(a,0,-.06,.205,.06,.11,.012,GK,.004)},
+ heavy:a=>{gcyl(a,[0,0,0],[0,0,.1],.02,GG1);cbox(a,0,-.08,.14,.064,.13,.2,GG1,.018);cbox(a,0,.03,.12,.05,.035,.14,GG1,.01);cbox(a,0,-.09,.245,.07,.16,.02,GK,.006)}};
+const ATT2_OFF={scope4:[0,0,0]};
+const GUNM={},GMESH={},ATTM2={};
+const gunOpts=id=>({v:id,base:BASE(id)});
+function gunBuild(id,noSight,noStock){const a=[];const m=GUNB[BASE(id)](a,{v:id,noSight,noStock});return{a,m}}
+/* meshes for every gun: full, without sight (an optic replaces it), without stock (a stock attachment replaces it), and both */
+function buildGuns2(){for(const id in WEP){if(id==='kn')continue;const B=BASE(id);if(!GUNB[B])continue;
+    const r=gunBuild(id,false,false);GUNM[id]=r.m;GMESH[id]={g:mkVBO(r.a)};
+    for(const[k,ns,nk]of[['s',1,0],['k',0,1],['sk',1,1]])GMESH[id][k]=mkVBO(gunBuild(id,!!ns,!!nk).a);
+    const m=r.m;if(m.mag){for(const[k,spec]of[['m',m.mg],['mx',m.mgx||m.mg]]){const b=[];curvedMag(b,spec[0],spec[1],spec[2],spec[3],GG1,spec[1]?14:3);
+        const out=[],tilt=m.magTilt?-.22:0,ct=Math.cos(tilt),st=Math.sin(tilt);for(let i=0;i<b.length;i+=10){const y=b[i+1],z=b[i+2],ny=b[i+4],nz=b[i+5];out.push(b[i]+m.mag[0],y*ct-z*st+m.mag[1],y*st+z*ct+m.mag[2],b[i+3],ny*ct-nz*st,ny*st+nz*ct,b[i+6],b[i+7],b[i+8],b[i+9])}
+        GMESH[id][k]=mkVBO(out)}}
+    /* bounding box for previews */
+    let zf=0,zb=0,yt=-1;for(let i=0;i<r.a.length;i+=10){zf=Math.min(zf,r.a[i+2]);zb=Math.max(zb,r.a[i+2]);if(r.a[i+2]<0&&r.a[i+2]>-.45)yt=Math.max(yt,r.a[i+1])}(window.GBB=window.GBB||{})[id]={zf,zb,yt,ym:m.muzzle?m.muzzle[1]:.02};
+    M['g_'+id]=GMESH[id].g;M['m_'+id]=GMESH[id].m||null;
+    if(typeof SIGHT!=='undefined'&&SIGHT[B])SIGHT[id]=Object.assign({},SIGHT[id]||SIGHT[B],{y:m.sightY})}
+  for(const k in ATT2){const b=[];ATT2[k](b);ATTM2[k]=mkVBO(b)}}
+const attOn=(c,slot)=>c&&c.att&&c.att[slot]&&attOk(c.id,slot,c.att[slot])?c.att[slot]:null;
+/* the right gun mesh for a weapon with its attachments */
+function gunMeshFor(c){const G=GMESH[c.id];if(!G)return M['g_'+c.id];const s=attOn(c,'optic')?'s':'',k=attOn(c,'stock')?'k':'';return G[s+k]||G.g}
+function magMeshFor(c){const G=GMESH[c.id];if(!G)return M['m_'+c.id];return attOn(c,'mag')==='ext'&&G.mx?G.mx:G.m||null}
+function drawAtts(c,gm){if(!c||!c.att||WEP[c.id].melee)return;const m=GUNM[c.id];if(!m)return;gl.uniform3fv(U.uTint,[1,1,1]);
+  const at=(k,p)=>{if(!p||!ATTM2[k])return;gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(p[0],p[1],p[2],0,0)));draw(ATTM2[k])};
+  const mz=attOn(c,'muzzle');if(mz)at(mz,m.muzzle);const u=attOn(c,'under');if(u)at(u,m.under);if(attOn(c,'laser'))at('tac',m.side);
+  if(attOn(c,'optic')&&m.rail)at('scope4',[0,m.rail[0],m.rail[1]]);const st=attOn(c,'stock');if(st)at(st,m.stock)}
+/* where the muzzle ends, including a muzzle device */
+function muzzleZ(c){const m=GUNM[c.id];if(!m||!m.muzzle)return-.7;const d=attOn(c,'muzzle');return m.muzzle[2]-(d==='supp'?.27:d==='brake'?.12:d==='comp'?.09:0)}
+function sightOfW(c){if(c&&attOn(c,'optic')){const m=GUNM[c.id];return{y:(m&&m.rail?m.rail[0]:.09)+.075,ret:1,scope:1}}return sightOf(c?c.id:'ar')}
+/* ================= Operators: all built like the Veteran, re-themed ================= */
 const OPAPI=(()=>{
-const OPX={seg:9,leg:[],arms:[],band:[],sl:null,gl:null};
-const V=(a,p,n,c)=>a.push(p[0],p[1],p[2],n[0],n[1],n[2],c[0],c[1],c[2],0);
-const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],sc=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
-const crs=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nrm=v=>{const l=Math.hypot(...v)||1;return v.map(x=>x/l)},dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-const sp=(x,e)=>Math.sign(x)*Math.pow(Math.abs(x),e);
-/* generic smooth surface over a (u,v) grid; u wraps */
-function surf(a,f,nu,nv,col,ctr){const P=[];for(let j=0;j<=nv;j++){const r=[];for(let i=0;i<nu;i++)r.push(f(i/nu,j/nv));P.push(r)}
-  const N=P.map((r,j)=>r.map((p,i)=>{const du=sub(r[(i+1)%nu],r[(i-1+nu)%nu]),dv=sub(P[Math.min(nv,j+1)][i],P[Math.max(0,j-1)][i]);let n=nrm(crs(dv,du));if(!isFinite(n[0])||Math.hypot(...crs(dv,du))<1e-9)n=nrm(sub(p,ctr));if(dot(n,sub(p,ctr))<0)n=sc(n,-1);return n}));
-  const C=(i,j)=>typeof col==='function'?col(i/nu,j/nv):col;
-  for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const i2=(i+1)%nu,q=[[i,j],[i2,j],[i2,j+1],[i,j+1]];const T=[[0,1,2],[0,2,3]];for(const t of T){const v0=P[q[t[0]][1]][q[t[0]][0]],v1=P[q[t[1]][1]][q[t[1]][0]],v2=P[q[t[2]][1]][q[t[2]][0]];
-      let fn=crs(sub(v1,v0),sub(v2,v0));const flip=dot(fn,sub(v0,ctr))<0;const idx=flip?[t[0],t[2],t[1]]:t;for(const k of idx){const[ii,jj]=q[k];V(a,P[jj][ii],N[jj][ii],C(ii,jj))}}}}
-/* rounded box / sphere / egg: superellipsoid. e=1 sphere, e~.25 rounded box. rot: yaw, pitch, roll */
-function ell(a,c,ce,r,e,rot,seg){e=e==null?1:e;const[ry2,rx2,rz2]=rot||[0,0,0];const R=p=>{let[x,y,z]=p;let t=y*Math.cos(rz2)-x*Math.sin(rz2);x=x*Math.cos(rz2)+y*Math.sin(rz2);y=t;t=y*Math.cos(rx2)-z*Math.sin(rx2);z=y*Math.sin(rx2)+z*Math.cos(rx2);y=t;t=x*Math.cos(ry2)+z*Math.sin(ry2);z=-x*Math.sin(ry2)+z*Math.cos(ry2);x=t;return add([x,y,z],ce)};
-  const s=seg||OPX.seg;surf(a,(u,v)=>{const th=u*6.2832,ph=-1.5708+v*3.1416;return R([r[0]*sp(Math.cos(ph),e)*sp(Math.cos(th),e),r[1]*sp(Math.sin(ph),e),r[2]*sp(Math.cos(ph),e)*sp(Math.sin(th),e)])},s*2,s,c,ce)}
-/* tapered tube between two points, optional capped ends */
-function tube(a,c,p,q,r1,r2,seg,caps){seg=Math.max(6,Math.round((seg||12)*OPX.seg/14));const d=nrm(sub(q,p)),up=Math.abs(d[1])<.9?[0,1,0]:[1,0,0],s=nrm(crs(d,up)),t=crs(s,d),ctr=sc(add(p,q),.5);
-  surf(a,(u,v)=>{const an=u*6.2832,r=r1+(r2-r1)*v,b=add(p,sc(sub(q,p),v));return add(b,add(sc(s,Math.cos(an)*r),sc(t,Math.sin(an)*r)))},seg,1,c,ctr);
-  if(caps!==false)for(const[e,r,sg]of[[p,r1,-1],[q,r2,1]]){const n=sc(d,sg);for(let i=0;i<seg;i++){const a0=i/seg*6.2832,a1=(i+1)/seg*6.2832,P0=add(e,add(sc(s,Math.cos(a0)*r),sc(t,Math.sin(a0)*r))),P1=add(e,add(sc(s,Math.cos(a1)*r),sc(t,Math.sin(a1)*r)));
-      const f=dot(crs(sub(P0,e),sub(P1,e)),n)>0;f?(V(a,e,n,c),V(a,P0,n,c),V(a,P1,n,c)):(V(a,e,n,c),V(a,P1,n,c),V(a,P0,n,c))}}}
-const cap=(a,c,p,q,r)=>{tube(a,c,p,q,r,r,12,false);ell(a,c,p,[r,r,r]);ell(a,c,q,[r,r,r])};
-/* ---------- characters: origin at the feet, facing -z, holding a rifle at the chest ---------- */
-function body(a,o){const sk=o.skin||[.78,.6,.48],sh=o.shirt,pa=o.pants,bo=o.boots||[.12,.1,.09],gl=o.gloves||sk,sl=o.sleeve||sh,bulk=o.bulk||1,L=OPX.leg,A=OPX.arms;
-  {const hx=0;cap(L,pa,[hx,.9,0],[hx,.5,.02],.1*bulk);cap(L,pa,[hx,.48,.02],[hx,.15,0],.088*bulk);ell(L,bo,[hx,.08,-.04],[.095*bulk,.08,o.bigShoes?.27:.15],.4)}
-  ell(a,pa,[0,.95,0],[.21*bulk,.13,.14*bulk],.55);ell(a,sh,[0,1.22,0],[.25*bulk,.28,.16*bulk],.5);ell(a,sk,[0,1.52,0],[.06,.05,.06],1);
-  const sR=[.26*bulk,1.4,0],eR=[.27,1.1,-.2],hR=[.1,1.14,-.42],sL=[-.26*bulk,1.4,0],eL=[-.2,1.14,-.36],hL=[.02,1.19,-.6];
-  cap(A,sl,sR,eR,.062*bulk);cap(A,sl,eR,hR,.054*bulk);cap(A,sl,sL,eL,.062*bulk);cap(A,sl,eL,hL,.054*bulk);ell(A,gl,hR,[.055,.06,.065],.8);ell(A,gl,hL,[.055,.06,.065],.8);
-  ell(OPX.band,[1,1,1],[-.27*bulk,1.3,0],[.075*bulk,.045,.075*bulk],.6);
-  OPX.sl=sl;OPX.gl=gl;
-  if(o.head!==false)ell(a,o.face||sk,[0,1.68,-.01],[.125,.145,.13],.8)}
-const OPS={
- soldier:{n:'RECON',b:o=>{body(o,{shirt:[.33,.35,.27],pants:[.3,.3,.24],gloves:[.14,.13,.12]});ell(o,[.25,.27,.2],[0,1.74,-.01],[.135,.09,.145],.6,null,10);ell(o,[.25,.27,.2],[0,1.71,-.01],[.15,.02,.16],.5);ell(o,[.14,.14,.14],[0,1.66,-.12],[.09,.035,.03],.4);ell(o,[.4,.55,.65],[0,1.66,-.15],[.075,.025,.01],.6);ell(o,[.26,.27,.21],[0,1.25,-.03],[.21,.2,.15],.45);for(const x of[-.1,0,.1])ell(o,[.2,.21,.16],[x,1.16,-.16],[.04,.05,.025],.4)}},
- clown:{n:'BOZO',b:o=>{const Y=[.82,.66,.14],Rd=[.72,.14,.13];body(o,{shirt:(u,v)=>u<.5?Y:Rd,pants:Rd,sleeve:Y,gloves:[.95,.95,.95],boots:[.85,.12,.12],bigShoes:1,face:[.95,.93,.9]});
-   for(let i=0;i<8;i++){const an=i/8*6.2832;ell(o,[[.2,.5,.95],[.95,.3,.6],[.3,.85,.35],[.95,.6,.1]][i%4],[Math.cos(an)*.11,1.75+Math.sin(i*1.7)*.02,Math.sin(an)*.1],[.075,.07,.075])}
-   ell(o,[.9,.1,.1],[0,1.64,-.135],[.035,.035,.035]);ell(o,[.85,.15,.2],[0,1.585,-.115],[.045,.012,.01],.6);for(const s of[-1,1])ell(o,[.15,.2,.5],[s*.045,1.69,-.12],[.018,.03,.01]);
-   for(let i=0;i<14;i++){const an=i/14*6.2832;ell(o,i%2?[.95,.95,.95]:[.9,.2,.3],[Math.cos(an)*.15,1.5,Math.sin(an)*.13],[.05,.03,.05])}for(const y of[1.33,1.2,1.07])ell(o,[.2,.45,.95],[0,y,-.145],[.025,.025,.012])}},
- police:{n:'OFFICER',b:o=>{const N=[.12,.15,.28];body(o,{shirt:N,pants:[.1,.12,.2],gloves:[.08,.08,.08]});tube(o,N,[0,1.73,-.01],[0,1.82,-.01],.12,.13,14);ell(o,[.05,.05,.07],[0,1.73,-.11],[.11,.012,.07],.5);ell(o,[.85,.7,.25],[0,1.79,-.13],[.025,.025,.01]);
-   ell(o,[.05,.05,.05],[0,1.67,-.12],[.09,.025,.02],.4);ell(o,[.85,.72,.25],[-.11,1.3,-.14],[.03,.035,.01]);ell(o,[.08,.07,.07],[0,.98,0],[.21,.035,.14],.5);ell(o,[.85,.75,.3],[0,.98,-.14],[.03,.025,.01],.4);for(const s of[-1,1])ell(o,[.1,.1,.1],[s*.17,.96,-.06],[.03,.05,.04],.4)}},
- knight:{n:'SIR CLANK',b:o=>{const S=[.62,.64,.68],S2=[.45,.47,.5];body(o,{shirt:S,pants:S2,sleeve:S,gloves:S2,boots:S2,head:false,bulk:1.08});
-   tube(o,S,[0,1.55,-.01],[0,1.8,-.01],.13,.12,16);ell(o,S,[0,1.8,-.01],[.12,.05,.12],.8);ell(o,[.05,.05,.06],[0,1.7,-.13],[.08,.012,.01],.5);for(let i=0;i<5;i++)ell(o,[.05,.05,.06],[-.04+i*.02,1.63,-.13],[.005,.02,.01],.5);
-   for(let i=0;i<6;i++)ell(o,[.8,.12,.12],[0,1.88+i*.03,.02+i*.03],[.03,.04,.03]);for(const s of[-1,1])ell(o,S,[s*.27,1.42,0],[.1,.07,.1],.8);
-   ell(o,[.7,.12,.12],[0,1.15,-.15],[.15,.22,.015],.4);ell(o,[.9,.75,.2],[0,1.2,-.163],[.022,.12,.005],.4);ell(o,[.9,.75,.2],[0,1.24,-.163],[.08,.02,.005],.4)}},
- astro:{n:'APOLLO',b:o=>{const W=[.88,.88,.86];body(o,{shirt:W,pants:W,gloves:[.75,.75,.72],boots:[.6,.6,.58],head:false,bulk:1.18});ell(o,W,[0,1.7,0],[.17,.17,.17]);ell(o,[.75,.55,.15],[0,1.71,-.06],[.13,.11,.12],1);
-   ell(o,[.8,.8,.78],[0,1.27,.17],[.17,.2,.09],.35);ell(o,[.9,.45,.12],[-.12,1.33,-.155],[.04,.03,.01],.4);ell(o,[.2,.35,.8],[.1,1.33,-.155],[.03,.02,.01],.4);ell(o,[.55,.55,.55],[0,1.15,-.16],[.07,.05,.02],.35)}},
- chef:{n:'LE CHEF',b:o=>{const W=[.92,.92,.9];body(o,{shirt:W,pants:[.25,.25,.27],gloves:[.78,.6,.48]});tube(o,W,[0,1.76,-.01],[0,1.92,-.01],.11,.13,14);for(let i=0;i<6;i++){const an=i/6*6.2832;ell(o,W,[Math.cos(an)*.08,1.95,Math.sin(an)*.08-.01],[.08,.06,.08])}
-   for(const s of[-1,1])for(const y of[1.34,1.24,1.14])ell(o,[.3,.3,.32],[s*.06,y,-.14],[.016,.016,.01]);ell(o,[.85,.15,.15],[0,1.47,-.06],[.09,.035,.07],.6);ell(o,[.35,.22,.12],[0,1.6,-.125],[.05,.012,.01],.6)}},
- ninja:{n:'SHADOW',b:o=>{const K=[.09,.09,.1];body(o,{shirt:K,pants:K,gloves:K,boots:K,face:K});ell(o,[.78,.6,.48],[0,1.69,-.105],[.075,.022,.02],.5);for(const s of[-1,1])ell(o,[.15,.1,.08],[s*.035,1.69,-.12],[.012,.012,.005]);
-   ell(o,[.8,.1,.12],[0,1.74,-.01],[.125,.025,.135],.5);for(let i=0;i<4;i++)ell(o,[.8,.1,.12],[.03+i*.01,1.73-i*.05,.13+i*.04],[.02,.03,.015]);ell(o,[.55,.1,.12],[0,.99,0],[.21,.04,.14],.5)}},
- cowboy:{n:'DUSTY',b:o=>{const Br=[.45,.3,.17];body(o,{shirt:[.75,.35,.25],pants:[.25,.33,.5],boots:[.35,.22,.12],gloves:[.55,.38,.22]});ell(o,Br,[0,1.76,-.01],[.27,.015,.25],.6);ell(o,Br,[0,1.82,-.01],[.12,.07,.11],.5);ell(o,[.2,.15,.1],[0,1.79,-.01],[.125,.015,.115],.5);
-   ell(o,[.8,.15,.15],[0,1.55,-.05],[.1,.04,.08],.6);ell(o,Br,[0,1.24,-.02],[.22,.2,.145],.5);ell(o,[.85,.7,.3],[0,.98,-.14],[.04,.03,.01],.4);ell(o,[.3,.2,.12],[0,.98,0],[.21,.03,.14],.5);for(const s of[-1,1])ell(o,[.35,.22,.12],[s*.06,1.68,-.115],[.02,.01,.01])}},
- hazmat:{n:'BIOHAZARD',b:o=>{const Y=[.78,.66,.1];body(o,{shirt:Y,pants:Y,gloves:[.12,.12,.12],boots:[.12,.12,.12],head:false,bulk:1.1});ell(o,Y,[0,1.68,0],[.15,.16,.15],.8);ell(o,[.2,.2,.21],[0,1.65,-.1],[.11,.1,.06],.7);
-   for(const s of[-1,1]){tube(o,[.3,.3,.32],[s*.07,1.6,-.13],[s*.11,1.56,-.2],.035,.035,10);ell(o,[.15,.25,.25],[s*.045,1.69,-.15],[.03,.03,.01])}ell(o,[.12,.12,.12],[0,1.25,-.15],[.06,.06,.01],1);ell(o,Y,[0,1.25,-.155],[.03,.03,.006],1)}},
- skeleton:{n:'BONES',b:o=>{const K=[.07,.07,.08],Wb=[.9,.88,.8];body(o,{shirt:K,pants:K,gloves:Wb,boots:K,face:Wb});for(const s of[-1,1])ell(o,[.02,.02,.02],[s*.045,1.68,-.1],[.03,.035,.03]);ell(o,[.05,.05,.05],[0,1.62,-.12],[.015,.02,.01]);
-   for(let i=0;i<5;i++)ell(o,[.05,.05,.05],[-.04+i*.02,1.575,-.11],[.006,.014,.008]);for(let i=0;i<4;i++)ell(o,Wb,[0,1.36-i*.07,-.13],[.15-i*.012,.016,.02],.6);ell(o,Wb,[0,1.24,-.14],[.016,.2,.015],.6);
-   for(const s of[-1,1]){tube(o,Wb,[s*.12,.92,-.08],[s*.12,.55,-.08],.022,.02,8);tube(o,Wb,[s*.12,.5,-.07],[s*.12,.15,-.07],.02,.018,8);ell(o,Wb,[s*.12,.52,-.08],[.035,.03,.03])}ell(o,Wb,[0,.95,-.1],[.14,.05,.03],.6)}}};
-
-OPS.vet={n:'VETERAN',classic:1};
+/* ================= OPERATORS v2: the veteran build, re-themed ================= */
+const SKN2=[.62,.5,.42];
+function opV2(T){const P=T.pants||[.3,.29,.24],P2=T.pants2||P.map(v=>v*.82),SH=T.shirt||[.36,.33,.27],DK=T.dark||[.11,.1,.09],BT=T.boot||[.2,.15,.11],SK=T.skin||SKN2,GR=T.gear||[.36,.32,.24];
+  const L=[],TO=[],H=[],AR=[],BAND=[];
+  /* leg */
+  box(L,0,-.47,0,.2,.47,.22,P);box(L,0,-.84,0,.18,.4,.2,P2);box(L,0,-.55,-.115,.16,.13,.045,T.knee||DK);box(L,-.105,-.38,0,.02,.12,.12,P2);box(L,0,-.85,-.03,(T.bigShoes?.26:.21),.13,T.bigShoes?.5:.31,BT);box(L,0,-.86,-.03,T.bigShoes?.27:.22,.03,T.bigShoes?.51:.32,DK);box(L,0,-.06,0,.21,.06,.23,T.belt||DK);
+  /* torso */
+  box(TO,0,.74,0,.42,.18,.26,P);box(TO,0,.84,0,.44,.06,.28,T.belt||DK);box(TO,0,.9,0,.44,.48,.26,SH);box(TO,0,1.36,0,.15,.1,.15,T.neck||SK);
+  for(const s of[-1,1]){box(TO,s*.27,1.12,0,.14,.26,.22,T.sleeve||SH);box(TO,s*.29,1.27,0,.16,.06,.24,(T.sleeve||SH).map(v=>v*.85))}
+  if(T.pack!==false){box(TO,0,.92,.18,.36,.4,.13,GR);box(TO,0,1.06,.25,.3,.16,.04,GR.map(v=>v*.85));box(TO,0,.94,.25,.3,.08,.035,DK);for(const s of[-1,1])box(TO,s*.13,.9,.13,.04,.45,.03,DK)}
+  if(T.vest){const V=T.vest;box(TO,0,.92,0,.48,.4,.32,V);box(TO,0,1.31,0,.38,.05,.3,V.map(v=>v*.85));for(const x of[-.13,0,.13]){box(TO,x,.93,-.165,.11,.15,.05,V.map(v=>v*.8));box(TO,x,1.07,-.19,.1,.02,.01,V.map(v=>v*.6))}}
+  for(const s of[-1,1])box(BAND,s*.27,1.24,0,.15,.05,.23,[1,1,1]);
+  T.torso&&T.torso(TO,DK);
+  /* head (origin at 1.42) */
+  box(H,0,0,0,.27,.3,.28,T.face||SK);if(T.headBase!==false){box(H,0,.13,-.142,.22,.08,.01,SK)}
+  T.head&&T.head(H,DK);
+  /* arms */
+  const SL=T.sleeve||SH,GLV=T.glove||[.15,.13,.11];box(AR,.2,-.12,-.1,.12,.13,.22,SL);box(AR,.15,-.1,-.3,.1,.1,.2,SL.map(v=>v*.9));box(AR,.11,-.09,-.43,.095,.095,.08,GLV);
+  box(AR,-.2,-.1,-.12,.12,.13,.24,SL);box(AR,-.13,-.07,-.36,.1,.1,.24,SL.map(v=>v*.9));box(AR,-.06,-.05,-.52,.095,.095,.08,GLV);
+  T.arms&&T.arms(AR);
+  return{leg:L,torso:TO,head:H,arms:AR,band:BAND}}
+const W=[.92,.92,.9],Y=[.85,.68,.12],YH=Y,K=[.07,.07,.075];
+const THEMES={
+ vet:{n:'VETERAN',vest:[.32,.34,.26],head:(a,D)=>{const OL=[.3,.32,.24],GL=[.5,.75,.85];box(a,0,-.03,-.15,.2,.15,.06,D);box(a,0,-.01,-.2,.09,.09,.07,[.34,.33,.3]);box(a,-.07,.12,-.16,.085,.07,.03,D);box(a,.07,.12,-.16,.085,.07,.03,D);box(a,-.07,.128,-.177,.065,.052,.005,GL);box(a,.07,.128,-.177,.065,.052,.005,GL);box(a,0,.19,0,.33,.15,.35,OL);box(a,0,.18,0,.37,.035,.39,OL.map(v=>v*.85));box(a,0,.33,0,.26,.04,.28,OL)}},
+ clown:{n:'BOZO',pants:[.75,.15,.14],pants2:[.2,.4,.85],shirt:Y,sleeve:[.2,.55,.25],boot:[.85,.12,.12],bigShoes:1,glove:W,face:[.95,.93,.9],pack:false,belt:[.95,.6,.1],
+   torso:(a,D)=>{for(const[x,y,c]of[[-.12,1.2,[.9,.2,.3]],[.1,1.05,[.2,.5,.95]],[-.05,.98,[.3,.8,.35]],[.12,1.28,[.95,.3,.6]]])box(a,x,y,-.135,.07,.07,.02,c);for(let i=0;i<10;i++){const an=i/10*6.283;box(a,Math.sin(an)*.17,1.36,Math.cos(an)*.15,.09,.05,.09,i%2?W:[.9,.2,.3],null,an)}for(const y of[1.25,1.12,.99])box(a,0,y,-.14,.035,.035,.02,[.2,.45,.95])},
+   head:(a,D)=>{box(a,0,.11,-.15,.06,.06,.06,[.95,.1,.1]);box(a,0,.03,-.142,.14,.035,.01,[.85,.12,.18]);for(const s of[-1,1]){box(a,s*.07,.15,-.142,.05,.05,.008,[.15,.25,.6]);box(a,s*.07,.21,-.142,.016,.03,.008,[.15,.25,.6])}
+     const HC=[[.95,.35,.1],[.95,.6,.1],[.3,.75,.95],[.95,.3,.55]];for(let i=0;i<14;i++){const an=i/14*6.283,r=.17;box(a,Math.sin(an)*r,.2+(i%3)*.03,Math.cos(an)*r*.9+.02,.1,.11,.1,HC[i%4],null,an)}box(a,0,.3,.02,.2,.07,.2,HC[0])}},
+ police:{n:'OFFICER',pants:[.1,.12,.2],shirt:[.14,.18,.32],sleeve:[.14,.18,.32],vest:[.1,.11,.14],pack:false,belt:[.06,.06,.07],glove:[.08,.08,.08],
+   torso:(a,D)=>{box(a,-.13,1.12,-.178,.06,.07,.01,[.85,.7,.25]);box(a,0,1.0,-.18,.3,.045,.01,[.85,.85,.85]);for(const s of[-1,1])box(a,s*.2,.74,-.1,.06,.1,.06,D);box(a,.25,.66,0,.05,.18,.07,D);box(a,-.22,1.2,-.17,.05,.09,.04,D)},
+   head:(a,D)=>{const N=[.1,.12,.22];box(a,0,.24,0,.3,.13,.3,N);box(a,0,.3,0,.34,.06,.34,N);box(a,0,.23,-.19,.29,.025,.12,K);box(a,0,.24,-.157,.29,.025,.01,[.85,.7,.25]);box(a,0,.27,-.16,.05,.05,.01,[.9,.75,.3]);box(a,0,.11,-.15,.22,.045,.02,K)}},
+ knight:{n:'SIR CLANK',pants:[.5,.52,.56],pants2:[.42,.44,.48],shirt:[.58,.6,.64],sleeve:[.58,.6,.64],boot:[.42,.44,.48],glove:[.42,.44,.48],knee:[.7,.72,.76],pack:false,belt:[.35,.22,.12],face:[.58,.6,.64],neck:[.48,.5,.54],headBase:false,
+   torso:(a,D)=>{box(a,0,.84,-.14,.34,.46,.02,[.7,.1,.1]);box(a,0,1.0,-.152,.05,.24,.01,[.9,.75,.2]);box(a,0,1.08,-.152,.18,.05,.01,[.9,.75,.2]);for(const s of[-1,1]){box(a,s*.3,1.26,0,.22,.1,.3,[.66,.68,.72]);box(a,s*.3,1.22,0,.24,.04,.32,[.5,.52,.56])}},
+   head:(a,D)=>{const S=[.62,.64,.68];box(a,0,-.02,0,.3,.36,.3,S);box(a,0,.34,0,.24,.05,.24,S);box(a,0,.16,-.152,.22,.025,.01,K);for(let i=0;i<4;i++)box(a,-.06+i*.04,.03,-.152,.015,.06,.01,K);box(a,0,-.02,-.16,.04,.36,.02,S.map(v=>v*.85));for(let i=0;i<5;i++)box(a,0,.38+i*.04,.05+i*.035,.05,.05,.07,[.85,.12,.12])}},
+ astro:{n:'APOLLO',pants:W,shirt:W,sleeve:W,boot:[.6,.6,.58],glove:[.7,.7,.68],knee:[.75,.75,.72],belt:[.55,.55,.55],face:W,headBase:false,gear:[.85,.85,.82],
+   torso:(a,D)=>{box(a,0,1.02,-.15,.2,.14,.03,[.55,.55,.55]);box(a,-.05,1.08,-.168,.04,.03,.01,[.9,.4,.1]);box(a,.05,1.08,-.168,.04,.03,.01,[.2,.4,.9]);box(a,-.15,1.2,-.14,.08,.05,.01,[.2,.35,.8]);box(a,-.15,1.15,-.14,.08,.03,.01,[.9,.9,.9]);for(const s of[-1,1])beam(a,[s*.12,1.3,-.1],[s*.16,1.1,.16],.04,[.6,.6,.6])},
+   head:(a,D)=>{box(a,0,-.05,0,.36,.4,.36,W);box(a,0,.02,-.17,.28,.24,.03,[.75,.55,.15]);box(a,0,.05,-.185,.22,.1,.005,[1,.85,.4]);box(a,0,.37,0,.2,.03,.2,W.map(v=>v*.85))}},
+ chef:{n:'LE CHEF',pants:[.85,.85,.83],pants2:[.2,.2,.22],shirt:W,sleeve:W,pack:false,belt:[.8,.8,.78],glove:SKN2,
+   torso:(a,D)=>{box(a,0,.6,-.15,.36,.62,.02,[.94,.94,.92]);box(a,0,1.0,-.152,.2,.02,.01,[.7,.7,.7]);for(const s of[-1,1])for(const y of[1.24,1.12,1.0])box(a,s*.08,y,-.14,.03,.03,.012,[.25,.25,.28]);box(a,0,1.36,-.06,.2,.06,.2,[.85,.15,.15]);box(a,-.15,.78,-.17,.08,.09,.015,[.95,.95,.95])},
+   head:(a,D)=>{box(a,0,.3,0,.3,.06,.3,W);box(a,0,.36,0,.28,.18,.28,W);for(const[x,z]of[[-.09,-.08],[.09,-.08],[-.09,.08],[.09,.08],[0,0]])box(a,x,.5,z,.15,.09,.15,W);box(a,0,.08,-.152,.12,.025,.01,[.3,.18,.1]);for(const s of[-1,1])box(a,s*.075,.07,-.152,.06,.02,.01,[.3,.18,.1]);for(const s of[-1,1])box(a,s*.06,.15,-.145,.04,.03,.005,K)}},
+ ninja:{n:'SHADOW',pants:[.08,.08,.09],shirt:[.1,.1,.11],sleeve:[.1,.1,.11],boot:[.06,.06,.07],glove:[.06,.06,.07],face:[.08,.08,.09],belt:[.6,.08,.1],knee:[.14,.14,.15],gear:[.12,.12,.13],headBase:false,
+   torso:(a,D)=>{beam(a,[-.2,1.32,-.14],[.2,.84,-.14],.06,[.6,.08,.1]);beam(a,[-.15,.7,.16],[.2,1.5,.2],.035,[.3,.25,.2]);box(a,.2,1.46,.2,.04,.1,.04,[.6,.08,.1])},
+   head:(a,D)=>{box(a,0,.12,-.145,.23,.06,.01,SKN2);for(const s of[-1,1])box(a,s*.06,.135,-.152,.04,.02,.005,K);box(a,0,.2,0,.29,.04,.3,[.6,.08,.1]);box(a,.04,.18,.17,.04,.04,.1,[.6,.08,.1]);box(a,.06,.12,.24,.035,.09,.03,[.6,.08,.1])}},
+ cowboy:{n:'DUSTY',pants:[.22,.3,.48],pants2:[.2,.27,.44],shirt:[.72,.32,.24],sleeve:[.72,.32,.24],vest:[.4,.27,.15],boot:[.35,.22,.12],glove:[.5,.35,.2],belt:[.3,.2,.12],pack:false,
+   torso:(a,D)=>{box(a,0,.84,-.142,.1,.07,.01,[.9,.75,.3]);box(a,0,1.32,-.12,.18,.08,.04,[.75,.12,.12]);box(a,.24,.62,.0,.08,.2,.08,[.35,.22,.12]);box(a,.24,.7,-.03,.03,.14,.03,[.5,.51,.53])},
+   head:(a,D)=>{const B=[.45,.3,.17];box(a,0,.21,0,.5,.025,.46,B);box(a,0,.23,0,.26,.13,.26,B);box(a,0,.33,0,.22,.03,.22,B.map(v=>v*.85));box(a,0,.235,0,.27,.03,.27,[.2,.13,.08]);box(a,0,-.04,-.15,.22,.06,.02,[.75,.12,.12]);box(a,0,.03,-.143,.12,.02,.01,[.35,.22,.12])}},
+ hazmat:{n:'BIOHAZARD',pants:Y,shirt:Y,sleeve:Y,boot:[.1,.1,.1],glove:[.1,.1,.1],knee:[.7,.58,.1],belt:[.12,.12,.12],face:Y,headBase:false,gear:[.85,.85,.82],
+   torso:(a,D)=>{box(a,0,1.0,-.14,.12,.12,.01,[.1,.1,.1]);box(a,0,1.03,-.147,.06,.06,.005,YH);for(const s of[-1,1])beam(a,[s*.1,.82,.24],[s*.1,1.32,.24],.1,[.8,.8,.78]);box(a,0,.76,-.14,.3,.04,.01,[.1,.1,.1])},
+   head:(a,D)=>{box(a,0,-.03,0,.33,.38,.33,Y);box(a,0,.06,-.17,.24,.14,.02,[.2,.32,.35]);box(a,0,-.06,-.19,.12,.08,.06,[.18,.18,.19]);for(const s of[-1,1]){beam(a,[s*.06,-.04,-.21],[s*.12,-.08,-.27],.07,[.25,.25,.26])}box(a,0,.35,0,.12,.03,.12,Y.map(v=>v*.8))}},
+ skeleton:{n:'BONES',pants:[.07,.07,.08],shirt:[.08,.08,.09],sleeve:[.08,.08,.09],boot:[.06,.06,.06],glove:[.9,.88,.8],face:[.9,.88,.8],neck:[.9,.88,.8],belt:[.05,.05,.05],knee:[.9,.88,.8],pack:false,headBase:false,
+   torso:(a,D)=>{const B=[.9,.88,.8];box(a,0,.92,-.14,.04,.44,.01,B);for(let i=0;i<4;i++)box(a,0,1.24-i*.08,-.14,.32-i*.03,.03,.01,B);box(a,0,.76,-.14,.26,.05,.01,B)},
+   head:(a,D)=>{for(const s of[-1,1])box(a,s*.065,.1,-.142,.07,.07,.01,K);box(a,0,.04,-.142,.04,.04,.01,K);for(let i=0;i<5;i++)box(a,-.08+i*.04,-.07,-.142,.025,.05,.01,i%2?K:[.9,.88,.8]);box(a,0,-.12,-.03,.22,.06,.22,[.85,.83,.75])}}};
+THEMES.vet.headBase=false;
+THEMES.soldier={n:'RECON',pants:[.3,.33,.22],pants2:[.26,.29,.19],shirt:[.34,.37,.25],sleeve:[.32,.35,.24],vest:[.22,.25,.17],gear:[.3,.33,.22],glove:[.12,.12,.1],
+  head:(a,D)=>{const H=[.3,.34,.22];box(a,0,.06,-.142,.22,.05,.01,[.25,.3,.18]);for(const s of[-1,1])box(a,s*.06,.16,-.142,.05,.02,.006,K);box(a,0,.21,0,.31,.1,.31,H);box(a,0,.2,0,.46,.02,.46,H.map(v=>v*.85));box(a,0,.29,0,.24,.03,.24,H);box(a,0,.23,0,.32,.03,.32,[.18,.2,.13])}};
 const OP_IDS=['vet','soldier','clown','police','knight','astro','chef','ninja','cowboy','hazmat','skeleton'];
-const OP_DESC={vet:'The original Strike Zone grunt.',soldier:'Helmet, goggles, plate carrier.',clown:'Big shoes. Bigger hair.',police:'Badge, cap and duty belt.',knight:'Full plate, red plume.',astro:'Helmet visor and life support.',chef:'Toque, apron, no mercy.',ninja:'Black wrap and a red sash.',cowboy:'Wide hat and a big buckle.',hazmat:'Sealed suit and a gas mask.',skeleton:'Mostly bones.'};
-/* split a whole-body build into the parts drawChar animates */
-function opBuild(id){const o=OPS[id];if(!o||o.classic)return null;OPX.leg=[];OPX.arms=[];OPX.band=[];const all=[];o.b(all);
-  const torso=[],head=[],legX=[];for(let i=0;i<all.length;i+=30){const cy=(all[i+1]+all[i+11]+all[i+21])/3,cx=(all[i]+all[i+10]+all[i+20])/3;const t=all.slice(i,i+30);
-    if(cy>1.5)head.push(...t);else if(cy<.82&&Math.abs(cx)>.04)legX.push([cx,t]);else torso.push(...t)}
-  const mv=(arr,dx,dy,dz)=>{for(let i=0;i<arr.length;i+=10){arr[i]+=dx;arr[i+1]+=dy;arr[i+2]+=dz}return arr};
-  /* extra leg-height pieces (skeleton bones) follow the right leg */
-  const leg=OPX.leg.slice();for(const[cx,t]of legX)if(cx>0)leg.push(...mv(t.slice(),-.115,0,0));
-  mv(leg,0,-.85,0);mv(head,0,-1.42,0);const arms=mv(OPX.arms.slice(),0,-1.24,0);
-  const sl=OPX.sl,glv=OPX.gl,hand=[],slc=typeof sl==='function'?sl(.75,.5):sl;
-  ell(hand,glv,[0,-.045,-.12],[.05,.05,.07],.6);for(let i=0;i<4;i++)ell(hand,glv,[-.03+i*.02,-.02,-.19],[.011,.012,.03],.7);ell(hand,glv,[.045,-.04,-.1],[.014,.014,.035],.7,[.5,0,0]);
-  cap(hand,slc,[0,-.055,-.04],[0,-.065,.2],.055);ell(hand,slc.map(v=>v*.8),[0,-.055,-.035],[.06,.06,.02],.6);
-  const mk=a=>a.length?mkVBO(a):null;return{leg:mk(leg),torso:mk(torso),head:mk(head),arms:mk(arms),band:mk(OPX.band),hand:mk(hand)}}
+const OPS={};for(const k of OP_IDS)OPS[k]={n:THEMES[k].n};
+const OP_DESC={vet:'The original Strike Zone grunt.',soldier:'Boonie hat, face paint, light kit.',clown:'Big shoes. Bigger hair.',police:'Peaked cap, badge and duty belt.',knight:'Full plate, visor and a red plume.',astro:'Gold visor and life support.',chef:'Tall toque, buttoned whites, apron.',ninja:'Black wrap, red sash, sword on the back.',cowboy:'Wide hat, bandana, holster.',hazmat:'Sealed suit, twin-filter gas mask.',skeleton:'Mostly bones.'};
+/* first-person hand in the operator's glove and sleeve colours */
+function handOf(T){const SH=T.sleeve||T.shirt||[.36,.33,.27],GV=T.glove||[.15,.13,.11],SKc=T.skin||SKN2,a=[];
+  box(a,0,-.045,-.13,.09,.09,.1,GV);box(a,0,-.035,-.17,.095,.03,.03,GV.map(v=>v*.8));box(a,0,-.04,-.04,.08,.08,.06,T.wrist||GV.map(v=>v*.9));box(a,0,-.06,.01,.125,.12,.04,SH.map(v=>v*.75));box(a,0,-.06,.03,.12,.12,.2,SH);return a}
 const OPM={};
-function opMesh(id){if(!(id in OPM)){try{OPM[id]=opBuild(id)}catch(e){console.warn('op',id,e);OPM[id]=null}}return OPM[id]}
-const opOf=p=>OPS[p&&p.op]?p.op:(p&&p.bot?(p.op=OP_IDS[1+Math.floor(Math.random()*(OP_IDS.length-1))]):'vet');
-
-return{OPS,OP_IDS,OP_DESC,opMesh,opOf,ell,tube,cap}})();
+function opMesh(id){if(!THEMES[id])id='vet';if(!OPM[id]){const T=THEMES[id],r=opV2(T);OPM[id]={leg:mkVBO(r.leg),torso:mkVBO(r.torso),head:mkVBO(r.head),arms:mkVBO(r.arms),band:mkVBO(r.band),hand:mkVBO(handOf(T))}}return OPM[id]}
+const opOf=p=>THEMES[p&&p.op]?p.op:(p&&p.bot?(p.op=OP_IDS[Math.floor(Math.random()*OP_IDS.length)]):'vet');
+return{OPS,OP_IDS,OP_DESC,opMesh,opOf}})();
 const{OPS,OP_IDS,OP_DESC,opMesh,opOf}=OPAPI;
 /* ================= Lobby: PLAY / WEAPONS / OPERATORS / SETTINGS ================= */
 let lobTab='play',wSel=null,wRot=.6,wDrag=null,opSel=null,opRot=0;
@@ -1932,7 +2012,7 @@ function pgClass(){const C=classById(wSel),ed=clsEditable(wSel),at=clsAtts(C),L=
     ${card('lethal','LETHAL',`${icon(C.lethal,'big')}<b>${L.n}</b>`)}
     ${card('ks','SCORESTREAKS',`<div class="atl">${(S.streaks||DEF_STREAKS).map(k=>`<i>${SK[k].n}</i>`).join('')}</div><em>CHANGE ›</em>`,'ksc')}
     ${[0,1,2].map(t=>card('perk'+t,'PERK '+(t+1),`${icon(C.perks[t],'big perk')}<b>${perkName(C.perks[t])}</b>`,'perkc')).join('')}
-  </div><div class="wside">${ed?`<input id="wClsName" class="wname" maxlength="18" spellcheck="false" value="${esc2(C.n)}" title="Click to rename">`:`<h2 class="wname">${esc2(C.n)}</h2><p class="wdef">Default class · changing anything makes an editable copy</p>`}
+  </div><div class="wside">${ed?`<input id="wClsName" class="wcname" maxlength="18" spellcheck="false" value="${esc2(C.n)}" title="Click to rename">`:`<h2 class="wcname">${esc2(C.n)}</h2><p class="wdef">Default class · changing anything makes an editable copy</p>`}
     <div class="wprev"><canvas id="wCv" width="640" height="230"></canvas><p class="whint">drag to turn</p></div><div class="winfo" id="wInfo"></div>
     <div class="wact">${S.cls===wSel?'<span class="weq">★ ACTIVE CLASS</span>':'<button class="mid wuse" data-a="use">USE THIS CLASS</button>'}
       <button class="mid" data-a="dup">DUPLICATE</button>${ed&&S.classes.length>1?'<button class="mid wdel" data-a="del">DELETE</button>':''}</div></div></div>`}
@@ -2024,8 +2104,7 @@ function pvBegin(w,h){gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,w,
 function pvEnd(cv){const g=cv.getContext('2d');g.drawImage(C,0,C.height-cv.height,cv.width,cv.height,0,0,cv.width,cv.height)}
 function pvGun(id,att,w,h,ry,pitch,zm){const bb=gunBB(id)||{zf:-.75,zb:.35};const len=bb.zb-bb.zf,cz=(bb.zf+bb.zb)/2,asp=w/h,d=len*.5/(Math.tan(.25)*Math.min(asp,2.4))*(asp>1.9?1.55:1.2)*(zm||1)+.25;const eye=[d,.1,0];
   const vp=mul(persp(.5,asp,.05,20),viewM(eye,Math.atan2(eye[0],eye[2]),pitch==null?-.08:pitch));setWorld(vp,eye);gl.uniform1f(U.uDetail,0);gl.uniform3fv(U.uTint,[1.3,1.3,1.3]);
-  const gm=mul(modelM(0,0,0,ry,0),modelM(0,.03,-cz,0,0));gl.uniformMatrix4fv(U.uM,false,gm);draw(M['g_'+id]);
-  if(M['m_'+id]){const ext=att&&att.mag==='ext'&&attOk(id,'mag','ext');gl.uniformMatrix4fv(U.uM,false,ext?mul(gm,new Float32Array([1,0,0,0,0,1.45,0,0,0,0,1,0,0,0,0,1])):gm);draw(M['m_'+id])}
+  const gm=mul(modelM(0,0,0,ry,0),modelM(0,.03,-cz,0,0));gl.uniformMatrix4fv(U.uM,false,gm);const cw={id,att:att||{}};draw(gunMeshFor(cw));const mm=magMeshFor(cw);if(mm)draw(mm);
   if(att)drawAtts({id,att,ws:deriveWS(id,att,[]),wsId:id},gm)}
 let snapCv=null;
 function lobbyPreview(){if(state!=='menu'&&state!=='over'||$('menu').hidden||!staticMesh)return;try{
