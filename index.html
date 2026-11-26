@@ -278,6 +278,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
     <div class="so"><span>Sprint</span><div class="chips" id="stSprint"></div></div>
     <div class="so"><span>Crouch</span><div class="chips" id="stCrouch"></div></div>
     <div class="so"><span>Killcam</span><div class="chips" id="stKc"></div></div>
+    <div class="so"><span>Scope view</span><div class="chips" id="stScope"></div></div>
     <h4>AUDIO &amp; DISPLAY</h4>
     <label>MASTER VOLUME <span id="volV"></span><input type="range" id="vol" min="0" max="100"></label>
     <label>MUSIC VOLUME <span id="musV"></span><input type="range" id="mus" min="0" max="100"></label>
@@ -1455,7 +1456,7 @@ function fxBegin(eye){FX.on=FX.ok&&S.gfx!=='low';if(!FX.on){gl.uniform1f(U.uShOn
   gl.uniformMatrix4fv(U.uLS,false,FX.LS);gl.uniformMatrix4fv(U.uLD,false,FX.LD);gl.uniform4f(U.uShT,FX.sTs,FX.sBias,FX.dTs,FX.dBias);gl.uniform4f(U.uAOM,FX.aoM[0],FX.aoM[1],FX.aoM[2],0);gl.uniform1f(U.uShOn,1);gl.uniform1f(U.uAOOn,0);gl.uniform1f(U.uHF,.38);
   gl.bindFramebuffer(gl.FRAMEBUFFER,FX.scn.fb);gl.viewport(0,0,FX.scn.w,FX.scn.h);return true}
 function fxQuad(p){gl.useProgram(p);for(let i=1;i<4;i++)gl.disableVertexAttribArray(i);gl.bindBuffer(gl.ARRAY_BUFFER,FX.quad);gl.vertexAttribPointer(A.P,2,gl.FLOAT,false,0,0);gl.drawArrays(gl.TRIANGLES,0,6);for(let i=1;i<4;i++)gl.enableVertexAttribArray(i)}
-function fxSky(yaw,pitch,fov){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch),f=[-sy*cp,sp,-cy*cp],r=[cy,0,-sy],u=[r[1]*f[2]-r[2]*f[1],r[2]*f[0]-r[0]*f[2],r[0]*f[1]-r[1]*f[0]],ty=Math.tan(fov/2),tx=ty*C.width/C.height;
+function fxSky(yaw,pitch,fov,asp){const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch),f=[-sy*cp,sp,-cy*cp],r=[cy,0,-sy],u=[r[1]*f[2]-r[2]*f[1],r[2]*f[0]-r[0]*f[2],r[0]*f[1]-r[1]*f[0]],ty=Math.tan(fov/2),tx=ty*(asp||C.width/C.height);
   gl.disable(gl.DEPTH_TEST);gl.depthMask(false);gl.useProgram(FX.sky);const K=FX.skyU;gl.uniform3fv(K.uF,f);gl.uniform3fv(K.uR,r);gl.uniform3fv(K.uUp,u);gl.uniform3fv(K.uSun,SUN);gl.uniform3fv(K.uFog,FOG);gl.uniform2f(K.uT,tx,ty);fxQuad(FX.sky);
   gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthMask(true)}
 function fxEnd(){if(!FX.on)return;gl.disable(gl.DEPTH_TEST);gl.disable(gl.BLEND);const s=FX.scn,b0=FX.b0,b1=FX.b1;
@@ -1600,13 +1601,8 @@ function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&
   gl.uniformMatrix4fv(U.uM,false,base(x,by+1.42,z,yaw,p.pitch*.6));draw(M.head);
   const up=base(x,by+1.24,z,yaw,p.pitch);gl.uniformMatrix4fv(U.uM,false,up);draw(M.arms);
   const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw)}
-function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,W2,H2);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-  if(!staticMesh)return;let eye,yaw,pitch;
-  if(state==='play'&&me){const rdt=Math.min(.05,(performance.now()-(window._rT||0))/1000);window._rT=performance.now();const cr=me.slideT>0?.92:me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,1-Math.exp(-rdt*16));const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH-landK*.13+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3;if(MODE.snd){const sp=specTarget();if(sp){specP=sp;const e2=eyeOf(sp);eye=[e2[0],e2[1]+.05,e2[2]];yaw=sp.yaw;pitch=sp.pitch}}}}
-  else{const t=performance.now()/9000,rr=Math.min(40,MAP*.9);eye=[Math.cos(t)*rr,MAP<40?9:14,Math.sin(t)*rr];yaw=Math.atan2(eye[0],eye[2]);pitch=-.22}
-  const sv=streakView();if(sv){eye=sv.eye;yaw=sv.yaw;pitch=sv.pitch}const W0=me&&!me.dead?WS(curW(me)):WEP.ar,fov=sv?sv.fov:((S.fov+(state==='play'?fovK*5*(1-adsK):0))*Math.PI/180)/(1+(W0.zoom-1)*adsK);projV=persp(fov,W2/H2,.08,420);VP=mul(projV,viewM(eye,yaw,pitch));camE=eye;camY=yaw;camP=pitch;
-  if(fxBegin(eye)){gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);fxSky(yaw,pitch,fov)}
-  setWorld(VP,eye);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,I4);if(FX.on)gl.uniform1f(U.uAOOn,1);draw(staticMesh);gl.uniform1f(U.uAOOn,0);drawDecals();gl.uniform1f(U.uEm,1);const fl=.85+Math.sin(T*23)*.1+Math.sin(T*7)*.08;gl.uniform3fv(U.uTint,[fl,fl,fl]);draw(glowMesh);gl.uniform1f(U.uEm,0);
+function worldPass(vpX,eye,yaw,pitch,sv){
+  setWorld(vpX,eye);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,I4);if(FX.on)gl.uniform1f(U.uAOOn,1);draw(staticMesh);gl.uniform1f(U.uAOOn,0);drawDecals();gl.uniform1f(U.uEm,1);const fl=.85+Math.sin(T*23)*.1+Math.sin(T*7)*.08;gl.uniform3fv(U.uTint,[fl,fl,fl]);draw(glowMesh);gl.uniform1f(U.uEm,0);
   if(state==='play'&&MODE===MODES.hp&&hillMesh[hill.i]){const st=hill.state,pu=.75+.25*Math.sin(performance.now()/180);gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,I4);
     gl.uniform3fv(U.uTint,st==='ours'?[.35,.8,1.6]:st==='theirs'?[1.6,.45,.35]:st==='contested'?[1.6*pu,1.05*pu,.3]:[1,1,1]);draw(hillMesh[hill.i]);gl.uniform1f(U.uEm,0);gl.uniform3fv(U.uTint,[1,1,1])}
   if(state==='play'&&MODE.snd){gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,I4);gl.uniform3fv(U.uTint,[1,1,1]);draw(siteMesh);gl.uniform1f(U.uEm,0);const B=snd.bomb;
@@ -1621,11 +1617,22 @@ function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.
   for(const n of nades){gl.uniform3fv(U.uTint,[.25,.28,.2]);gl.uniformMatrix4fv(U.uM,false,modelM(n.x,n.y,n.z,T*8,T*5,.18));draw(M.cube)}
   for(const k of picks){gl.uniform3fv(U.uTint,[.35,.4,.22]);gl.uniformMatrix4fv(U.uM,false,modelM(k.x,k.y+.35+Math.sin(T*3)*.08,k.z,T*1.5,0,.45));draw(M.cube);gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1.2,1,.3]);gl.uniformMatrix4fv(U.uM,false,modelM(k.x,k.y+.62+Math.sin(T*3)*.08,k.z,T*1.5,0,.15));draw(M.cube);gl.uniform1f(U.uEm,0)}
   for(const q of parts){gl.uniform3fv(U.uTint,q.c);gl.uniformMatrix4fv(U.uM,false,modelM(q.x,q.y,q.z,q.x,0,q.s));draw(M.cube)}
-  partPass(eye,yaw,pitch);
+  partPass(eye,yaw,pitch);}
+function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,W2,H2);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  if(!staticMesh)return;let eye,yaw,pitch;
+  if(state==='play'&&me){const rdt=Math.min(.05,(performance.now()-(window._rT||0))/1000);window._rT=performance.now();const cr=me.slideT>0?.92:me.crouch?1.05:1.6;me.eyeH=lerp(me.eyeH||1.6,cr,1-Math.exp(-rdt*16));const sp=Math.hypot(me.vx,me.vz);eye=[me.x+R(-shake,shake)*.15,me.y+me.eyeH-landK*.13+R(-shake,shake)*.1+(me.ground?Math.sin(bob*2)*.035*Math.min(1,sp/5)*(1-adsK*.8):0),me.z];yaw=me.yaw;pitch=me.pitch;if(me.dead){eye=[me.x,me.y+.6,me.z];pitch=-.3;if(MODE.snd){const sp=specTarget();if(sp){specP=sp;const e2=eyeOf(sp);eye=[e2[0],e2[1]+.05,e2[2]];yaw=sp.yaw;pitch=sp.pitch}}}}
+  else{const t=performance.now()/9000,rr=Math.min(40,MAP*.9);eye=[Math.cos(t)*rr,MAP<40?9:14,Math.sin(t)*rr];yaw=Math.atan2(eye[0],eye[2]);pitch=-.22}
+  const sv=streakView();if(sv){eye=sv.eye;yaw=sv.yaw;pitch=sv.pitch}const W0=me&&!me.dead?WS(curW(me)):WEP.ar,fov=sv?sv.fov:((S.fov+(state==='play'?fovK*5*(1-adsK):0))*Math.PI/180)/(1+((pipMode()?Math.min(W0.zoom,1.2):W0.zoom)-1)*adsK);projV=persp(fov,W2/H2,.08,420);VP=mul(projV,viewM(eye,yaw,pitch));camE=eye;camY=yaw;camP=pitch;
+  if(fxBegin(eye)){gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);fxSky(yaw,pitch,fov)}
+  worldPass(VP,eye,yaw,pitch,sv);
+  /* picture-in-picture scope: a second, zoomed render of the world inside the lens */
+  {const pp=pipState(fov);if(pp){const vr=gl.getParameter(gl.VIEWPORT),w=vr[2],h=vr[3],r=Math.round(h*pp.r),x0=Math.round(vr[0]+w/2-r),y0=Math.round(vr[1]+h/2-r);
+    gl.viewport(x0,y0,2*r,2*r);gl.enable(gl.SCISSOR_TEST);gl.scissor(x0,y0,2*r,2*r);gl.clearColor(SKY[0],SKY[1],SKY[2],1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);if(FX.on)fxSky(yaw,pitch,pp.fov,1);
+    worldPass(mul(persp(pp.fov,1,.08,420),viewM(eye,yaw,pitch)),eye,yaw,pitch,sv);gl.disable(gl.SCISSOR_TEST);gl.viewport(vr[0],vr[1],vr[2],vr[3])}}
   /* viewmodel */
   if(state==='play'&&me&&!me.dead&&!sv){gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1f(U.uFireOn,0);gl.uniform1f(U.uShOn,0);gl.uniform1f(U.uHF,0);gl.uniform1f(U.uDetail,0);const pv=persp(60*Math.PI/180,W2/H2,.02,10);gl.uniformMatrix4fv(U.uVP,false,pv);gl.uniform3fv(U.uCam,[0,0,0]);gl.uniform1f(U.uFogD,0);
     const c=curW(me),sp=Math.hypot(me.vx,me.vz),sprint=me.sprint?1:0,bx=Math.sin(bob)*.012*Math.min(1,sp/4)*(1-adsK),by=Math.abs(Math.cos(bob))*.012*Math.min(1,sp/4)*(1-adsK),rl=c.rl>0?Math.sin(Math.min(1,(WS(c).rl-c.rl)/WS(c).rl)*Math.PI):0;
-    const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.75*sightW(c).y,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.5,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
+    const ml=meleeT>0?Math.sin(meleeT/.35*Math.PI):0,gx=lerp(.2,0,adsK)+bx-ml*.12,gy=lerp(-.2,-.75*sightW(c).y,adsK)-by-rl*.1-sprint*.05,gz=lerp(-.62,-.6,adsK)+recoil*.5-ml*.25,rx=recoil*1.4+rl*.6-sprint*.35,ry=sprint*.5;
     const kn=c.id==='kn',gm=kn?modelM(.24+bx-ml*.1,-.24-by,-.5-ml*.32,.25-ml*.5,.15+ml*.4-sprint*.3,.95):modelM(gx,gy,gz,ry,rx,.75);const scoped=sightW(c).scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped){draw(gunMeshFor(c));drawAtts(c,gm);gl.uniformMatrix4fv(U.uM,false,gm)}const rp=c.rl>0?1-c.rl/WS(c).rl:0,mo=rp<=0||BASE(c.id)==='sg'&&c.id!=='sg2'?0:rp<.3?-((rp/.3)**2)*.5:rp<.55?-.5:rp<.8?-.5*(1-(rp-.55)/.25):0,hasMag=magMeshFor(c)&&!(rp>.3&&rp<.55);
     if(hasMag&&!scoped){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,mo*.9,mo*.05,0,mo*-.15)));draw(magMeshFor(c))}
     const lh=rp>.05&&rp<.85&&(BASE(c.id)!=='sg'||c.id==='sg2')?Math.sin((rp-.05)/.8*Math.PI):0;if(!scoped)for(const[hx,hy,hz]of(c.id==='kn'?[[.0,-.03,.18]]:[[.0,-.12,.18],[-.02-lh*.02,-.05-lh*.22,-.28+lh*.2]])){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));{const om=opMesh(opOf(me));draw(om&&om.hand||M.hand)}}
@@ -1645,7 +1652,11 @@ const GUN_EXTRA={rev:a=>{box(a,0,.03,-.2,.05,.05,.12,[.3,.3,.28]);box(a,0,-.01,-
 /* ---- attachments ---- */
 const ATT_SLOTS=[['optic','OPTIC'],['muzzle','MUZZLE'],['under','UNDERBARREL'],['mag','MAGAZINE'],['laser','LASER'],['stock','STOCK']];
 const ATTS={
-  optic:{scope4:{n:'4× SCOPE',d:'Magnified scope for long sightlines. Slower to aim.',only:['ar','smg'],fx:{zoom:1.25,adsMul:.85,sightY:.21,scope:1}}},
+  optic:{iron:{n:'TRITIUM IRONS',d:'Folding iron sights with glowing dots. Fastest to aim, no zoom.',only:['ar','smg'],fx:{adsMul:1.12}},
+    reflex:{n:'REFLEX SIGHT',d:'Open frame with a small red dot. Clear view, no zoom.',only:['ar','smg'],fx:{adsMul:1.05}},
+    holo:{n:'HOLO SIGHT',d:'Big square window with a circle-and-dot reticle. Slight zoom.',only:['ar','smg'],fx:{zoom:.5,adsMul:.97}},
+    scope3:{n:'3× SCOPE',d:'Mid-range magnified scope with a chevron crosshair.',only:['ar','smg'],fx:{zoom:2,adsMul:.9,scope:1}},
+    scope4:{n:'4× SCOPE',d:'Long-range magnified scope. Slowest to aim.',only:['ar','smg'],fx:{zoom:3,adsMul:.85,scope:1}}},
   muzzle:{supp:{n:'SUPPRESSOR',d:'Your shots no longer show you on the enemy minimap or compass. Slightly less range.',fx:{quiet:1,range:.88}},
     comp:{n:'COMPENSATOR',d:'Keeps the barrel down while firing.',fx:{rec:.78}},
     brake:{n:'MUZZLE BRAKE',d:'Extra range and a little less recoil.',fx:{range:1.12,rec:.9}}},
@@ -1683,6 +1694,7 @@ function curClass(){classesInit();return classById(S.cls)}
 function deriveWS(id,att,perks){const W=WEP[id];if(!W)return W;att=att||{};perks=perks||[];const o=Object.assign({},W),FX=[];
   for(const[slot]of ATT_SLOTS){const a=att[slot];if(a&&attOk(id,slot,a))FX.push(ATTS[slot][a].fx)}
   for(const f of FX){if(f.rec)o.rec*=f.rec;if(f.hip)o.hip*=f.hip;if(f.range){o.range*=f.range;o.dr=W.dr.map(([d,v])=>[d>=1e9?d:d*f.range,v])}if(f.mag){o.mag=Math.round(W.mag*f.mag);o.res=Math.round(W.res*f.mag)}if(f.rl)o.rl*=f.rl;if(f.spd)o.spd*=f.spd;if(f.zoom)o.zoom=Math.max(o.zoom,1+f.zoom);if(f.adsMul)o.adsMul=(o.adsMul||1)*f.adsMul;if(f.quiet)o.quiet=1;if(f.beam)o.beam=1;if(f.scope)o.scopeAtt=1}
+  if(att.optic&&attOk(id,'optic',att.optic))o.optic=att.optic;
   if(perks.includes('fasthands'))o.rl*=.7;if(perks.includes('light'))o.spd*=1.07;return o}
 const WS=c=>c?(c.ws&&c.wsId===c.id?c.ws:WEP[c.id]):WEP.ar;
 function mkWepL(id,att,perks){const W=WEP[id];const ws=deriveWS(id,att,perks);return{id,att:att||{},ws,wsId:id,mag:ws.mag,res:ws.res,cd:0,rl:0}}
@@ -1750,9 +1762,9 @@ function curvedMag(a,len,curve,wx,dz,c,segs){segs=segs||12;const hx=wx/2,hz=dz/2
 /* trigger housing, guard and trigger: joined to the receiver above and the grip behind */
 function tguard(a,yb,zf,zr,col){const D=.045;cbox(a,0,yb-.028,(zf+zr)/2,.05,.03,zr-zf,col||GG2,.008);const y0=yb-.028;
   box(a,0,y0-D,zf,.012,D+.002,.012,GG1);box(a,0,y0-D-.008,(zf+zr+.03)/2,.012,.01,zr-zf+.03,GG1);box(a,0,y0-D*.75,zr+.02,.012,D*.75,.012,GG1);beam(a,[0,y0,(zf+zr)/2+.01],[0,y0-D*.6,(zf+zr)/2-.008],.008,GSTEEL)}
-function reddot(a,y,z){cbox(a,0,y,z,.05,.018,.08,GG1,.005);const cy=y+.05,hw=.024,hh=.021,t=.009;
+function reddot(a,y,z){cbox(a,0,y,z,.05,.018,.08,GG1,.005);const cy=y+.062,hw=.036,hh=.032,t=.009;
   for(const zz of[z-.03,z+.02]){const d=zz<z?.022:.012;box(a,-hw-t/2,y+.016,zz,t,cy+hh+t-(y+.016),d,GG1);box(a,hw+t/2,y+.016,zz,t,cy+hh+t-(y+.016),d,GG1);box(a,0,cy+hh,zz,hw*2+t*2,t,d,GG1);box(a,0,y+.016,zz,hw*2+t*2,cy-hh-(y+.016),d,GG1)}
-  box(a,0,cy+hh+t,z-.005,hw*2+t*2,.006,.06,GG2);box(a,hw+t+.004,cy-.01,z-.005,.006,.02,.02,GG2)}
+  box(a,0,cy+hh+t,z-.005,hw*2+t*2,.006,.06,GG2);box(a,hw+t+.004,cy-.012,z-.005,.006,.024,.024,GG2)}
 function railTop(a,y,z0,z1){cbox(a,0,y,(z0+z1)/2,.03,.012,z1-z0,GG1,.004);for(let z=z1-.02;z>z0+.01;z-=.033)box(a,0,y+.012,z,.034,.007,.014,GK)}
 
 /* one builder per base gun; variants (o.v) change parts and colours. Returns the mount points */
@@ -1767,7 +1779,7 @@ const GUNB={
   if(!o.noStock){gcyl(a,[0,.045,.17],[0,.045,.42],.02,GG1);cbox(a,0,-.03,.36,.052,.1,.15,F,.014);cbox(a,0,.045,.37,.044,.028,.11,F,.01);cbox(a,0,-.06,.445,.06,.135,.02,GK,.006)}
   beam(a,[0,-.05,.1],[0,-.19,.15],.052,F,.048);for(let k=0;k<3;k++)beam(a,[.026,-.08-k*.035,.11+k*.013],[.026,-.095-k*.035,.115+k*.013],.006,F.map(c=>c*.6));tguard(a,-.035,-.02,.07);
   if(!o.noSight){reddot(a,.098,-.02);cbox(a,0,.098,-.6-lng*.1,.02,.04,.02,GG1,.004)}
-  return{muzzle:[0,.035,bz-.05],rail:[.098,-.2],under:[0,-.008,-.52-lng*.06],side:[.042,.035,-.56-lng*.06],stock:[0,.045,.17],mag:[0,-.075,-.06],mg:v==='ar2'?[.2,0,.058,.092]:[.22,.055,.05,.085],mgx:v==='ar2'?[.32,0,.058,.092]:[.36,.1,.05,.085],sightY:.148}},
+  return{muzzle:[0,.035,bz-.05],rail:[.098,-.2],railF:-.5-lng*.08,under:[0,-.008,-.52-lng*.06],side:[.042,.035,-.56-lng*.06],stock:[0,.045,.17],mag:[0,-.075,-.06],mg:v==='ar2'?[.2,0,.058,.092]:[.22,.055,.05,.085],mgx:v==='ar2'?[.32,0,.058,.092]:[.36,.1,.05,.085],sightY:.16}},
  smg(a,o){const v=o.v,F=v==='smg3'?GWOOD:GG1,sh=v==='smg2'?1:0;
   cbox(a,0,-.06,-.02+sh*.04,.07,.13,.38-sh*.08,GG2,.014);box(a,.036,.02,-.04,.002,.03,.1,GK);for(let k=0;k<4;k++)box(a,.036,-.03,-.16-k*.03+sh*.06,.002,.04,.012,GK);
   railTop(a,.07,-.24+sh*.08,.14);cbox(a,0,-.04,-.31+sh*.06,.06,.09,.2-sh*.06,F,.014);
@@ -1775,7 +1787,7 @@ const GUNB={
   if(!o.noStock&&!sh){for(const y of[.03,-.05])gcyl(a,[0,y,.17],[0,y,.38],.01,GG1);cbox(a,0,-.1,.38,.05,.16,.02,GK,.006)}if(sh&&!o.noStock){cbox(a,0,-.1,.19,.04,.1,.04,GG1,.008)}
   beam(a,[0,-.08,.07],[0,-.22,.11],.05,GG1,.046);tguard(a,-.06,-.07,.04,GG1);
   if(!o.noSight)reddot(a,.082,-.02);
-  return{muzzle:[0,.01,mz],rail:[.082,-.06],under:[0,-.04,-.33+sh*.06],side:[.032,-.005,-.32+sh*.06],stock:[0,0,.17],mag:[0,-.06,-.16],mg:sh?[.3,0,.036,.05]:[.24,0,.042,.06],mgx:sh?[.42,0,.036,.05]:[.36,0,.042,.06],sightY:.131}},
+  return{muzzle:[0,.01,mz],rail:[.082,-.06],railF:-.2+sh*.08,under:[0,-.04,-.33+sh*.06],side:[.032,-.005,-.32+sh*.06],stock:[0,0,.17],mag:[0,-.06,-.16],mg:sh?[.3,0,.036,.05]:[.24,0,.042,.06],mgx:sh?[.42,0,.036,.05]:[.36,0,.042,.06],sightY:.144}},
  sg(a,o){const v=o.v,F=v==='sg2'?GG1:GWOOD;
   if(v==='sg3'){for(const sx of[-1,1])gcyl(a,[sx*.024,.03,-.08],[sx*.024,.03,-.78],.023,GG1);cbox(a,0,.0,-.42,.09,.03,.5,F,.01);cbox(a,0,-.02,0,.08,.1,.2,GK,.014);box(a,0,.055,-.78,.006,.01,.006,GSTEEL)}
   else{cbox(a,0,-.03,0,.075,.1,.3,v==='sg2'?GG2:GK,.016);gcyl(a,[0,.05,-.12],[0,.05,-.82],.022,GG1);gcyl(a,[0,.0,-.12],[0,.0,-.72],.018,GG1);box(a,0,.073,-.8,.006,.012,.006,GSTEEL);
@@ -1807,6 +1819,12 @@ const ATT2={
  grip:a=>{box(a,0,-.012,0,.05,.012,.07,GG2);cbox(a,0,-.13,0,.038,.12,.042,GG1,.01,'y');for(let k=0;k<3;k++)box(a,0,-.1+k*.03,-.022,.03,.008,.003,GK);cbox(a,0,-.142,0,.046,.016,.05,GK,.006,'y')},
  angled:a=>{box(a,0,-.012,0,.05,.012,.11,GG2);beam(a,[0,-.01,.05],[0,-.07,-.04],.04,GG1)},
  tac:a=>{cbox(a,.016,-.024,0,.032,.048,.1,GK,.008);box(a,.016,-.002,-.051,.016,.016,.003,GRED);box(a,0,-.02,0,.012,.03,.04,GG2)},
+ /* optics: origin on top of the rail */
+ reflex:a=>{const F=[.2,.2,.21];cbox(a,0,0,.0,.05,.012,.08,GG1,.004);box(a,0,.012,.026,.03,.016,.022,F);box(a,0,.012,-.026,.084,.01,.014,F);for(const s of[-1,1])beam(a,[s*.041,.012,-.026],[s*.04,.084,-.014],.008,F);beam(a,[-.04,.084,-.014],[0,.096,-.012],.008,F);beam(a,[.04,.084,-.014],[0,.096,-.012],.008,F);box(a,.024,.01,.0,.006,.01,.02,GG2)},
+ holo:a=>{const F=[.17,.17,.18];cbox(a,0,0,0,.05,.014,.1,GG1,.004);cbox(a,0,.014,.03,.07,.028,.045,F,.008);box(a,0,.014,-.012,.084,.016,.04,F);const cy=.064,hw=.04,hh=.034,t=.011;for(const zz of[-.03]){box(a,-hw-t/2,.026,zz,t,cy+hh+t-.026,.05,F);box(a,hw+t/2,.026,zz,t,cy+hh+t-.026,.05,F);box(a,0,cy+hh,zz,hw*2+t*2,t,.05,F);box(a,0,cy+hh+t,zz+.005,hw*2+t*2-.01,.005,.04,GG2)}for(const s of[-1,1])box(a,s*.037,.02,.035,.004,.012,.012,GG2)},
+ scope3:a=>{const B=[.17,.17,.18];cbox(a,0,0,0,.04,.026,.11,B,.006);gcyl(a,[0,.068,.09],[0,.068,-.11],.024,GG1);gcyl(a,[0,.068,-.1],[0,.068,-.16],.034,GG1);gcyl(a,[0,.068,.08],[0,.068,.13],.03,GG1);cbox(a,0,.088,-.01,.03,.012,.07,B,.004);box(a,0,.1,-.01,.006,.006,.05,[.2,1.6,.4]);box(a,0,.04,-.163,.05,.05,.002,GGLASS)},
+ ironR:a=>{const R=[.75,.12,.1],G=[.3,2.2,.5];cbox(a,0,0,0,.036,.014,.04,GG1,.004);for(const s of[-1,1]){box(a,s*.019,.014,0,.01,.05,.024,R);box(a,s*.019,.044,-.012,.006,.012,.002,G)}gcyl(a,[0,.045,-.004],[0,.045,.004],.012,R)},
+ ironF:a=>{const R=[.75,.12,.1],G=[.3,2.2,.5];cbox(a,0,0,0,.03,.014,.03,GG1,.004);for(const s of[-1,1]){beam(a,[s*.016,.014,0],[s*.02,.06,0],.008,R)}box(a,0,.014,0,.006,.031,.01,R);box(a,0,.042,.006,.004,.006,.002,G)},
  scope4:a=>{for(const z of[-.08,.04])cbox(a,0,0,z,.03,.045,.028,GK,.006);gcyl(a,[0,.075,.12],[0,.075,-.2],.026,GG1);gcyl(a,[0,.075,-.18],[0,.075,-.28],.037,GG1);gcyl(a,[0,.075,.1],[0,.075,.18],.033,GG1);gcyl(a,[0,.105,-.04],[0,.115,-.04],.012,GG2);gcyl(a,[.026,.075,-.04],[.04,.075,-.04],.012,GG2);box(a,0,.04,-.282,.062,.07,.002,GGLASS)},
  light:a=>{beam(a,[0,0,0],[0,0,.1],.03,GG1);cbox(a,0,-.05,.12,.05,.08,.16,GTAN,.014);cbox(a,0,-.06,.205,.06,.11,.012,GK,.004)},
  heavy:a=>{gcyl(a,[0,0,0],[0,0,.1],.02,GG1);cbox(a,0,-.08,.14,.064,.13,.2,GG1,.018);cbox(a,0,.03,.12,.05,.035,.14,GG1,.01);cbox(a,0,-.09,.245,.07,.16,.02,GK,.006)}};
@@ -1833,10 +1851,25 @@ function magMeshFor(c){const G=GMESH[c.id];if(!G)return M['m_'+c.id];return attO
 function drawAtts(c,gm){if(!c||!c.att||WEP[c.id].melee)return;const m=GUNM[c.id];if(!m)return;gl.uniform3fv(U.uTint,[1,1,1]);
   const at=(k,p)=>{if(!p||!ATTM2[k])return;gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(p[0],p[1],p[2],0,0)));draw(ATTM2[k])};
   const mz=attOn(c,'muzzle');if(mz)at(mz,m.muzzle);const u=attOn(c,'under');if(u)at(u,m.under);if(attOn(c,'laser'))at('tac',m.side);
-  if(attOn(c,'optic')&&m.rail)at('scope4',[0,m.rail[0],m.rail[1]]);const st=attOn(c,'stock');if(st)at(st,m.stock)}
+  const op=attOn(c,'optic');if(op&&m.rail){if(op==='iron'){at('ironR',[0,m.rail[0],m.rail[1]+.2]);at('ironF',[0,m.rail[0],m.railF])}else at(op,[0,m.rail[0],m.rail[1]+(op==='reflex'?.05:0)])}const st=attOn(c,'stock');if(st)at(st,m.stock)}
 /* where the muzzle ends, including a muzzle device */
 function muzzleZ(c){const m=GUNM[c.id];if(!m||!m.muzzle)return-.7;const d=attOn(c,'muzzle');return m.muzzle[2]-(d==='supp'?.27:d==='brake'?.12:d==='comp'?.09:0)}
-function sightOfW(c){if(c&&attOn(c,'optic')){const m=GUNM[c.id];return{y:(m&&m.rail?m.rail[0]:.09)+.075,ret:1,scope:1}}return sightOf(c?c.id:'ar')}
+const OPTIC_SIGHT={iron:[.045,0,0],reflex:[.052,0,'dot'],holo:[.064,0,'holo'],scope3:[.068,1,'acog'],scope4:[.075,1,'cross']};
+function sightOfW(c){const op=c&&attOn(c,'optic');if(op){const m=GUNM[c.id],q=OPTIC_SIGHT[op]||OPTIC_SIGHT.scope4;return{y:(m&&m.rail?m.rail[0]:.09)+q[0],ret:q[2],scope:q[1]}}
+  const s=sightOf(c?c.id:'ar');if(!c)return s;const B=BASE(c.id);return Object.assign({},s,{ret:B==='dmr'?'snp':(B==='ar'||B==='smg')?'dot':0})}
+/* scope style: zoomed picture in the lens (pip) or the whole screen zoomed (full) */
+const pipMode=()=>state==='play'&&me&&!me.dead&&(S.scopeMode||'pip')==='pip'&&sightW(curW(me)).scope;
+function pipState(fov){if(!pipMode()||adsK<.82||streakView())return null;const W=WS(curW(me)),base=S.fov*Math.PI/180;return{r:.34,fov:base/W.zoom}}
+/* reticles drawn over the sight window or lens */
+function drawReticle(g,kind,cx,cy,s,a){g.save();g.globalAlpha=a;const red='rgba(255,45,35,.95)';g.shadowColor='rgba(255,40,30,.8)';g.shadowBlur=s*.6;g.fillStyle=red;g.strokeStyle=red;
+  if(kind==='dot'){g.beginPath();g.arc(cx,cy,s*.32,0,6.283);g.fill()}
+  else if(kind==='holo'){const gr='rgba(70,255,110,.95)';g.fillStyle=gr;g.strokeStyle=gr;g.shadowColor='rgba(60,255,100,.8)';g.lineWidth=s*.15;g.beginPath();g.arc(cx,cy,s*1.45,0,6.283);g.stroke();g.beginPath();g.arc(cx,cy,s*.22,0,6.283);g.fill();for(let k=0;k<4;k++){const an=k*1.5708,c1=Math.cos(an),s1=Math.sin(an);g.beginPath();g.moveTo(cx+c1*s*1.45,cy+s1*s*1.45);g.lineTo(cx+c1*s*1.8,cy+s1*s*1.8);g.stroke()}}
+  else if(kind==='acog'){g.lineWidth=s*.16;g.beginPath();g.moveTo(cx-s*6,cy);g.lineTo(cx-s*1.2,cy);g.moveTo(cx+s*1.2,cy);g.lineTo(cx+s*6,cy);g.moveTo(cx,cy+s*1.2);g.lineTo(cx,cy+s*5);g.stroke();g.beginPath();g.moveTo(cx-s*.9,cy+s*1.1);g.lineTo(cx,cy);g.lineTo(cx+s*.9,cy+s*1.1);g.stroke();g.beginPath();g.arc(cx,cy,s*.22,0,6.283);g.fill();
+    g.fillStyle='rgba(255,170,40,.9)';g.shadowColor='rgba(255,170,40,.6)';for(const sx of[-1,1]){g.beginPath();g.moveTo(cx+sx*s*9,cy-s*.9);g.lineTo(cx+sx*s*8,cy);g.lineTo(cx+sx*s*9,cy+s*.9);g.lineWidth=s*.2;g.strokeStyle='rgba(255,170,40,.9)';g.stroke()}}
+  else{g.shadowBlur=0;g.fillStyle='rgba(10,10,10,.95)';const lw=Math.max(1,s*.14),R=s*14;g.fillRect(cx-R,cy-lw/2,R*2,lw);g.fillRect(cx-lw/2,cy-R,lw,R*2);const pw=lw*3.5,gap=R*.3;g.fillRect(cx-R,cy-pw/2,R-gap,pw);g.fillRect(cx+gap,cy-pw/2,R-gap,pw);g.fillRect(cx-pw/2,cy+gap,pw,R-gap);
+    if(kind==='snp')for(let k=1;k<=4;k++){g.fillRect(cx-s*.5,cy+k*R*.065-lw/2,s,lw);g.fillRect(cx+k*R*.065-lw/2,cy-s*.5,lw,s)}g.fillStyle=red;g.shadowBlur=s*.4;g.beginPath();g.arc(cx,cy,Math.max(1.5,s*.18),0,6.283);g.fill()}
+  g.restore()}
+
 /* ================= Operators: all built like the Veteran, re-themed ================= */
 const OPAPI=(()=>{
 /* ================= OPERATORS v2: the veteran build, re-themed ================= */
@@ -2366,7 +2399,7 @@ let rebinding=null;
 function renderSettings(){$('sens').value=S.sens;$('sensV').textContent=S.sens;$('fov').value=S.fov;$('fovV').textContent=S.fov+'°';$('adsS').value=Math.round(S.adsSens*100);$('adsSV').textContent=Math.round(S.adsSens*100)+'%';$('vol').value=S.vol;$('volV').textContent=S.vol+'%';$('mus').value=S.music==null?60:S.music;$('musV').textContent=(S.music==null?60:S.music)+'%';
   const tog=(id,key,opts)=>{chips(id,opts,key,()=>{save();renderSettings();applySettings()})};
   tog('stAds','adsMode',[['hold','Hold'],['toggle','Toggle']]);tog('stSprint','sprintMode',[['hold','Hold'],['toggle','Toggle'],['auto','Always sprint']]);tog('stCrouch','crouchMode',[['both','Tap or hold'],['toggle','Toggle'],['hold','Hold']]);
-  tog('stInv','invertY',[[0,'Off'],[1,'On']]);tog('stAuto','autoRl',[[1,'On'],[0,'Off']]);tog('stKc','killcam',[[1,'On'],[0,'Off']]);tog('stFps','showFps',[[0,'Off'],[1,'On']]);
+  tog('stInv','invertY',[[0,'Off'],[1,'On']]);tog('stAuto','autoRl',[[1,'On'],[0,'Off']]);tog('stKc','killcam',[[1,'On'],[0,'Off']]);if(!S.scopeMode)S.scopeMode='pip';tog('stScope','scopeMode',[['pip','Zoomed lens'],['full','Full screen']]);tog('stFps','showFps',[[0,'Off'],[1,'On']]);
   tog('stX','xhair',[['#ffffff','White'],['#7cff6b','Green'],['#5be0ff','Cyan'],['#ffe14d','Yellow'],['#ff5a6e','Pink']]);
   chips('gfx',[['high','High detail'],['low','Low (faster)']],'gfx',()=>{S.gfxUser=true;save();resize()});
   $('binds').innerHTML=ACTIONS.map(([a,n])=>`<div class="bd"><span>${n}</span><button class="chip ${rebinding===a?'wait':''}" data-a="${a}">${rebinding===a?'Press a key…':keyName(B(a))}</button></div>`).join('');
@@ -2400,13 +2433,17 @@ $('resume').onclick=()=>{paused=false;$('pause').hidden=true;lockMouse();updLock
 function resize(){const d=S.gfx==='low'?Math.min(devicePixelRatio||1,1)*.8:Math.min(devicePixelRatio||1,1.5);C.width=Math.round(innerWidth*d);C.height=Math.round(innerHeight*d);OV.width=Math.round(innerWidth*(devicePixelRatio||1));OV.height=Math.round(innerHeight*(devicePixelRatio||1))}
 addEventListener('resize',resize);
 let last=performance.now();
-function scopeOv(){if(window.__noScope||state!=='play'||!me||me.dead||!sightW(curW(me)).scope||adsK<.7)return;const W2=OV.width,H2=OV.height,a=Math.min(1,(adsK-.7)/.25),cx=W2/2,cy=H2/2,r=Math.min(W2,H2)*.44*(1.15-.15*a);
-  ox.save();ox.globalAlpha=a;ox.fillStyle='#050505';ox.beginPath();ox.rect(0,0,W2,H2);ox.moveTo(cx+r,cy);ox.arc(cx,cy,r,0,6.2832);ox.fill('evenodd');
-  const g=ox.createRadialGradient(cx,cy,r*.72,cx,cy,r);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.85)');ox.fillStyle=g;ox.beginPath();ox.arc(cx,cy,r,0,6.283);ox.fill();
-  const lw=Math.max(1,r*.004);ox.fillStyle='#000';ox.fillRect(cx-r,cy-lw/2,r*2,lw);ox.fillRect(cx-lw/2,cy-r,lw,r*2);const pw=lw*4.5,gap=r*.28;
-  ox.fillRect(cx-r,cy-pw/2,r-gap,pw);ox.fillRect(cx+gap,cy-pw/2,r-gap,pw);ox.fillRect(cx-pw/2,cy+gap,pw,r-gap);
-  for(let k=1;k<=4;k++){const y=cy+k*r*.055;ox.fillRect(cx-r*.03/(k%2?1:.6),y-lw/2,r*.06/(k%2?1:.6),lw)}
-  ox.fillStyle='rgba(255,40,30,.95)';ox.beginPath();ox.arc(cx,cy,Math.max(1.5,lw*1.1),0,6.283);ox.fill();ox.restore()}
+function scopeOv(){if(window.__noScope||state!=='play'||!me||me.dead||streakView())return;const sw=sightW(curW(me)),W2=OV.width,H2=OV.height,cx=W2/2,cy=H2/2,u=Math.min(W2,H2)/100;
+  if(!sw.scope){if(sw.ret&&adsK>.6)drawReticle(ox,sw.ret,cx,cy,u*.9,Math.min(1,(adsK-.6)/.3));return}
+  if(adsK<.7)return;const a=Math.min(1,(adsK-.7)/.25);ox.save();ox.globalAlpha=a;
+  if((S.scopeMode||'pip')==='pip'){if(adsK<.82){ox.restore();return}const r=H2*.34;
+    /* scope body around the lens: a thick dark ring with a lit edge and soft shading outside */
+    const sh=ox.createRadialGradient(cx,cy,r*1.25,cx,cy,r*2.1);sh.addColorStop(0,'rgba(0,0,0,.45)');sh.addColorStop(1,'rgba(0,0,0,0)');ox.fillStyle=sh;ox.beginPath();ox.arc(cx,cy,r*2.1,0,6.283);ox.moveTo(cx+r*1.25,cy);ox.arc(cx,cy,r*1.25,0,Math.PI*2);ox.fill('evenodd');
+    const rg=ox.createRadialGradient(cx,cy,r,cx,cy,r*1.42);rg.addColorStop(0,'#050505');rg.addColorStop(.25,'#1b1b1c');rg.addColorStop(.7,'#2c2c2e');rg.addColorStop(.88,'#46464a');rg.addColorStop(1,'#151516');ox.fillStyle=rg;ox.beginPath();ox.arc(cx,cy,r*1.42,0,6.283);ox.moveTo(cx+r,cy);ox.arc(cx,cy,r,0,Math.PI*2);ox.fill('evenodd');
+    const lg=ox.createRadialGradient(cx,cy,r*.8,cx,cy,r);lg.addColorStop(0,'rgba(0,0,0,0)');lg.addColorStop(1,'rgba(0,0,0,.55)');ox.fillStyle=lg;ox.beginPath();ox.arc(cx,cy,r,0,6.283);ox.fill();
+    ox.save();ox.beginPath();ox.arc(cx,cy,r,0,6.283);ox.clip();drawReticle(ox,sw.ret||'cross',cx,cy,r/14,1);ox.restore()}
+  else{const g=ox.createRadialGradient(cx,cy,Math.min(W2,H2)*.38,cx,cy,Math.max(W2,H2)*.62);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.42)');ox.fillStyle=g;ox.fillRect(0,0,W2,H2);drawReticle(ox,sw.ret||'cross',cx,cy,Math.min(W2,H2)*.44/14,1)}
+  ox.restore()}
 /* browsers stop requestAnimationFrame in hidden tabs; keep an online match ticking (bots, rules, network) while you are tabbed out */
 let bgW=null,bgLast=0;
 function bgTick(){if(!document.hidden||!(NET.on&&NET.inMatch)||state!=='play')return;const now=performance.now();let r=Math.min(.5,(now-bgLast)/1000);bgLast=now;while(r>1e-4){const s=Math.min(.025,r);update(s);r-=s}last=now}
