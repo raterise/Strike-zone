@@ -224,6 +224,25 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 .aopt:hover{border-color:var(--y)}.aopt.on{border-color:var(--y);background:linear-gradient(180deg,rgba(90,58,18,.92),rgba(26,20,14,.94))}.aopt.off{opacity:.38;cursor:default}.aopt.off:hover{border-color:var(--line)}
 @media(max-width:1380px){.ltabs button{font-size:21px;padding:6px 12px 8px}}
 @media(max-width:1100px){.wbody,.wbody.smb,.wbody.smb.att{grid-template-columns:1fr}.lgrid{grid-auto-rows:110px}.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---- in-game class select: a list down the left side ---- */
+#loadout{display:block;place-items:initial;padding:0;background:none;overflow:visible;pointer-events:none}#loadout[hidden]{display:none}
+#sideLo{pointer-events:auto;position:absolute;left:0;top:0;bottom:0;width:460px;padding:34px 0 26px 34px;background:linear-gradient(90deg,rgba(10,9,8,.93) 0%,rgba(10,9,8,.8) 70%,rgba(10,9,8,0) 100%);display:flex;flex-direction:column;color:#efe6da;overflow:hidden}
+#sideLo h1{margin:0;white-space:nowrap;font:400 38px/1 'Black Ops One',var(--fn);letter-spacing:1px}#sideLo h1 span{color:var(--y)}
+#sideLo .tm{margin-top:10px;width:330px;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;border:1px solid rgba(255,176,46,.5);border-radius:4px;background:rgba(255,176,46,.1)}#sideLo .tm b{font:400 30px/1 'Black Ops One',var(--fn);color:var(--y)}#sideLo .tm small{font-size:13px;letter-spacing:2.5px;color:#efe6da}
+#sideLo .sub{margin:8px 0 10px;white-space:nowrap;font-size:13px;letter-spacing:2.5px;color:var(--dim)}
+#loGrid{display:block!important;grid-template-columns:none!important;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:8px;margin-right:30px}#loGrid .grp{font-size:11px;letter-spacing:2.5px;color:var(--dim);margin:10px 0 5px}
+#loGrid .it{position:relative;width:330px;padding:9px 12px 9px 16px;margin-bottom:4px;border-left:3px solid rgba(255,255,255,.12);background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,0));cursor:pointer;transition:background .12s,border-color .12s}
+#loGrid .it:hover{border-left-color:rgba(255,176,46,.6);background:linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,0))}
+#loGrid .it b{display:block;font:400 21px/1 'Black Ops One',var(--fn);letter-spacing:.5px}#loGrid .it i{display:block;font-style:normal;font-size:13px;letter-spacing:1.2px;color:var(--dim);margin-top:3px}
+#loGrid .it u{position:absolute;right:10px;top:9px;text-decoration:none;font-size:11px;color:rgba(255,255,255,.35)}
+#loGrid .it.on{border-left-color:var(--y);background:linear-gradient(90deg,rgba(255,176,46,.28),rgba(255,176,46,0))}#loGrid .it.on b{color:var(--y)}#loGrid .it.on u{color:var(--y)}
+#loGrid .det{margin:4px 0 8px 19px;width:315px;font-size:13px;letter-spacing:1px;color:#d8cfc2;line-height:1.55}#loGrid .det em{font-style:normal;color:var(--y)}
+#sideLo .ft{display:flex;gap:10px;align-items:center;margin-top:12px}
+#sideLo .go{font:400 22px/1 'Black Ops One',var(--fn);letter-spacing:2px;color:#1b1309;background:linear-gradient(180deg,#ffb02e,#e27a1a);border:0;border-radius:4px;padding:12px 22px;cursor:pointer}
+#sideLo .ks{font:700 13px var(--f);letter-spacing:2px;color:#d8cfc2;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:10px 12px;cursor:pointer}#sideLo .ks.on{border-color:var(--y);color:var(--y)}
+#sideLo kbd{font-size:11px;border:1px solid rgba(0,0,0,.3);border-radius:3px;padding:1px 5px;margin-left:8px;font-family:var(--f)}#sideLo .ks kbd{border-color:rgba(255,255,255,.3)}
+body.loside #clk,body.loside #hint,body.loside #score,body.loside #hpS,body.loside #feed,body.loside #streaks,body.loside #hp,body.loside #fps{visibility:hidden}
 </style>
 </head>
 <body>
@@ -299,7 +318,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
   <div class="onrow"><input id="lbLink" readonly style="flex:1"><button class="mid" id="lbCopy" style="margin:0">Copy invite link</button></div>
   <div class="row" style="margin-top:6px"><div><h4>PLAYERS</h4><div id="lbPlayers"></div></div><div><h4>MODE</h4><div class="chips" id="lbMode"></div><h4>MAP</h4><div class="chips" id="lbMap"></div><h4>BOTS</h4><div class="chips" id="lbFill"></div><div class="chips" id="lbDiff" style="margin-top:6px"></div></div></div>
   <p id="lbMsg" style="color:#ff8a7a;min-height:1em"></p><button class="big" id="lbStart">START MATCH</button><p class="tagl" id="lbWait">Waiting for the host to start…</p><button class="mid" id="lbLeave">Leave room</button></div></section>
-<section class="screen" id="loadout" hidden><div class="card" style="width:min(720px,100%)"><h1 class="logo out" style="font-size:60px">LOAD<span>OUT</span></h1><p class="tagl" id="loNote">Your new primary is equipped when you next spawn.</p><div class="chips" id="loTabs" style="justify-content:center;margin-bottom:10px"></div><div id="loGrid"></div><p class="sec2" style="text-align:center">Build and edit classes from the WEAPONS tab on the main menu.</p><button class="big" id="loOk">CONFIRM</button></div></section>
+<section class="screen" id="loadout" hidden><div id="sideLo"><div class="hd"><h1 id="loTitle">SELECT <span>CLASS</span></h1></div><div class="tm" id="loTm"><small>MATCH STARTS IN</small><b id="loSec">20</b></div><p class="sub" id="loNote">CLICK A CLASS OR PRESS 1–9</p><div id="loTabs" hidden></div><div id="loGrid"></div><div class="ft"><button class="go" id="loOk">READY<kbd>ENTER</kbd></button><button class="ks" id="loKs">SCORESTREAKS<kbd>K</kbd></button></div></div></section>
 <section class="screen" id="over" hidden><div class="card res" style="width:min(520px,100%)"><h1 class="logo out" id="oTitle" style="font-size:52px">MATCH OVER</h1><p class="tagl" id="oSub"></p><div id="oTable"></div><button class="big" id="again">PLAY AGAIN</button><br><button class="mid" id="toMenu">Menu</button></div></section>
 <script>
 'use strict';
@@ -2204,7 +2223,7 @@ let preT=0,preSec=-1,preApplied=false,nuke=null,NUKE_WIN=null,goT=0;
 function preStart(){if(window.__noPause&&!window.__pre){preT=0;nuke=null;NUKE_WIN=null;if(!MODE.snd)msg(MODE.n,MODE===MODES.hp?'Hardpoint: '+HILLS[0].n:MODE.sub,2.6);return}preT=PRE_PICK+PRE_COUNT;preSec=-1;preApplied=false;nuke=null;NUKE_WIN=null;mouse.l=mouse.r=false;
   setTimeout(()=>{if(preT>PRE_COUNT&&state==='play'&&!loadoutOpen)openLoadout()},50)}
 function preTick(dt){preT-=dt;msgT-=dt;if(me){me.vx=me.vz=0;adsK=0}
-  if(preT>PRE_COUNT){const n=Math.ceil(preT-PRE_COUNT);if(loadoutOpen&&$('loNote'))$('loNote').innerHTML=`Pick your class · match starts in <b style="color:var(--y);font-size:22px">${n}</b>`;return}
+  if(preT>PRE_COUNT){const n=Math.ceil(preT-PRE_COUNT);if(loadoutOpen&&$('loSec'))$('loSec').textContent=n;return}
   if(!preApplied){preApplied=true;if(loadoutOpen)closeLoadout();if(me&&!me.dead){applyLoadout(me);me.wi=0}}
   const s=Math.ceil(preT);if(s!==preSec&&s>0){preSec=s;sfx('ksuse')}
   if(preT<=0){preT=0;goT=performance.now();sfx('ksready');if(!MODE.snd)setTimeout(()=>msg(MODE.n,MODE===MODES.hp?'Hardpoint: '+HILLS[0].n:MODE.sub,2.6),700);if(!isLocked()&&!NET.on)lockMouse()}}
@@ -2330,7 +2349,7 @@ function overlay(){const W2=OV.width,H2=OV.height,dp=devicePixelRatio||1;ox.clea
     ox.fillStyle=`rgba(20,16,12,${.7*al})`;ox.beginPath();ox.arc(gx,gy,17*dp,0,7);ox.fill();ox.strokeStyle=`rgba(255,${d<4?60:160},40,${al})`;ox.lineWidth=3*dp;ox.stroke();ox.fillStyle=`rgba(255,${d<4?90:190},60,${al})`;ox.font=`bold ${18*dp}px sans-serif`;ox.textAlign='center';ox.textBaseline='middle';ox.fillText('!',gx,gy+1*dp)}
   for(const d of dmgDir){const a=wrapA(d.a-me.yaw)+Math.PI;ox.strokeStyle=`rgba(230,30,20,${Math.min(1,d.t)})`;ox.lineWidth=9*dp;ox.beginPath();ox.arc(W2/2,H2/2,110*dp,-Math.PI/2-a-.25,-Math.PI/2-a+.25);ox.stroke()}
   /* minimap */
-  const R0=84*dp,cx=16*dp+R0,cy=16*dp+R0,sc=R0/(MAP<40?26:45);ox.save();ox.beginPath();ox.arc(cx,cy,R0,0,7);const mg=ox.createRadialGradient(cx,cy,0,cx,cy,R0);mg.addColorStop(0,'rgba(26,23,20,.78)');mg.addColorStop(1,'rgba(10,9,8,.82)');ox.fillStyle=mg;ox.fill();ox.clip();
+  const R0=84*dp,cx=loadoutOpen?-9999:16*dp+R0,cy=16*dp+R0,sc=R0/(MAP<40?26:45);ox.save();ox.beginPath();ox.arc(cx,cy,R0,0,7);const mg=ox.createRadialGradient(cx,cy,0,cx,cy,R0);mg.addColorStop(0,'rgba(26,23,20,.78)');mg.addColorStop(1,'rgba(10,9,8,.82)');ox.fillStyle=mg;ox.fill();ox.clip();
   ox.fillStyle='rgba(255,255,255,.06)';ox.beginPath();ox.moveTo(cx,cy);ox.arc(cx,cy,R0,-Math.PI/2-.62,-Math.PI/2+.62);ox.closePath();ox.fill();ox.translate(cx,cy);ox.rotate(me.yaw);ox.fillStyle='rgba(205,192,170,.42)';
   for(const b of COLL){if(b.y1<1.3)continue;const x=(b.x0-me.x)*sc,z=(b.z0-me.z)*sc;if(Math.abs(x)>R0*1.5||Math.abs(z)>R0*1.5)continue;ox.fillRect(x,z,(b.x1-b.x0)*sc,(b.z1-b.z0)*sc)}
   const uavOn=uavFor(me);for(const t of turrets){ox.fillStyle=foe(me,t.owner)?'#ff5a46':'#4fa3ff';ox.fillRect((t.x-me.x)*sc-3.5*dp,(t.z-me.z)*sc-3.5*dp,7*dp,7*dp)}
@@ -2386,10 +2405,24 @@ function weaponCards(cur,cls,cardCls){if(cls==='ks')return streakCards(cardCls,(
 function classTabs(cls,onPick){return CLASSES.concat([['ks','SCORESTREAKS']]).map(([c,n])=>`<button class="chip" data-cls="${c}" aria-pressed="${c===cls}">${n}</button>`).join('')}
 let loCls=null;
 const loTabsHtml=cls=>[['cl','CLASSES'],['ks','SCORESTREAKS']].map(([c,n])=>`<button class="chip" data-cls="${c}" aria-pressed="${c===cls}">${n}</button>`).join('');
-function loCards(){const cur=loadoutPick||S.cls;loCls=loCls==='ks'?'ks':'cl';$('loTabs').innerHTML=loTabsHtml(loCls);$('loTabs').onclick=e=>{const b=e.target.closest('[data-cls]');if(!b)return;loCls=b.dataset.cls;loCards()};
-  $('loGrid').className=loCls==='ks'?'':'clg';$('loGrid').innerHTML=loCls==='ks'?streakCards('lo',(S.streaks||DEF_STREAKS)):classGrid(cur,'lo');$('loGrid').onclick=e=>{const c=e.target.closest('.lo');if(!c)return;if(c.dataset.sk){toggleStreak(c.dataset.sk);loCards();return}loadoutPick=c.dataset.cl;loCards()}}
-function openLoadout(){loadoutOpen=true;loadoutPick=S.cls;loCls='cl';mouse.l=mouse.r=false;keys={};$('loNote').textContent=state==='play'?(MODE.snd?'Your new primary is equipped next round.':'Changes apply when you next spawn.'):'Pick a class and your scorestreaks.';loCards();$('loadout').hidden=false;try{if(isLocked())document.exitPointerLock()}catch(e){}}
-function closeLoadout(){if(loadoutPick){S.cls=loadoutPick;S.prim=classById(loadoutPick).prim;save();renderMenu()}$('loadout').hidden=true;loadoutOpen=false;if(state==='play'){if(preT>0){preConfirmed();lockMouse();return}if(me&&!me.dead)pop('LOADOUT SET · NEXT LIFE','#ffb02e');lockMouse()}}
+/* in-game class select: a list down the left side */
+function loDetail(C){const at=clsAtts(C),L=LETHALS[C.lethal]||LETHALS.frag,Tc=TACTICALS[C.tac]||TACTICALS.flash;
+  return `<div class="det">${at.length?at.join(' · '):'No attachments'}<br>${WEP[C.sec]?WEP[C.sec].n:'P9'} · <em>${L.s}</em> · <em>${Tc.s}</em><br>${(C.perks||[]).map(perkName).join(' · ')}</div>`}
+function loCards(){const cur=loadoutPick||S.cls,ks=loCls==='ks';$('loKs').classList.toggle('on',ks);$('loTitle').innerHTML=ks?'SCORE<span>STREAKS</span>':'SELECT <span>CLASS</span>';
+  if(ks){const sel=S.streaks||DEF_STREAKS;$('loNote').textContent=`PICK 3 · ${sel.length}/3 CHOSEN`;
+    $('loGrid').innerHTML=SK_IDS.map(id=>`<div class="it ${sel.includes(id)?'on':''}" data-sk="${id}"><b>${SK[id].n}</b><i>${skCost(me,id)} POINTS</i></div>`).join('')}
+  else{const ids=clsIds();$('loNote').textContent=`CLICK A CLASS OR PRESS 1–${Math.min(9,ids.length)}`;let h='',g0='';
+    ids.forEach((id,i)=>{const C=classById(id),g=id[0]==='c'?'CUSTOM':'DEFAULT';if(g!==g0){g0=g;h+=`<p class="grp">${g}</p>`}const at=clsAtts(C).length,op=C.att&&C.att.optic&&attOk(C.prim,'optic',C.att.optic)?ATTS.optic[C.att.optic].n:null;
+      h+=`<div class="it ${id===cur?'on':''}" data-cl="${id}"><b>${esc2(C.n)}</b><i>${WEP[C.prim].n}${at?` · ${op&&at===1?op:at+' ATTACHMENT'+(at>1?'S':'')}`:''}</i>${i<9?`<u>${i+1}</u>`:''}</div>`+(id===cur?loDetail(C):'')});
+    $('loGrid').innerHTML=h;const on=$('loGrid').querySelector('.it.on');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest'})}
+  $('loGrid').onclick=e=>{const c=e.target.closest('.it');if(!c)return;sfx('swap');if(c.dataset.sk){toggleStreak(c.dataset.sk);loCards();return}loadoutPick=c.dataset.cl;loCards()};
+  $('loKs').onclick=()=>{loCls=loCls==='ks'?'cl':'ks';sfx('swap');loCards()}}
+addEventListener('keydown',e=>{if(!loadoutOpen)return;const k=e.code;
+  if(k==='Enter'||k==='NumpadEnter'){e.preventDefault();e.stopImmediatePropagation();closeLoadout();return}
+  if(k==='KeyK'){e.preventDefault();e.stopImmediatePropagation();loCls=loCls==='ks'?'cl':'ks';sfx('swap');loCards();return}
+  const m=/^(?:Digit|Numpad)([1-9])$/.exec(k);if(m&&loCls!=='ks'){e.preventDefault();e.stopImmediatePropagation();const id=clsIds()[+m[1]-1];if(id){loadoutPick=id;sfx('swap');loCards()}}},true);
+function openLoadout(){loadoutOpen=true;document.body.classList.add('loside');loadoutPick=S.cls;loCls='cl';$('loTm').hidden=!(preT>0);mouse.l=mouse.r=false;keys={};if(!(preT>0))$('loTitle').title=MODE.snd?'Applies next round':'Applies when you next spawn';loCards();$('loadout').hidden=false;try{if(isLocked())document.exitPointerLock()}catch(e){}}
+function closeLoadout(){if(loadoutPick){S.cls=loadoutPick;S.prim=classById(loadoutPick).prim;save();renderMenu()}$('loadout').hidden=true;loadoutOpen=false;document.body.classList.remove('loside');if(state==='play'){if(preT>0){preConfirmed();lockMouse();return}if(me&&!me.dead)pop('LOADOUT SET · NEXT LIFE','#ffb02e');lockMouse()}}
 $('loOk').onclick=closeLoadout;$('kcSkip').onclick=()=>kcEnd();bmapWire();$('dLoad').onclick=()=>{if(state==='play'&&me&&me.dead)openLoadout()};
 $('pLoad').onclick=()=>{$('pause').hidden=true;paused=false;openLoadout()};
 /* ================= Menu ================= */
