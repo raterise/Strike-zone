@@ -243,6 +243,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 #sideLo .ks{font:700 13px var(--f);letter-spacing:2px;color:#d8cfc2;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:10px 12px;cursor:pointer}#sideLo .ks.on{border-color:var(--y);color:var(--y)}
 #sideLo kbd{font-size:11px;border:1px solid rgba(0,0,0,.3);border-radius:3px;padding:1px 5px;margin-left:8px;font-family:var(--f)}#sideLo .ks kbd{border-color:rgba(255,255,255,.3)}
 body.loside #clk,body.loside #hint,body.loside #score,body.loside #hpS,body.loside #feed,body.loside #streaks,body.loside #hp,body.loside #fps{visibility:hidden}
+.akt{display:block;width:100%;text-align:left;font:400 22px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#efe6da;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,0));border:1px solid var(--line);border-left:3px solid rgba(255,255,255,.2);border-radius:5px;padding:12px 14px;cursor:pointer}.akt small{display:block;font:700 12px var(--f);letter-spacing:1.5px;color:var(--dim);margin-top:5px}.akt.on{border-color:var(--y);color:var(--y);background:linear-gradient(90deg,rgba(255,176,46,.2),rgba(255,176,46,0))}.akt:hover{border-color:var(--y)}
 </style>
 </head>
 <body>
@@ -734,7 +735,7 @@ function fire(p){const c=curW(p),W=WS(c);if(W.melee){if(c.cd>0||p.dead)return fa
     if(who&&who.prot>T){for(let i=0;i<3;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-1.5,1.5),vy:R(0,2),vz:R(-1.5,1.5),t:.3,c:[1.4,1.6,2],s:.08})}
     else if(who){const dmg=dmgAt(W,tB)*(hs?W.hs:leg?(W.limb||.85):1);any=true;if(damage(who,dmg,p,hs))kill=true;for(let i=0;i<4;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-2,2),vy:R(0,3),vz:R(-2,2),t:.4,c:[.6,.05,.05],s:.12})}
     else if(w.b){if(w.b.tur)damageTurret(w.b.tur,dmgAt(W,tB),p);decalHit(w.b,end);for(let i=0;i<3;i++)parts.push({x:end[0]-d[0]*.05,y:end[1]-d[1]*.05,z:end[2]-d[2]*.05,vx:R(-1.5,1.5),vy:R(.5,2.5),vz:R(-1.5,1.5),t:.5,c:[.55,.5,.42],s:.1})}}
-  if(p===me){const bk=W.bipod&&me.crouch?.4:1;recoil=Math.min(.12,recoil+W.rec*bk);me.pitch+=W.rec*bk*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=W.quiet||W.noflash?0:.05;me.shotT=T;sfx(W.quiet?'qshot':'shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
+  if(p===me){const bk=W.bipod&&me.crouch?.4:1;recoil=Math.min(.12,recoil+W.rec*bk);me.pitch+=W.rec*bk*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=W.quiet||W.noflash?0:.05;if(W.akimbo)akimboSide^=1;me.shotT=T;sfx(W.quiet?'qshot':'shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
   else{const d=Math.hypot(p.x-me.x,p.z-me.z);sfx('far',c.id,W.quiet?d*3:d,Math.atan2(p.x-me.x,p.z-me.z)-me.yaw);if(!W.quiet)p.lastShot=T}
   return true}
 function damage(q,dmg,from,hs){if(q.dead)return false;if(q.prot>T&&from!==q)return false;if(from&&from!==q&&!STREAK_DMG)(q.hitBy||(q.hitBy=new Map())).set(from,T);
@@ -979,7 +980,7 @@ function hostReplaceLeaver(p){players=players.filter(q=>q!==p);NET.roster=NET.ro
 function becomeHost(){pop('YOU ARE NOW THE HOST','#ffb02e');for(const p of players){if(p.isBot){p.bot=true;p.remote=false;p.ai.path=null;p.ai.tgt=null;if(!p.w||!p.w[0])p.w=[mkWep(p.prim||'ar'),mkWep('pis'),mkWep('kn')]}}}
 /* ---------- per-frame networking ---------- */
 function netTick(dt){if(!NET.on||!NET.inMatch||state!=='play')return;NET.sendT-=dt;NET.pingT=(NET.pingT||0)-dt;if(NET.pingT<=0&&!NET.host){NET.pingT=2;netSend({t:'pi',i:me.nid,ts:performance.now()})}NET.botT-=dt;NET.gT-=dt;
-  if(NET.sendT<=0&&me){NET.sendT=1/15;const c=curW(me);netSend({t:'p',i:me.nid,L:me.L,pg:NET.ping||0,sc:me.score||0,at:attCode(me.w&&me.w[0]),pk:(me.perks||[]).join(','),op:S.op||'soldier',s:[r2(me.x),r2(me.y),r2(me.z),r2(me.yaw),r2(me.pitch),me.crouch?1:0,c.id,me.dead?1:0,me.sprint?1:0],sh:takeShots(me.nid)})}
+  if(NET.sendT<=0&&me){NET.sendT=1/15;const c=curW(me);netSend({t:'p',i:me.nid,L:me.L,pg:NET.ping||0,sc:me.score||0,at:attCode(me.w&&me.w[0]),at2:attCode(me.w&&me.w[1]),pk:(me.perks||[]).join(','),op:S.op||'soldier',s:[r2(me.x),r2(me.y),r2(me.z),r2(me.yaw),r2(me.pitch),me.crouch?1:0,c.id,me.dead?1:0,me.sprint?1:0],sh:takeShots(me.nid)})}
   if(NET.host){if(NET.botT<=0){NET.botT=1/12;const B=players.filter(p=>p.isBot).map(p=>[p.nid,r2(p.x),r2(p.y),r2(p.z),r2(p.yaw),r2(p.pitch),p.crouch?1:0,curW(p).id,p.dead?1:0]);netSend({t:'b',b:B,sh:takeShots(null)})}
     if(NET.gT<=0){NET.gT=.25;netSend({t:'g',g:gameState()})}}
   for(const p of players)if(p.remote)interp(p)}
@@ -987,7 +988,7 @@ function takeShots(nid){const out=[],keep=[];for(const s of NET.shots){if(nid?s[
 function recordShot(p,a,b){if(!NET.on)return;if(p===me||(NET.host&&p.isBot))NET.shots.push([p.nid,r1(a[0]),r1(a[1]),r1(a[2]),r1(b[0]),r1(b[1]),r1(b[2]),WS(curW(p)).quiet?1:0])}
 function playShots(sh){if(!sh)return;for(const[n,ax,ay,az,bx,by,bz,qt]of sh){const p=byNid(n);if(!p||p===me)continue;tracers.push({a:[ax,ay,az],b:[bx,by,bz],t:.06});if(!qt)p.lastShot=T;{const d=[bx-ax,by-ay,bz-az],L=Math.hypot(...d);if(L>.3&&L<199){const w=rayWorld([ax,ay,az],d.map(v=>v/L),L+.08);if(w.b&&w.t>L-.15)decalHit(w.b,[bx,by,bz])}}if(me){const d=Math.hypot(p.x-me.x,p.z-me.z);sfx('far',curW(p).id,d,Math.atan2(p.x-me.x,p.z-me.z)-me.yaw)}}}
 function pushSnap(p,s){const now=performance.now();p.snaps.push({t:now,x:s[0],y:s[1],z:s[2],yaw:s[3],pitch:s[4]});if(p.snaps.length>12)p.snaps.shift();p.crouch=!!s[5];if(p.w&&p.w[0]&&WEP[s[6]]){p.wi=0;p.w[0].id=s[6]}}
-function netPlayerState(m){if(!NET.inMatch)return;const p=byNid(m.i);if(!p||p===me)return;p.ping=m.pg;p.lastMsg=performance.now();if(m.sc!=null)p.score=m.sc;if(m.op)p.op=m.op;if(m.at!=null&&p.w&&p.w[0]&&m.at!==p.atc){p.atc=m.at;p.w[0].att=attFromCode(m.at);p.w[0].ws=deriveWS(p.w[0].id,p.w[0].att,[]);p.w[0].wsId=p.w[0].id}if(m.pk!=null){p.perks=m.pk?m.pk.split(','):[];p.ghost=p.perks.includes('ghost');p.cold=p.perks.includes('cold');p.silent=p.perks.includes('silence')}
+function netPlayerState(m){if(!NET.inMatch)return;const p=byNid(m.i);if(!p||p===me)return;p.ping=m.pg;p.lastMsg=performance.now();if(m.sc!=null)p.score=m.sc;if(m.op)p.op=m.op;if(m.at2!=null&&p.w&&p.w[1]&&m.at2!==p.atc2){p.atc2=m.at2;p.w[1].att=attFromCode(m.at2);p.w[1].ws=deriveWS(p.w[1].id,p.w[1].att,[]);p.w[1].wsId=p.w[1].id}if(m.at!=null&&p.w&&p.w[0]&&m.at!==p.atc){p.atc=m.at;p.w[0].att=attFromCode(m.at);p.w[0].ws=deriveWS(p.w[0].id,p.w[0].att,[]);p.w[0].wsId=p.w[0].id}if(m.pk!=null){p.perks=m.pk?m.pk.split(','):[];p.ghost=p.perks.includes('ghost');p.cold=p.perks.includes('cold');p.silent=p.perks.includes('silence')}
   if(m.L>p.L){p.L=m.L;if(p.dead||NET.host){p.dead=false;p.hp=100;p.snaps=[];p.prot=MODE.snd?0:T+SPAWN_PROT}}if(m.sh&&m.sh.length)p.prot=0;if(!p.dead)pushSnap(p,m.s);playShots(m.sh)}
 function netBotState(m){for(const b of m.b){const p=byNid(b[0]);if(!p)continue;const dead=!!b[8];if(p.dead&&!dead){p.snaps=[];p.prot=MODE.snd?0:T+SPAWN_PROT}p.dead=dead;if(!dead){p.hp=100;pushSnap(p,b.slice(1))}}playShots(m.sh)}
 /* render remote players ~110 ms in the past, blending between the two snapshots around that time */
@@ -1615,13 +1616,13 @@ function drawChar(p){const dead=p.dead,x=p.x,y=p.y,z=p.z,yaw=p.yaw,cr=p.crouch&&
     gl.uniformMatrix4fv(U.uM,false,base(x,by,z,yaw,0));draw(om.torso);gl.uniform3fv(U.uTint,pr>1?p.col.map(v=>v*pr):p.col);draw(om.band);gl.uniform3fv(U.uTint,W1);
     if(om.head){gl.uniformMatrix4fv(U.uM,false,base(x,by+1.42,z,yaw,p.pitch*.6));draw(om.head)}
     const up=base(x,by+1.24,z,yaw,p.pitch);gl.uniformMatrix4fv(U.uM,false,up);draw(om.arms);
-    const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw);return}
+    const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw);if(WS(curW(p)).akimbo){const gw2=mul(up,modelM(-.22,-.02,-.4,0,0));gl.uniformMatrix4fv(U.uM,false,gw2);draw(gunMeshFor(curW(p)));const mm2=magMeshFor(curW(p));if(mm2)draw(mm2)};return}
   if(dead){const m=modelM(x,y+.25,z,yaw,-1.5);gl.uniformMatrix4fv(U.uM,false,m);draw(M.torso);gl.uniform3fv(U.uTint,p.col);draw(M.vest);return}
   const co=Math.cos(yaw),si=Math.sin(yaw);for(const s of[-1,1]){const lx=x+s*.13*co,lz=z-s*.13*si;gl.uniformMatrix4fv(U.uM,false,base(lx,by+.85,lz,yaw,s*sw));draw(M.leg)}
   gl.uniformMatrix4fv(U.uM,false,base(x,by,z,yaw,0));draw(M.torso);gl.uniform3fv(U.uTint,pr>1?p.col.map(v=>v*pr):p.col);draw(M.vest);gl.uniform3fv(U.uTint,W1);
   gl.uniformMatrix4fv(U.uM,false,base(x,by+1.42,z,yaw,p.pitch*.6));draw(M.head);
   const up=base(x,by+1.24,z,yaw,p.pitch);gl.uniformMatrix4fv(U.uM,false,up);draw(M.arms);
-  const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw)}
+  const gw=mul(up,modelM(.05,-.02,-.42,0,0));gl.uniformMatrix4fv(U.uM,false,gw);draw(gunMeshFor(curW(p)));draw(magMeshFor(curW(p)));drawAtts(curW(p),gw);if(WS(curW(p)).akimbo){const gw2=mul(up,modelM(-.22,-.02,-.4,0,0));gl.uniformMatrix4fv(U.uM,false,gw2);draw(gunMeshFor(curW(p)));const mm2=magMeshFor(curW(p));if(mm2)draw(mm2)}}
 function worldPass(vpX,eye,yaw,pitch,sv){
   setWorld(vpX,eye);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,I4);if(FX.on)gl.uniform1f(U.uAOOn,1);draw(staticMesh);gl.uniform1f(U.uAOOn,0);drawDecals();gl.uniform1f(U.uEm,1);const fl=.85+Math.sin(T*23)*.1+Math.sin(T*7)*.08;gl.uniform3fv(U.uTint,[fl,fl,fl]);draw(glowMesh);gl.uniform1f(U.uEm,0);
   if(state==='play'&&MODE===MODES.hp&&hillMesh[hill.i]){const st=hill.state,pu=.75+.25*Math.sin(performance.now()/180);gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,I4);
@@ -1657,7 +1658,8 @@ function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.
     const kn=c.id==='kn',gm=kn?modelM(.24+bx-ml*.1,-.24-by,-.5-ml*.32,.25-ml*.5,.15+ml*.4-sprint*.3,.95):modelM(gx,gy,gz,ry,rx,.75);const scoped=sightW(c).scope&&adsK>.82;gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm);if(!scoped){draw(gunMeshFor(c));drawAtts(c,gm);gl.uniformMatrix4fv(U.uM,false,gm)}const rp=c.rl>0?1-c.rl/WS(c).rl:0,mo=rp<=0||BASE(c.id)==='sg'&&c.id!=='sg2'?0:rp<.3?-((rp/.3)**2)*.5:rp<.55?-.5:rp<.8?-.5*(1-(rp-.55)/.25):0,hasMag=magMeshFor(c)&&!(rp>.3&&rp<.55);
     if(hasMag&&!scoped){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,mo*.9,mo*.05,0,mo*-.15)));draw(magMeshFor(c))}
     const lh=rp>.05&&rp<.85&&(BASE(c.id)!=='sg'||c.id==='sg2')?Math.sin((rp-.05)/.8*Math.PI):0;if(!scoped)for(const[hx,hy,hz]of(c.id==='kn'?[[.0,-.03,.18]]:[[.0,-.12,.18],[-.02-lh*.02,-.05-lh*.22,-.28+lh*.2]])){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));{const om=opMesh(opOf(me));draw(om&&om.hand||M.hand)}}
-    if(flashT>0&&c.id!=='kn'){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,GUNM[c.id]&&GUNM[c.id].muzzle?GUNM[c.id].muzzle[1]:0,muzzleZ(c),R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}fxEnd()}
+    if(WS(c).akimbo&&!kn&&!scoped)drawAkimboVM(c,gx,gy,gz,ry,rx);
+    if(flashT>0&&c.id!=='kn'&&!(WS(c).akimbo&&akimboSide)){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,GUNM[c.id]&&GUNM[c.id].muzzle?GUNM[c.id].muzzle[1]:0,muzzleZ(c),R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}fxEnd()}
 function muzzleWorld(){const f=dirOf(me.yaw,me.pitch),r=[Math.cos(me.yaw),0,-Math.sin(me.yaw)],e=camE,s=1-adsK;return[e[0]+f[0]*.9+r[0]*.22*s,e[1]+f[1]*.9-.16*s-.05,e[2]+f[2]*.9+r[2]*.22*s]}
 function project(p){const m=VP,w=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(w<=.05)return null;return[((m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12])/w*.5+.5)*OV.width,(1-((m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13])/w*.5+.5))*OV.height]}
 /* ================= Loadouts: classes, attachments, perks, equipment, sidearms ================= */
@@ -1721,7 +1723,7 @@ const WS=c=>c?(c.ws&&c.wsId===c.id?c.ws:WEP[c.id]):WEP.ar;
 function mkWepL(id,att,perks){const W=WEP[id];const ws=deriveWS(id,att,perks);return{id,att:att||{},ws,wsId:id,mag:ws.mag,res:ws.res,cd:0,rl:0}}
 /* what a player spawns with */
 function applyLoadout(p){let C;if(p.bot){if(!p.botCls)p.botCls={...DEF_CLASSES[Math.floor(Math.random()*DEF_CLASSES.length)],prim:p.prim||'ar'};C=p.botCls;if(p.prim)C.prim=p.prim}else if(p===me)C=curClass();else C=p.cls||DEF_CLASSES[0];
-  p.perks=(C.perks||[]).slice();const pk=p.perks;p.w=[mkWepL(C.prim||'ar',C.att,pk),mkWepL(SIDEARMS.includes(C.sec)?C.sec:'pis',{},pk),mkWepL('kn',{},pk)];p.wi=0;
+  p.perks=(C.perks||[]).slice();const pk=p.perks;p.w=[mkWepL(C.prim||'ar',C.att,pk),mkWepL(SIDEARMS.includes(C.sec)?C.sec:'pis',C.secAtt||{},pk),mkWepL('kn',{},pk)];p.wi=0;
   p.lethal=p.bot?'frag':LETHALS[C.lethal]?C.lethal:'frag';p.nades=LETHALS[p.lethal].c;p.tac=TACTICALS[C.tac]?C.tac:'flash';p.tacs=TACTICALS[p.tac].c;p.ghost=pk.includes('ghost');p.cold=pk.includes('cold');p.silent=pk.includes('silence');p.blindT=0;p.stunT=0;if(p===me){me.prim=C.prim;me.op=OPS[S.op]?S.op:'soldier'}}
 const attCode=w=>w&&w.att?Object.entries(w.att).filter(([,v])=>v).map(([k,v])=>ATT_SLOTS.findIndex(([q])=>q===k)+v).join('.'):'';
 function attFromCode(code){const o={};if(!code)return o;for(const s of String(code).split('.')){const slot=ATT_SLOTS[+s[0]];if(slot&&ATTS[slot[0]][s.slice(1)])o[slot[0]]=s.slice(1)}return o}
@@ -2006,6 +2008,21 @@ function buildMagVariants(){for(const id in GUNM){const m=GUNM[id],G=GMESH[id];i
 {const _mm=magMeshFor;magMeshFor=function(c){const G=GMESH[c&&c.id],a=c&&attOn(c,'mag');if(G&&a==='light'&&G.ml)return G.ml;if(G&&a==='drum'&&G.md)return G.md;return _mm(c)}}
 /* thermal: enemies drawn white-hot while you look through a thermal scope */
 let thermalPass=false;
+/* ================= Akimbo: two guns, hip fire only ================= */
+ATTS.under.akimbo={n:'AKIMBO',d:'A second gun in your other hand. Double the ammo and a faster combined fire rate. Hip fire only, and no optics.',only:['smg','pis'],fx:{akimbo:1}};
+const AKIMBO_SEC=['pis','rev','mpis','bpis','shorty'];
+/* sidearms take one attachment: akimbo. Akimbo and optics can't go together */
+{const _ok=attOk;attOk=(wid,slot,a)=>{if(a==='akimbo'){if(slot!=='under')return false;return BASE(wid)==='smg'&&wid!=='smg4'||AKIMBO_SEC.includes(wid)}
+  if(SIDEARMS.includes(wid))return false;return _ok(wid,slot,a)}}
+/* an optic and akimbo on the same class: whichever was picked last wins */
+function akimboClash(att,slot,val){if(!att)return null;if(slot==='under'&&val==='akimbo'&&att.optic){delete att.optic;return'Optic removed · akimbo can’t use optics'}if(slot==='optic'&&val&&att.under==='akimbo'){delete att.under;return'Akimbo removed · it can’t use optics'}return null}
+{const _d=deriveWS;deriveWS=function(id,att,perks){let a=att;if(att&&att.under==='akimbo'&&attOk(id,'under','akimbo')&&att.optic){a=Object.assign({},att);delete a.optic}
+  const o=_d(id,a,perks);if(!o||!a||a.under!=='akimbo'||!attOk(id,'under','akimbo'))return o;o.akimbo=1;o.mag=o.mag*2;o.res=o.res*2;o.rps*=1.6;o.hip*=1.2;o.rl*=1.35;o.spd*=.98;o.scopeAtt=0;return o}}
+/* the second gun: drawn in the left hand, mirrored position */
+function drawAkimboVM(c,gx,gy,gz,ry,rx){const gm2=modelM(-gx-.03,gy,gz+.02,-ry,rx,.75);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,gm2);draw(gunMeshFor(c));const mm=magMeshFor(c);if(mm)draw(mm);drawAtts(c,gm2);
+  gl.uniformMatrix4fv(U.uM,false,mul(gm2,modelM(0,-.12,.18,0,.3)));{const om=opMesh(opOf(me));draw(om&&om.hand||M.hand)}
+  if(flashT>0&&akimboSide){gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,mul(gm2,modelM(0,GUNM[c.id]&&GUNM[c.id].muzzle?GUNM[c.id].muzzle[1]:0,muzzleZ(c),R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}
+let akimboSide=0;
 /* ================= Operators: all built like the Veteran, re-themed ================= */
 const OPAPI=(()=>{
 /* ================= OPERATORS v2: the veteran build, re-themed ================= */
@@ -2176,7 +2193,7 @@ function pgClass(){const C=classById(wSel),ed=clsEditable(wSel),at=clsAtts(C),L=
   return wTop('LOADOUTS')+wTabs()+`<div class="wbody"><div class="lgrid">
     ${card('prim',wKind(C.prim),`${gunImg(C.prim,C.att)}<b>${WEP[C.prim].n}</b><em>CHANGE ›</em>`,'w2 prim')}
     ${card('smith','GUNSMITH',`<div class="atl">${at.length?at.map(a=>`<i>${a}</i>`).join(''):'<i class="no">No attachments yet</i>'}</div><b>${at.length}/${ATT_MAX} ATTACHMENTS</b><em>CUSTOMISE ›</em>`,'smith')}
-    ${card('sec','SECONDARY',`${gunImg(C.sec)}<b>${WEP[C.sec].n}</b><em>CHANGE ›</em>`,'w2')}
+    ${card('sec','SECONDARY',`${gunImg(C.sec)}<b>${C.secAtt&&C.secAtt.under==='akimbo'?'AKIMBO ':''}${WEP[C.sec].n}</b><em>CHANGE ›</em>`,'w2')}
     ${card('melee','MELEE',`${icon('melee','big')}<b>COMBAT KNIFE</b>`,'fixed')}
     ${card('tac','TACTICAL',`${icon(C.tac,'big')}<b>${Tc.n}</b>`)}
     ${card('lethal','LETHAL',`${icon(C.lethal,'big')}<b>${L.n}</b>`)}
@@ -2198,7 +2215,7 @@ const SLOT_T={prim:'PRIMARY WEAPON',sec:'SECONDARY',lethal:'LETHAL',tac:'TACTICA
 function pgPick(slot){const C=classById(wSel);let g0=null;
   return wTop(SLOT_T[slot]+` <small>${slot==='ks'?'ALL CLASSES':esc2(C.n)}</small>`,1)+`<div class="wbody"><div class="pgrid ${slot==='prim'||slot==='sec'?'guns':''}">`+pickOpts(slot,C).map(o=>{let h='';if(o.g&&o.g!==g0){g0=o.g;h=`<p class="wgrp">${o.g}</p>`}
     return h+`<button class="popt ${o.on?'on':''}" data-v="${o.v}">${o.img}<b>${o.n}</b>${o.cost?`<span class="pc">${o.cost} PTS</span>`:''}${o.on?'<i>✓</i>':''}</button>`}).join('')+
-    `</div><div class="wside">${slot==='prim'||slot==='sec'?'<div class="wprev"><canvas id="wCv" width="640" height="280"></canvas></div>':''}<div class="winfo" id="wInfo"></div>${slot==='ks'?'<p class="wdef">They unlock in order of cost. Picking a fourth swaps out your oldest pick.</p>':''}</div></div>`}
+    `</div><div class="wside">${slot==='sec'&&attOk(C.sec,'under','akimbo')?`<button class="akt ${C.secAtt&&C.secAtt.under==='akimbo'?'on':''}" data-a="akimbo">AKIMBO · ${C.secAtt&&C.secAtt.under==='akimbo'?'ON':'OFF'}<small>Two ${WEP[C.sec].n}s · hip fire only</small></button>`:''}${slot==='prim'||slot==='sec'?'<div class="wprev"><canvas id="wCv" width="640" height="280"></canvas></div>':''}<div class="winfo" id="wInfo"></div>${slot==='ks'?'<p class="wdef">They unlock in order of cost. Picking a fourth swaps out your oldest pick.</p>':''}</div></div>`}
 
 /* ---- page 3: gunsmith — the gun big in the middle, slots around it ---- */
 const SMITH_POS={optic:[50,4],laser:[22,4],muzzle:[3,44],under:[22,84],mag:[50,84],stock:[80,44]};
@@ -2226,12 +2243,12 @@ function wInfo(){const el=$('wInfo');if(!el)return;const P=wPage(),C=classById(w
   const gunInfo=(id,att,base)=>{const ws=deriveWS(id,att,C.perks);return `<p class="wk">${wKind(id)}</p><h3>${WEP[id].n}</h3><p class="wd">${wDesc(id)}</p>${SIDEARMS.includes(id)?`<p class="wd">${stkText(id)}</p>`:statsHtml(statRows(id,att,C.perks,base))}<p class="wm">${ws.mag} ROUNDS · ${ws.rl.toFixed(1)}s RELOAD${ws.quiet?' · SUPPRESSED':''}</p>`};
   const item=(k,n,d,icn)=>`<div class="wbigic">${icon(icn,'huge')}</div><p class="wk">${k}</p><h3>${n}</h3><p class="wd">${d}</p>`;
   if(P.pg==='class'){const k=wHover||'prim';
-    if(k==='prim'||k==='smith')h=gunInfo(C.prim,C.att);else if(k==='sec')h=gunInfo(C.sec,{});
+    if(k==='prim'||k==='smith')h=gunInfo(C.prim,C.att);else if(k==='sec')h=gunInfo(C.sec,C.secAtt||{});
     else if(k==='lethal'){const L=LETHALS[C.lethal];h=item('LETHAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),C.lethal)}else if(k==='tac'){const L=TACTICALS[C.tac];h=item('TACTICAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),C.tac)}
     else if(k.startsWith('perk')){const p=perkOf(C.perks[+k[4]]);h=item('PERK '+(+k[4]+1),p.n,p.d,C.perks[+k[4]])}else if(k==='melee')h=item('MELEE','COMBAT KNIFE','One hit kill up close. Press 3, or quick-melee with V.','melee')
     else if(k==='ks')h=item('SCORESTREAKS',(S.streaks||DEF_STREAKS).map(id=>SK[id].n).join(' · '),'Shared by all your classes.','ks')}
   else if(P.pg==='pick'){const s=P.slot,v=wHover||null;
-    if(s==='prim'||s==='sec'){const id=v||(s==='prim'?C.prim:C.sec);h=gunInfo(id,s==='prim'&&id===C.prim?C.att:{})}
+    if(s==='prim'||s==='sec'){const id=v||(s==='prim'?C.prim:C.sec);h=gunInfo(id,s==='prim'&&id===C.prim?C.att:s==='sec'&&C.secAtt&&attOk(id,'under',C.secAtt.under)?C.secAtt:{})}
     else if(s==='lethal'){const id=v||C.lethal,L=LETHALS[id];h=item('LETHAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),id)}else if(s==='tac'){const id=v||C.tac,L=TACTICALS[id];h=item('TACTICAL',L.n,L.d+(L.c>1?` You carry ${L.c}.`:''),id)}
     else if(s.startsWith('perk')){const id=v||C.perks[+s[4]],p=perkOf(id);h=item(SLOT_T[s],p.n,p.d,id)}
     else if(s==='ks'){const id=v||(S.streaks||DEF_STREAKS)[0],k=SK[id];h=item('SCORESTREAK · '+k.c+' POINTS',k.n,k.d||'','ks')}}
@@ -2248,6 +2265,7 @@ function wInput(e){if(e.target.id!=='wClsName'||!clsEditable(wSel))return;classB
   const t=document.querySelector('.ctab.on span');if(t)t.textContent=classById(wSel).n;renderMenu()}
 function wClick(e){const P=wPage(),a=e.target.closest('[data-a]');
   if(a){const A=a.dataset.a;if(A==='back')wBack();else if(A==='new')wNewClass();else if(A==='del')wDelete();
+    else if(A==='akimbo'){const C=wEditable();if(!C)return;C.secAtt=C.secAtt||{};if(C.secAtt.under==='akimbo')delete C.secAtt.under;else C.secAtt.under='akimbo';save();sfx('swap');renderWeapons();renderMenu()}
     else if(A==='use'){S.cls=wSel;save();sfx('swap');renderWeapons();renderMenu()}
     else if(A==='dup'){if(S.classes.length>=CLS_MAX){wToast('All '+CLS_MAX+' custom slots are full');return}const c=JSON.parse(JSON.stringify(classById(wSel)));c.n=(c.n+' 2').slice(0,18);S.classes.push(c);wSel='c'+(S.classes.length-1);save();sfx('swap');renderWeapons();renderMenu()}return}
   const tab=e.target.closest('.ctab[data-cl]');if(tab){wSel=tab.dataset.cl;wNav=[{pg:'class'}];sfx('swap');renderWeapons();return}
@@ -2257,10 +2275,10 @@ function wClick(e){const P=wPage(),a=e.target.closest('[data-a]');
   if(P.pg==='pick'){const o=e.target.closest('.popt[data-v]');if(!o)return;const v=o.dataset.v,s=P.slot;
     if(s==='ks'){toggleStreak(v);sfx('swap');renderWeapons();renderMenu();return}
     const C=wEditable();if(!C)return;
-    if(s==='prim'){if(C.prim!==v){C.prim=v;for(const[q]of ATT_SLOTS)if(C.att[q]&&!attOk(v,q,C.att[q]))delete C.att[q]}}else if(s==='sec')C.sec=v;else if(s==='lethal')C.lethal=v;else if(s==='tac')C.tac=v;else if(s.startsWith('perk'))C.perks[+s[4]]=v;
+    if(s==='prim'){if(C.prim!==v){C.prim=v;for(const[q]of ATT_SLOTS)if(C.att[q]&&!attOk(v,q,C.att[q]))delete C.att[q]}}else if(s==='sec'){C.sec=v;if(C.secAtt&&C.secAtt.under&&!attOk(v,'under',C.secAtt.under))delete C.secAtt.under}else if(s==='lethal')C.lethal=v;else if(s==='tac')C.tac=v;else if(s.startsWith('perk'))C.perks[+s[4]]=v;
     save();renderMenu();wBack();return}
   if(P.pg==='smith'){const sl=e.target.closest('.sslot[data-k]');if(!sl||sl.classList.contains('off'))return;wGo({pg:'att',slot:sl.dataset.k.slice(4)});return}
-  if(P.pg==='att'){const o=e.target.closest('.aopt[data-v]');if(!o||o.classList.contains('off'))return;const C=wEditable();if(!C)return;const v=o.dataset.v;if(v)C.att[P.slot]=v;else delete C.att[P.slot];save();renderMenu();wBack()}}
+  if(P.pg==='att'){const o=e.target.closest('.aopt[data-v]');if(!o||o.classList.contains('off'))return;const C=wEditable();if(!C)return;const v=o.dataset.v;const clash=akimboClash(C.att,P.slot,v);if(v)C.att[P.slot]=v;else delete C.att[P.slot];save();renderMenu();wBack();if(clash)setTimeout(()=>wToast(clash),0)}}
 
 /* ---------- OPERATORS ---------- */
 function renderOps(){$('oList').innerHTML=OP_IDS.map(id=>`<button class="orow ${id===opSel?'on':''}" data-op="${id}"><b>${OPS[id].n}</b>${id===S.op?'<i>EQUIPPED</i>':''}</button>`).join('');
@@ -2405,7 +2423,7 @@ function update(dt){if(state!=='play')return;if(preT>0){preTick(dt);netTick(dt);
   const frozen=MODE.snd&&(snd.phase==='freeze'||snd.phase==='post'),busy=MODE.snd&&me&&me.plantP>0;
   if(me&&!me.dead&&(me.drone||me.msl)){moveBody(me,dt,0,0,0,false);tickWeapon(me,dt);adsK=0}
   else if(me&&!me.dead){const ak=2.2*(1-adsK*.5)*dt*(S.sens/7);me.yaw+=((keys.ArrowLeft?1:0)-(keys.ArrowRight?1:0))*ak;me.pitch=cl(me.pitch+((keys.ArrowUp?1:0)-(keys.ArrowDown?1:0))*ak*.7,-1.45,1.45);
-    const f=(K('fwd')?1:0)-(K('back')?1:0),s=(K('right')?1:0)-(K('left')?1:0);adsK+=((mouse.r&&!(me.slideT>0)&&!WS(curW(me)).melee?1:0)-adsK)*Math.min(1,dt*11*(WS(curW(me)).adsMul||1));
+    const f=(K('fwd')?1:0)-(K('back')?1:0),s=(K('right')?1:0)-(K('left')?1:0);adsK+=((mouse.r&&!(me.slideT>0)&&!WS(curW(me)).melee&&!WS(curW(me)).akimbo?1:0)-adsK)*Math.min(1,dt*11*(WS(curW(me)).adsMul||1));
     const wasSp=me.sprint;me.sprint=(S.sprintMode==='auto'?true:S.sprintMode==='toggle'?!!me.sprintT:(K('sprint')||(B('sprint')==='ShiftLeft'&&keys.ShiftRight)))&&f>0&&!mouse.r&&adsK<.2&&(!mouse.l||hasPerk(me,'firesprint'))&&curW(me).rl<=0&&!(me.slideT>0);
     if(me.sprint&&me.crouch){if(canStand(me))me.crouch=false;else me.sprint=false}if(wasSp&&!me.sprint)me.sprintOut=T+.12;if(f<=0)me.sprintT=false;
     const fx=-Math.sin(me.yaw),fz=-Math.cos(me.yaw),rx=Math.cos(me.yaw),rz=-Math.sin(me.yaw);let wx=fx*f+rx*s,wz=fz*f+rz*s;const L=Math.hypot(wx,wz);if(L>0){wx/=L;wz/=L}
@@ -2524,7 +2542,7 @@ let loCls=null;
 const loTabsHtml=cls=>[['cl','CLASSES'],['ks','SCORESTREAKS']].map(([c,n])=>`<button class="chip" data-cls="${c}" aria-pressed="${c===cls}">${n}</button>`).join('');
 /* in-game class select: a list down the left side */
 function loDetail(C){const at=clsAtts(C),L=LETHALS[C.lethal]||LETHALS.frag,Tc=TACTICALS[C.tac]||TACTICALS.flash;
-  return `<div class="det">${at.length?at.join(' · '):'No attachments'}<br>${WEP[C.sec]?WEP[C.sec].n:'P9'} · <em>${L.s}</em> · <em>${Tc.s}</em><br>${(C.perks||[]).map(perkName).join(' · ')}</div>`}
+  return `<div class="det">${at.length?at.join(' · '):'No attachments'}<br>${C.secAtt&&C.secAtt.under==='akimbo'?'AKIMBO ':''}${WEP[C.sec]?WEP[C.sec].n:'P9'} · <em>${L.s}</em> · <em>${Tc.s}</em><br>${(C.perks||[]).map(perkName).join(' · ')}</div>`}
 function loCards(){const cur=loadoutPick||S.cls,ks=loCls==='ks';$('loKs').classList.toggle('on',ks);$('loTitle').innerHTML=ks?'SCORE<span>STREAKS</span>':'SELECT <span>CLASS</span>';
   if(ks){const sel=S.streaks||DEF_STREAKS;$('loNote').textContent=`PICK 3 · ${sel.length}/3 CHOSEN`;
     $('loGrid').innerHTML=SK_IDS.map(id=>`<div class="it ${sel.includes(id)?'on':''}" data-sk="${id}"><b>${SK[id].n}</b><i>${skCost(me,id)} POINTS</i></div>`).join('')}
