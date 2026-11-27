@@ -819,13 +819,13 @@ function throwNadeOld(p){if(p.dead||!p.nades||p.nadeCd>T)return;p.nades--;p.prot
 function nadeTick(dt){for(const n of nades){n.t-=dt;if(!n.stuck){n.vy-=(n.kind==='knife'?4:n.kind==='bolt'?3:n.kind==='rocket'?0:16)*dt;const px=n.x,py=n.y,pz=n.z;for(const ax of['x','y','z']){const o=n[ax];n[ax]+=n['v'+ax]*dt;let hit=n.y<.08&&ax==='y';if(!hit)for(const b of COLL)if(n.x>b.x0&&n.x<b.x1&&n.y>b.y0&&n.y<b.y1&&n.z>b.z0&&n.z<b.z1){hit=true;break}
       if(hit){n[ax]=o;const r=equipHit(n,ax);if(r==='done'){n.dead=1;break}if(r==='stop')break;n['v'+ax]*=-.38;if(ax==='y'){n.vx*=.7;n.vz*=.7}}}
       if(n.kind==='rocket'&&!n.dead){if(Math.random()<.9)parts.push({x:n.x,y:n.y,z:n.z,vx:R(-.4,.4),vy:R(0,.6),vz:R(-.4,.4),t:R(.4,.8),c:Math.random()<.3?[2,1.1,.4]:[.5,.48,.45],s:R(.12,.25)});if(rocketAir(n,px,py,pz)){explode(n);n.dead=1}}
-      if((n.kind==='knife'||n.kind==='bolt'||n.kind==='rocket')&&!n.stuck&&!n.dead)for(const q of players){if(q.dead||q===n.from||!foe(n.from,q))continue;const sdx=n.x-px,sdz=n.z-pz,sl=sdx*sdx+sdz*sdz,st=sl>1e-8?cl(((q.x-px)*sdx+(q.z-pz)*sdz)/sl,0,1):1,hx=px+sdx*st,hz=pz+sdz*st,hy=py+(n.y-py)*st;if(Math.hypot(q.x-hx,q.z-hz)<(n.kind==='rocket'?.6:.5)&&hy>q.y&&hy<q.y+1.9){n.dead=1;n.x=hx;n.y=hy;n.z=hz;if(n.kind==='rocket'){explode(n);break}const hs=hy>q.y+1.45;if(n.from===me||!NET.on||NET.host&&!n.remote){KILL_MELEE=n.kind==='knife';damage(q,n.kind==='bolt'?n.dmg*(hs?n.hsm:1):150,n.from,hs);KILL_MELEE=false}if(n.from===me){hitT=.2;hitK=q.dead;sfx('hit')}break}}}
+      if((n.kind==='knife'||n.kind==='bolt'||n.kind==='rocket')&&!n.stuck&&!n.dead)for(const q of players){if(q.dead||q===n.from||!foe(n.from,q))continue;const sdx=n.x-px,sdz=n.z-pz,sl=sdx*sdx+sdz*sdz,st=sl>1e-8?cl(((q.x-px)*sdx+(q.z-pz)*sdz)/sl,0,1):1,hx=px+sdx*st,hz=pz+sdz*st,hy=py+(n.y-py)*st;if(Math.hypot(q.x-hx,q.z-hz)<(n.kind==='rocket'?.6:.5)&&hy>q.y&&hy<q.y+1.9){n.dead=1;n.x=hx;n.y=hy;n.z=hz;if(n.kind==='rocket'||n.exp){explode(n);break}const hs=hy>q.y+1.45;if(n.from===me||!NET.on||NET.host&&!n.remote){KILL_MELEE=n.kind==='knife';damage(q,n.kind==='bolt'?n.dmg*(hs?n.hsm:1):150,n.from,hs);KILL_MELEE=false}if(n.from===me){hitT=.2;hitK=q.dead;sfx('hit')}break}}}
     if(n.t<=0&&!n.dead){equipFuse(n);n.dead=1}}nades=nades.filter(n=>!n.dead)}
 function explode(n){const c=[n.x,n.y+.3,n.z];if(n.y<4.5){const fy=floorAt(n.x,n.z,.05,n.y+.3);if(n.y-fy<.6)addDecal([n.x,fy+.004,n.z],[0,1,0],1)}for(let i=0;i<34;i++)parts.push({x:n.x,y:n.y+.3,z:n.z,vx:R(-7,7),vy:R(2,9),vz:R(-7,7),t:R(.5,.9),c:i%3?[.35,.32,.3]:[1.9,1.1,.4],s:R(.15,.35)});
   if(me){const d=Math.hypot(n.x-me.x,n.z-me.z);shake=Math.max(shake,cl(1-d/25,0,1)*.6);if(ac)sfx('boom',null,d,Math.atan2(n.x-me.x,n.z-me.z)-me.yaw)}
   for(const t of turrets)if(t.alive&&Math.hypot(t.x-n.x,t.z-n.z)<5)damageTurret(t,150,n.from);
   if(n.remote&&NET.host)return;
-  for(const q of players){if(q.dead||(q!==n.from&&!foe(n.from,q)))continue;const d=Math.hypot(q.x-n.x,q.y+.9-n.y,q.z-n.z);if(d>7)continue;if(!los(c,[q.x,q.y+1,q.z]))continue;const dm=d<2.2?150:150*(1-(d-2.2)/4.8);if(damage(q,dm,n.from,false)&&n.from===me&&q!==me)pop('GRENADE KILL','#ffb02e');if(n.from===me&&q!==me){hitT=.2;hitK=q.dead}}}
+  for(const q of players){if(q.dead||(q!==n.from&&!foe(n.from,q)))continue;const d=Math.hypot(q.x-n.x,q.y+.9-n.y,q.z-n.z);const RM=n.small?3.5:7,R0=n.small?1.2:2.2,DM=n.small?110:150;if(d>RM)continue;if(!los(c,[q.x,q.y+1,q.z]))continue;const dm=d<R0?DM:DM*(1-(d-R0)/(RM-R0));if(damage(q,dm,n.from,false)&&n.from===me&&q!==me)pop('GRENADE KILL','#ffb02e');if(n.from===me&&q!==me){hitT=.2;hitK=q.dead}}}
 function dropAmmo(q){}
 function pickTick(dt){for(const k of picks){k.t-=dt;if(!me||me.dead)continue;if(Math.hypot(k.x-me.x,k.z-me.z)<1.4&&Math.abs(k.y-me.y)<1.5){let got=false;for(const w of me.w){const W=WS(w);if(w.res<W.res){w.res=Math.min(W.res,w.res+Math.ceil(W.res*.5));got=true}}if(me.nades<(LETHALS[me.lethal]||{c:1}).c){me.nades++;got=true}if(got){k.t=0;pop('+ AMMO','#9fe06a');sfx('reload')}}}picks=picks.filter(k=>k.t>0)}
 /* ================= Search & Destroy ================= */
@@ -923,7 +923,7 @@ function netRecv(m){
   case 'th':if(NET.host&&NET.inMatch){const t=turrets.find(t=>t.id===m.id),f=byNid(m.k);if(t&&f)damageTurret(t,Math.min(+m.d||0,150),f)}break;
   case 'pi':if(NET.host)netSend({t:'po',to:m.i,ts:m.ts});break;
   case 'po':NET.ping=Math.round(lerp(NET.ping||(performance.now()-m.ts),performance.now()-m.ts,.5));break;
-  case 'n':if(NET.inMatch){const p=byNid(m.i);const k=m.k||'frag';if(p)nades.push({kind:k,x:m.a[0],y:m.a[1],z:m.a[2],vx:m.a[3],vy:m.a[4],vz:m.a[5],t:fuseT(k),from:p,remote:true})}break;
+  case 'n':if(NET.inMatch){const p=byNid(m.i);const k=m.k||'frag';if(p)nades.push({kind:k,x:m.a[0],y:m.a[1],z:m.a[2],vx:m.a[3],vy:m.a[4],vz:m.a[5],t:fuseT(k),from:p,remote:true,exp:m.e?1:0,small:m.e?1:0})}break;
   case 'act':if(NET.host&&NET.inMatch)hostAct(m);break;
   case 'round':if(!NET.host&&NET.inMatch)clientRound(m);break;
   case 'rend':if(!NET.host&&NET.inMatch)clientRoundEnd(m);break;
@@ -1706,7 +1706,7 @@ const DEF_CLASSES=[
   {n:'ASSAULT',prim:'ar',att:{under:'grip',mag:'ext'},sec:'pis',lethal:'frag',tac:'flash',perks:['fasthands','hardline','firesprint']},
   {n:'CLOSE QUARTERS',prim:'smg',att:{laser:'tac',stock:'light',mag:'fast'},sec:'mpis',lethal:'semtex',tac:'stun',perks:['light','ghost','silence']},
   {n:'MARKSMAN',prim:'dmr2',att:{muzzle:'brake',stock:'heavy'},sec:'rev',lethal:'knife',tac:'smoke',perks:['scav','ghost','tacres']},
-  {n:'BREACHER',prim:'sg',att:{under:'grip',mag:'ext'},sec:'shorty',lethal:'molotov',tac:'flash',perks:['fasthands','cold','firesprint']},
+  {n:'BREACHER',prim:'sg',att:{under:'grip',muzzle:'choke'},sec:'shorty',lethal:'molotov',tac:'flash',perks:['fasthands','cold','firesprint']},
   {n:'STEALTH',prim:'ar2',att:{muzzle:'supp',optic:'scope4',under:'angled'},sec:'bpis',lethal:'knife',tac:'smoke',perks:['scav','ghost','silence']}];
 const CLS_MAX=10;
 function classesInit(){if(!Array.isArray(S.classes)||!S.classes.length)S.classes=[0,1,2].map(i=>JSON.parse(JSON.stringify({...DEF_CLASSES[i],n:'CUSTOM '+(i+1),prim:i===0?(S.prim||'ar'):DEF_CLASSES[i].prim})));
@@ -1822,10 +1822,10 @@ const GUNB={
  sg(a,o){const v=o.v,F=v==='sg2'?GG1:GWOOD;
   if(v==='sg3'){for(const sx of[-1,1])gcyl(a,[sx*.024,.03,-.08],[sx*.024,.03,-.78],.023,GG1);cbox(a,0,.0,-.42,.09,.03,.5,F,.01);cbox(a,0,-.02,0,.08,.1,.2,GK,.014);box(a,0,.055,-.78,.006,.01,.006,GSTEEL)}
   else{cbox(a,0,-.03,0,.075,.1,.3,v==='sg2'?GG2:GK,.016);gcyl(a,[0,.05,-.12],[0,.05,-.82],.022,GG1);gcyl(a,[0,.0,-.12],[0,.0,-.72],.018,GG1);box(a,0,.073,-.8,.006,.012,.006,GSTEEL);
-   cbox(a,0,-.025,-.42,.072,.07,.22,F,.018);for(let k=0;k<5;k++)box(a,0,-.027,-.34-k*.04,.076,.074,.008,F.map(c=>c*.65));box(a,.038,.02,-.02,.002,.04,.12,GK)}
+   cbox(a,0,-.025,-.42,.072,.07,.22,F,.018);for(let k=0;k<5;k++)box(a,0,-.027,-.34-k*.04,.076,.074,.008,F.map(c=>c*.65));box(a,.038,.02,-.02,.002,.04,.12,GK);railTop(a,.07,-.14,.12)}
   if(!o.noStock){cbox(a,0,-.06,.24,.064,.13,.24,F,.016);cbox(a,0,-.075,.365,.07,.155,.02,GK,.006)}
   beam(a,[0,-.03,.12],[0,-.17,.16],.052,F,.048);tguard(a,-.03,-.03,.09,GG1);if(!o.noSight){for(const sx of[-1,1])box(a,sx*.012,.07,.02,.008,.035,.02,GK);box(a,0,.09,-.8,.008,.012,.008,[2.2,1.8,.6]);box(a,0,.072,-.8,.012,.02,.012,GK)}
-  return{muzzle:[0,v==='sg3'?.03:.05,-.82],under:[0,v==='sg3'?0:-.025,-.44],side:[.04,.02,-.3],stock:[0,0,.13],mag:v==='sg2'?[0,-.03,-.06]:null,mg:[.14,0,.06,.09],mgx:[.24,0,.06,.09],sightY:.1}},
+  return{muzzle:[0,v==='sg3'?.03:.05,-.82],rail:v==='sg3'?null:[.082,-.02],railF:-.72,under:[0,v==='sg3'?0:-.025,-.44],side:[.04,.02,-.3],stock:[0,0,.13],mag:v==='sg2'?[0,-.03,-.06]:null,mg:[.14,0,.06,.09],mgx:[.24,0,.06,.09],sightY:.1}},
  dmr(a,o){const v=o.v,F=v==='snp2'?GOD:v==='dmr2'?GTAN:GWOOD,big=v==='snp2'?1:0;
   cbox(a,0,-.03,-.05,.07+big*.01,.1+big*.01,.42,GG2,.014);cbox(a,0,-.02,-.44-big*.06,.076,.085,.36+big*.1,F,.02);const bz=-.98-big*.12;gcyl(a,[0,.03,-.6],[0,.03,bz],.017+big*.004,GG1);
   if(big){cbox(a,0,.0,bz-.06,.07,.065,.12,GK,.012);for(const sx of[-1,1])box(a,sx*.036,.012,bz-.06,.006,.04,.07,GG2);for(const sx of[-1,1])beam(a,[sx*.02,-.02,-.66],[sx*.12,-.3,-.7],.02,GK)}else cbox(a,0,.01,bz,.05,.05,.08,GK,.01);
@@ -1958,7 +1958,7 @@ attOk=(wid,slot,a)=>{const B=BASE(wid);if(B==='xbow'&&!['under','laser','stock']
 /* ---- projectiles: rockets and bolts fly through the world as real objects ---- */
 function fireProj(p,W,o,spr){const yaw=p.yaw+(p.bot?p.ai.aimE[0]:0)+R(-spr,spr)*.5,pitch=p.pitch+(p.bot?p.ai.aimE[1]:0)+R(-spr,spr)*.5,d=dirOf(yaw,pitch),v=W.pspd||50;
   const n={kind:W.proj,x:o[0]+d[0]*.7,y:o[1]+d[1]*.7-.05,z:o[2]+d[2]*.7,vx:d[0]*v,vy:d[1]*v,vz:d[2]*v,t:W.proj==='rocket'?6:5,from:p,dmg:W.dmg,hsm:W.hs};nades.push(n);
-  if(NET.on&&(p===me||NET.host&&p.isBot))netSend({t:'n',i:p.nid,k:W.proj,a:[n.x,n.y,n.z,n.vx,n.vy,n.vz].map(r2)});
+  if(NET.on&&(p===me||NET.host&&p.isBot))netSend({t:'n',i:p.nid,k:W.proj,e:W.expl?1:0,a:[n.x,n.y,n.z,n.vx,n.vy,n.vz].map(r2)});
   if(W.proj==='rocket')for(let i=0;i<8;i++)parts.push({x:o[0]-d[0]*.6,y:o[1]-.1,z:o[2]-d[2]*.6,vx:-d[0]*R(2,6)+R(-1,1),vy:R(0,1.5),vz:-d[2]*R(2,6)+R(-1,1),t:R(.3,.6),c:[.55,.52,.48],s:R(.2,.35)})}
 /* rockets hitting helicopters, drones, UAVs and other air streaks */
 function rocketAir(n,px,py,pz){const dx=n.x-px,dy=n.y-py,dz=n.z-pz,L=Math.hypot(dx,dy,dz)||1e-4,d=[dx/L,dy/L,dz/L];
@@ -2024,6 +2024,69 @@ function drawAkimboVM(c,gx,gy,gz,ry,rx){const gm2=modelM(-gx-.03,gy,gz+.02,-ry,r
   gl.uniformMatrix4fv(U.uM,false,mul(gm2,modelM(0,-.12,.18,0,.3)));{const om=opMesh(opOf(me));draw(om&&om.hand||M.hand)}
   if(flashT>0&&akimboSide){gl.uniform1f(U.uEm,1);gl.uniformMatrix4fv(U.uM,false,mul(gm2,modelM(0,GUNM[c.id]&&GUNM[c.id].muzzle?GUNM[c.id].muzzle[1]:0,muzzleZ(c),R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}
 let akimboSide=0;
+/* ================= Attachment compatibility + class-specific attachments ================= */
+/* new AMMO slot */
+ATT_SLOTS.push(['ammo','AMMO']);
+ATTS.ammo={
+  ap:{n:'ARMOR-PIERCING ROUNDS',d:'Assault rifles only. 10% more damage at every range.',fx:{}},
+  hp:{n:'HOLLOW POINTS',d:'SMGs only. Hits 15% harder up close, but damage drops off sooner.',fx:{}},
+  hv:{n:'HIGH-VELOCITY ROUNDS',d:'LMGs only. Bullets keep full damage 30% further.',fx:{}},
+  slug:{n:'SLUG ROUNDS',d:'Shotguns only. One heavy slug instead of pellets: accurate and deadly at range, weaker up close.',fx:{}},
+  hcal:{n:'HIGH-CALIBER ROUNDS',d:'Snipers and marksman rifles only. Headshots do 30% more damage.',fx:{}},
+  xexp:{n:'EXPLOSIVE BOLTS',d:'Crossbow only. Bolts blow up on impact. Slower bolts and reload.',fx:{rl:1.2}}};
+/* new class-only parts in the existing slots */
+Object.assign(ATTS.muzzle,{
+  boost:{n:'RECOIL BOOSTER',d:'Assault rifles only. Fires 15% faster but kicks harder.',fx:{rec:1.2}},
+  choke:{n:'SHOTGUN CHOKE',d:'Shotguns only. Tighter pellet spread and a bit more range.',fx:{hip:.7,adsSpr:.7,range:1.2}}});
+Object.assign(ATTS.stock,{wire:{n:'WIRE STOCK',d:'SMGs only. Skeleton stock: quicker movement and aiming, a little more kick.',fx:{spd:1.06,adsMul:1.15,rec:1.15}}});
+Object.assign(ATTS.mag,{belt:{n:'150-ROUND BELT',d:'LMGs only. A huge box of ammo. Heavy, slow to aim and reload.',fx:{magSet:150,rl:1.3,spd:.95,adsMul:.88}}});
+
+/* which weapon classes each attachment makes sense on (ar, smg, lmg, sg, dmr = snipers & marksman, xbow) */
+const COMPAT={
+  optic:{iron:'ar smg lmg sg',reflex:'ar smg lmg sg',holo:'ar smg lmg sg',scope3:'ar lmg dmr',scope4:'ar lmg dmr',thermal:'ar lmg dmr'},
+  muzzle:{supp:'ar smg lmg dmr',comp:'ar smg lmg',brake:'ar lmg dmr',flash:'ar smg lmg',hbar:'ar lmg dmr',boost:'ar',choke:'sg'},
+  under:{grip:'ar smg lmg sg',angled:'ar smg',bipod:'lmg dmr',hstop:'ar smg lmg sg xbow'},
+  mag:{ext:'ar smg lmg sg dmr',fast:'ar smg lmg sg dmr',light:'lmg',drum:'ar smg',belt:'lmg'},
+  laser:{tac:'ar smg sg lmg xbow',steady:'ar smg sg lmg xbow'},
+  stock:{light:'ar smg sg lmg xbow',heavy:'ar smg sg lmg dmr',none:'smg sg xbow',wire:'smg'},
+  ammo:{ap:'ar',hp:'smg',hv:'lmg',slug:'sg',hcal:'dmr',xexp:'xbow'}};
+{const _ok=attOk,MNT={optic:'rail',muzzle:'muzzle',under:'under',laser:'side',stock:'stock',mag:'mag'};
+  attOk=(wid,slot,a)=>{const A=ATTS[slot]&&ATTS[slot][a],W=WEP[wid];if(!A||!W||W.melee)return false;
+    if(a==='akimbo')return _ok(wid,slot,a);if(SIDEARMS.includes(wid))return false;
+    const B=BASE(wid),L=COMPAT[slot]&&COMPAT[slot][a];if(!L||!L.split(' ').includes(B))return false;
+    const m=typeof GUNM!=='undefined'&&GUNM[wid];if(m&&MNT[slot]&&!m[MNT[slot]])return false;
+    if((a==='drum'||a==='belt')&&m&&m.drum)return false;return true}}
+
+/* stats the base system doesn't know about */
+const SNP_OPT={scope3:[3,1.15],scope4:[4,1],thermal:[3.5,.95]};
+{const _d=deriveWS;deriveWS=function(id,att,perks){const o=_d(id,att,perks);if(!o||!att)return o;
+  const on=s=>att[s]&&attOk(id,s,att[s])?att[s]:null,am=on('ammo'),op=on('optic');
+  if(on('muzzle')==='boost')o.rps*=1.15;
+  if(am==='ap'){o.dmg*=1.1;o.dr=o.dr.map(([d,v])=>[d,v*1.1])}
+  if(am==='hp'){o.dr=o.dr.map(([d,v],i)=>[d>=1e9?d:d*.85,i===0?v*1.15:v]);o.range*=.85}
+  if(am==='hv'){o.dr=o.dr.map(([d,v])=>[d>=1e9?d:d*1.3,v]);o.range*=1.3}
+  if(am==='slug'){o.pel=1;o.dmg=75;o.dr=[[22,75],[45,55],[1e9,40]];o.hip*=.6;o.ads=Math.min(o.ads,.008);o.range=Math.max(o.range,30);o.hs=1.4;o.slug=1}
+  if(am==='hcal')o.hs*=1.3;
+  if(am==='xexp'){o.expl=1;o.pspd=(o.pspd||75)*.85}
+  /* a sniper's own scope swapped for a different one: that scope's zoom, faster or slower to aim */
+  if(op&&BASE(id)==='dmr'&&SNP_OPT[op]){const[z,ads]=SNP_OPT[op],f=ATTS.optic[op].fx;o.zoom=z;o.adsMul=(o.adsMul||1)/(f.adsMul||1)*ads}
+  return o}}
+
+/* explosive bolts */
+{const _fp=fireProj;fireProj=function(p,W,o,spr){const n0=nades.length;_fp(p,W,o,spr);const n=nades[n0];if(n&&W.expl){n.exp=1;n.small=1}}}
+{const _eh=equipHit;equipHit=function(n,ax){const v=[n.vx,n.vy,n.vz],r=_eh(n,ax);if(n.kind==='bolt'&&n.exp&&n.stuck&&!n.backed){n.backed=1;n.t=Math.min(n.t,.45);const L=Math.hypot(...v)||1;n.x-=v[0]/L*.3;n.y-=v[1]/L*.3;n.z-=v[2]/L*.3}return r}}
+{const _ef=equipFuse;equipFuse=function(n){if(n.kind==='bolt'&&n.exp){explode(n);return}return _ef(n)}}
+
+/* models */
+Object.assign(ATT2,{
+  boost:a=>{ncyl(a,[0,0,.01],[0,0,-.05],.02,.024,GG2,12);ncyl(a,[0,0,-.05],[0,0,-.1],.028,.028,GK,12);for(let k=0;k<6;k++){const an=k/6*6.283;box(a,Math.cos(an)*.027,Math.sin(an)*.027-.004,-.075,.008,.008,.03,GG1)}ncyl(a,[0,0,-.1],[0,0,-.12],.024,.02,GG2,12)},
+  choke:a=>{ncyl(a,[0,0,.01],[0,0,-.06],.026,.026,GG2,12);ncyl(a,[0,0,-.06],[0,0,-.1],.026,.021,GG2,12);for(let k=0;k<3;k++)ncyl(a,[0,0,-.012-k*.016],[0,0,-.018-k*.016],.029,.029,GK,12)},
+  wire:a=>{for(const sx of[-1,1])beam(a,[sx*.018,.0,0],[sx*.018,-.03,.2],.01,GG1);beam(a,[0,-.07,.02],[0,-.09,.2],.01,GG1);cbox(a,0,-.1,.2,.055,.115,.014,GK,.004)}});
+/* belt box: a big ammo can under the gun */
+{const _bm=buildMagVariants;buildMagVariants=function(){_bm();for(const id in GUNM){const m=GUNM[id],G=GMESH[id];if(!m||!m.mag||!G||BASE(id)!=='lmg')continue;
+  const b=[];cbox(b,0,-.2,-.01,.11,.2,.18,[.24,.27,.2],.014);box(b,0,-.12,-.01,.115,.012,.185,GK);cbox(b,.058,-.16,-.01,.006,.05,.06,GG2,.003);for(let k=0;k<5;k++)box(b,-.04,.0-k*.004,-.07+k*.03,.03,.016,.02,[1,.78,.3]);
+  G.mb=mkVBO(b.map((v,i)=>{const j=i%10;return j===0?v+m.mag[0]:j===1?v+m.mag[1]:j===2?v+m.mag[2]:v}))}}}
+{const _mm=magMeshFor;magMeshFor=function(c){const G=GMESH[c&&c.id];if(G&&G.mb&&attOn(c,'mag')==='belt')return G.mb;return _mm(c)}}
 /* ================= Operators: all built like the Veteran, re-themed ================= */
 const OPAPI=(()=>{
 /* ================= OPERATORS v2: the veteran build, re-themed ================= */
@@ -2219,16 +2282,16 @@ function pgPick(slot){const C=classById(wSel);let g0=null;
     `</div><div class="wside">${slot==='sec'&&attOk(C.sec,'under','akimbo')?`<button class="akt ${C.secAtt&&C.secAtt.under==='akimbo'?'on':''}" data-a="akimbo">AKIMBO · ${C.secAtt&&C.secAtt.under==='akimbo'?'ON':'OFF'}<small>Two ${WEP[C.sec].n}s · hip fire only</small></button>`:''}${slot==='prim'||slot==='sec'?'<div class="wprev"><canvas id="wCv" width="640" height="280"></canvas></div>':''}<div class="winfo" id="wInfo"></div>${slot==='ks'?'<p class="wdef">They unlock in order of cost. Picking a fourth swaps out your oldest pick.</p>':''}</div></div>`}
 
 /* ---- page 3: gunsmith — the gun big in the middle, slots around it ---- */
-const SMITH_POS={optic:[50,4],laser:[22,4],muzzle:[3,44],under:[22,84],mag:[50,84],stock:[80,44]};
+const SMITH_POS={optic:[50,4],laser:[22,4],muzzle:[3,44],under:[22,84],mag:[50,84],stock:[80,44],ammo:[78,84]};
 function pgSmith(){const C=classById(wSel),n=Object.entries(C.att).filter(([s,v])=>v&&attOk(C.prim,s,v)).length;
   return wTop(`GUNSMITH <small>${WEP[C.prim].n} · ${esc2(C.n)}</small>`,1)+`<div class="wbody smb"><div class="stage"><canvas id="wCv" width="1000" height="460"></canvas>
-    ${ATT_SLOTS.map(([s,nm])=>{const ok=Object.keys(ATTS[s]).some(a=>attOk(C.prim,s,a)),cur=C.att[s]&&attOk(C.prim,s,C.att[s])?ATTS[s][C.att[s]].n:null,[x,y]=SMITH_POS[s];
+    ${ATT_SLOTS.filter(([s])=>Object.keys(ATTS[s]).some(a=>attOk(C.prim,s,a))).map(([s,nm])=>{const ok=Object.keys(ATTS[s]).some(a=>attOk(C.prim,s,a)),cur=C.att[s]&&attOk(C.prim,s,C.att[s])?ATTS[s][C.att[s]].n:null,[x,y]=SMITH_POS[s];
       return `<button class="sslot ${cur?'has':''} ${ok?'':'off'}" data-k="att:${s}" style="left:${x}%;top:${y}%"><span>${nm}</span><b>${ok?cur||'EMPTY':'NOT AVAILABLE'}</b></button>`}).join('')}
     <p class="scnt">${n}/${ATT_MAX} ATTACHMENTS</p><p class="whint">drag to turn</p></div><div class="wside"><div class="winfo" id="wInfo"></div></div></div>`}
 
 /* ---- page 4: choose an attachment for one slot ---- */
 function pgAtt(slot){const C=classById(wSel),nm=ATT_SLOTS.find(([q])=>q===slot)[1],others=Object.entries(C.att).filter(([q,v])=>v&&q!==slot&&attOk(C.prim,q,v)).length,cur=C.att[slot]||'';
-  const opts=[{v:'',n:'NONE',d:'Remove the attachment from this slot.'}].concat(Object.entries(ATTS[slot]).map(([id,A])=>({v:id,n:A.n,d:A.d,off:!attOk(C.prim,slot,id)?'Not available for this weapon':others>=ATT_MAX&&cur!==id?`Already ${ATT_MAX} attachments · remove one first`:''})));
+  const opts=[{v:'',n:'NONE',d:'Remove the attachment from this slot.'}].concat(Object.entries(ATTS[slot]).filter(([id])=>attOk(C.prim,slot,id)).map(([id,A])=>({v:id,n:A.n,d:A.d,off:others>=ATT_MAX&&cur!==id?`Already ${ATT_MAX} attachments · remove one first`:''})));
   return wTop(`${nm} <small>${WEP[C.prim].n}</small>`,1)+`<div class="wbody smb att"><div class="alist">${opts.map(o=>`<button class="aopt ${cur===o.v?'on':''} ${o.off?'off':''}" data-v="${o.v}"><b>${o.n}${cur===o.v?' <i>✓ EQUIPPED</i>':''}</b><span>${o.off||o.d}</span></button>`).join('')}</div>
     <div class="stage"><canvas id="wCv" width="900" height="460"></canvas><p class="whint">hover to preview · drag to turn</p></div><div class="wside"><div class="winfo" id="wInfo"></div></div></div>`}
 
@@ -2466,7 +2529,7 @@ function hud(){updLockUI();if(state!=='play'||!me)return;{const now=performance.
   const hm=$('hitm');hm.style.opacity=hitT>0?Math.min(1,hitT*8):0;hm.classList.toggle('k',hitK);
   $('msg').style.opacity=msgT>0&&!me.dead?Math.min(1,msgT*2):0;$('sub').style.opacity=$('msg').style.opacity;$('pops').style.opacity=me.dead?0:1;
   $('dmg').style.boxShadow=me.dead?'inset 0 0 220px rgba(0,0,0,.75)':`inset 0 0 ${120+ (100-me.hp)*2}px rgba(150,0,0,${cl((100-me.hp)/100*.8+(dmgT>0?dmgT*.6:0),0,.85)})`;
-  const h=$('hint');let ht='';if(me.dead||W.melee)ht='';else if(MODE.snd&&snd.phase==='live'&&me.plantP<=0&&sndHint())ht=sndHint();else if(c.mag===0&&c.res===0&&me.w.some((w,i)=>i!==me.wi&&!WS(w).melee&&w.mag+w.res>0))ht='NO AMMO · press 1 / 2 to switch';else if(c.mag===0&&c.res===0)ht='NO AMMO · grab ammo from fallen enemies';else if(c.mag<=W.mag*.25&&c.rl<=0&&c.res>0)ht='RELOAD  [R]';
+  const h=$('hint');let ht='';if(me.dead||W.melee)ht='';else if(MODE.snd&&snd.phase==='live'&&me.plantP<=0&&sndHint())ht=sndHint();else if(c.mag===0&&c.res===0&&me.w.some((w,i)=>i!==me.wi&&!WS(w).melee&&w.mag+w.res>0))ht='NO AMMO · press 1 / 2 to switch';else if(c.mag===0&&c.res===0)ht='NO AMMO';else if(c.mag<=W.mag*.25&&c.rl<=0&&c.res>0)ht='RELOAD  [R]';
   {const sh=streakHint();if(sh)ht=sh}if(!ht&&!me.dead&&me.prot>T)ht='SPAWN PROTECTED · ends when you shoot';h.hidden=!ht;h.textContent=ht;$('nadeN').textContent=me.nades||0;$('tacN').textContent=me.tacs||0;$('eqLn').textContent=(LETHALS[me.lethal]||LETHALS.frag).s;$('eqTn').textContent=(TACTICALS[me.tac]||TACTICALS.flash).s;
   streakHud();
   if(me.dead&&bmapOpen)closeBombMap(false);
