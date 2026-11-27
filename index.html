@@ -130,7 +130,26 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 .mfoot{display:flex;align-items:center;gap:16px;color:var(--dim);font-size:14px;letter-spacing:1.5px}
 .cards.c4#modes{grid-template-columns:repeat(5,minmax(0,1fr))}.cards#modes .mc h3{font-size:clamp(18px,1.6vw,28px)}
 body.gungame #streaks{display:none}
-@media(max-width:900px){.cards.c3{grid-template-columns:1fr}.cards.c4#modes{grid-template-columns:repeat(2,minmax(0,1fr))}.cards.c4{grid-template-columns:repeat(2,minmax(0,1fr))}.cards.c2{grid-template-columns:1fr}.mc{min-height:180px}}
+body.noks #streaks,body.gungame #streaks{display:none}
+.mcb{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:8px;justify-content:flex-end;opacity:0;pointer-events:none;transform:translateY(6px);transition:.15s}
+.mc:hover .mcb,.mc.on .mcb{opacity:1;pointer-events:auto;transform:none}#modes .mc,#modes .mc.on{padding-bottom:70px}
+.mcb .nextb{position:static;animation:none;padding:9px 8px;flex:1;font-size:13px;letter-spacing:2px;white-space:nowrap}.mcb .cfgb{flex:1.4}.cfgb{font:700 12px var(--f);letter-spacing:1.5px;color:#eee;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.22);border-radius:40px;padding:8px 13px;cursor:pointer;white-space:nowrap;font-size:11.5px;letter-spacing:1px;padding:8px 6px}.cfgb:hover{border-color:var(--a);color:var(--a)}
+.tags i.cus{color:var(--a);border-color:var(--a)}
+#modeCfg{border:1px solid rgba(255,255,255,.12);border-top:3px solid var(--a);border-radius:12px;background:rgba(14,12,10,.82);backdrop-filter:blur(6px);padding:20px 24px;display:flex;flex-direction:column;gap:14px;max-width:1100px}
+#modeCfg[hidden]{display:none}.cfh{display:flex;align-items:center;gap:16px}.cfh .ico{width:52px;height:52px;border-radius:50%;border:2px solid var(--a);color:var(--a);display:grid;place-items:center;font:700 17px var(--f)}
+.cfh small{letter-spacing:3px;color:var(--dim);font-size:12px}.cfh h2{margin:0;font:600 30px var(--f);letter-spacing:2px;color:var(--a)}.cfh .ghost{margin-left:auto}.cfh .ghost:disabled{opacity:.35;cursor:default}
+.cfg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cfr{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-left:3px solid transparent}
+.cfr.ch{border-left-color:var(--a)}.cfr b{display:block;letter-spacing:2px;font-size:14px}.cfr span{display:block;color:var(--dim);font-size:12.5px;margin-top:3px}.cfr em{font-style:normal;color:var(--a)}
+.stp{display:flex;align-items:center;gap:4px;flex:none}.stp button{width:34px;height:34px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:#fff;font:700 18px var(--f);cursor:pointer}.stp button:hover:not(:disabled){border-color:var(--a);color:var(--a)}.stp button:disabled{opacity:.3;cursor:default}
+.stp output{min-width:86px;text-align:center;font:700 17px var(--f);letter-spacing:1px}.cfr .chips{flex:none}
+.cff{display:flex;justify-content:space-between;align-items:center}.cff .nextb{position:static;font-size:16px;padding:11px 26px}
+body.cfgon #step0 .botrow{display:none}
+#roomBar{position:absolute;right:0;top:64px;padding:10px 14px;border-radius:10px;display:flex;flex-direction:column;gap:8px;min-width:330px;border-top:2px solid #4fd36b;z-index:3}
+#roomBar[hidden]{display:none}.rbt{display:flex;align-items:center;gap:10px}.rbt span{font-size:11px;letter-spacing:2px;color:var(--dim);display:flex;align-items:center;gap:6px}.rbt b{font:700 22px var(--f);letter-spacing:4px;margin-right:auto}
+.rbp{display:flex;flex-wrap:wrap;gap:5px}.rbp i{font-style:normal;font-size:12px;letter-spacing:1px;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.07)}.rbp i.me{color:var(--y)}.rbp i.bot{color:var(--dim)}
+body.inroom #openOnline{display:none}.mtop{position:relative}
+@media(max-width:900px){.cards.c3{grid-template-columns:1fr}.cfg{grid-template-columns:1fr}.cards.c4#modes{grid-template-columns:repeat(2,minmax(0,1fr))}.cards.c4{grid-template-columns:repeat(2,minmax(0,1fr))}.cards.c2{grid-template-columns:1fr}.mc{min-height:180px}}
 .setc{width:min(900px,100%);text-align:left;max-height:calc(100vh - 32px);overflow:auto}.setg{display:grid;grid-template-columns:1fr 1fr;gap:26px}.setc label{margin:10px 0 4px}
 .so{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:9px 0;font-size:15px;color:#e8dfd2}.so .chips{justify-content:flex-end}.so .chip{padding:5px 10px;font-size:13px}
 #binds{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 26px}.bd{display:flex;justify-content:space-between;align-items:center;font-size:15px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)}.bd .chip{min-width:96px;padding:5px 10px;font-size:13px}.bd .chip.wait{background:var(--y);color:#111}
@@ -747,7 +766,7 @@ function damage(q,dmg,from,hs){if(q.dead)return false;if(q.prot>T&&from!==q)retu
   if(q.bot&&!q.ai.tgt&&from)q.ai.alert=from;
   if(NET.on&&NET.host&&q.remote&&!q.isBot)netSend({t:'hp',i:q.nid,hp:Math.max(0,Math.round(q.hp)),f:from?from.nid:null});
   if(q.hp<=0){if(NET.on&&NET.host)netSend({t:'k',k:from?from.nid:null,v:q.nid,hs:hs?1:0,sk:STREAK_DMG||undefined,ml:KILL_MELEE?1:undefined});killFx(q,from,hs);return true}return false}
-function killFx(q,from,hs){if(q===me&&from&&from!==me&&!STREAK_DMG)kcStart(from);q.dead=true;q.hp=0;q.killedBy=from&&from!==q?from.name:from?'yourself':'the bomb';q.respT=MODE===MODES.hp?4:3;q.d++;dropAmmo(q);if(from&&from!==q){from.k++;if(MODE===MODES.tdm)tScore[from.team]++;scoreKill(q,from,hs);if(!STREAK_DMG){from.ks=(from.ks||0)+1;nukeCheck(from)}if(hasPerk(from,'scav')&&from.w&&!from.dead){for(const w of from.w){const W=WS(w);if(!W||W.melee)continue;w.res=Math.min(W.res*2,w.res+Math.ceil(W.mag*1.5))}from.nades=Math.min((LETHALS[from.lethal]||{c:1}).c,(from.nades||0)+1);from.tacs=Math.min((TACTICALS[from.tac]||{c:1}).c,(from.tacs||0)+1);if(from===me)pop('+ SCAVENGER','#9fe06a')}}q.ks=0;q.sp=0;q.got={};q.mk=0;if(q===me){if(me.drone)endDrone(true);me.msl=null}pushFeed(from,q,hs);
+function killFx(q,from,hs){if(q===me&&from&&from!==me&&!STREAK_DMG)kcStart(from);q.dead=true;q.hp=0;q.killedBy=from&&from!==q?from.name:from?'yourself':'the bomb';q.respT=MODE.resp||(MODE===MODES.hp?4:3);q.d++;dropAmmo(q);if(from&&from!==q){from.k++;if(MODE===MODES.tdm)tScore[from.team]++;scoreKill(q,from,hs);if(!STREAK_DMG){from.ks=(from.ks||0)+1;nukeCheck(from)}if(hasPerk(from,'scav')&&from.w&&!from.dead){for(const w of from.w){const W=WS(w);if(!W||W.melee)continue;w.res=Math.min(W.res*2,w.res+Math.ceil(W.mag*1.5))}from.nades=Math.min((LETHALS[from.lethal]||{c:1}).c,(from.nades||0)+1);from.tacs=Math.min((TACTICALS[from.tac]||{c:1}).c,(from.tacs||0)+1);if(from===me)pop('+ SCAVENGER','#9fe06a')}}q.ks=0;q.sp=0;q.got={};q.mk=0;if(q===me){if(me.drone)endDrone(true);me.msl=null}pushFeed(from,q,hs);
   if(from===me){msg(hs?'HEADSHOT':'ELIMINATED','',1.1,true);hitK=true;hitT=.2}
   for(let i=0;i<14;i++)parts.push({x:q.x,y:q.y+1,z:q.z,vx:R(-3,3),vy:R(1,5),vz:R(-3,3),t:.8,c:[.5,.05,.05],s:.14})}
 function reload(p){const c=curW(p),W=WS(c);if(W.melee||c.rl>0||c.mag>=W.mag||c.res<=0)return;c.rl=W.rl;if(p===me)sfx('reload')}
@@ -832,7 +851,7 @@ function dropAmmo(q){}
 function pickTick(dt){for(const k of picks){k.t-=dt;if(!me||me.dead)continue;if(Math.hypot(k.x-me.x,k.z-me.z)<1.4&&Math.abs(k.y-me.y)<1.5){let got=false;for(const w of me.w){const W=WS(w);if(w.res<W.res){w.res=Math.min(W.res,w.res+Math.ceil(W.res*.5));got=true}}if(me.nades<(LETHALS[me.lethal]||{c:1}).c){me.nades++;got=true}if(got){k.t=0;pop('+ AMMO','#9fe06a');sfx('reload')}}}picks=picks.filter(k=>k.t>0)}
 /* ================= Search & Destroy ================= */
 /* rounds, no respawns, one bomb; Ravens (team 0) attack first, sides swap at half time */
-const PLANT_T=4,DEFUSE_T=5,BOMB_T=40,FREEZE_T=4,ROUND_T=105,HALF=3;
+const FREEZE_T=4;let PLANT_T=4,DEFUSE_T=5,BOMB_T=40,ROUND_T=105,HALF=3;
 let snd={round:0,att:0,phase:'freeze',t:0,post:0,bomb:null,target:0,specI:0,winMsg:''};
 const isSnd=()=>MODE===MODES.snd;
 function sndStart(){snd={round:0,att:0,phase:'freeze',t:0,post:0,bomb:null,target:0,specI:0};tScore=[0,0];sndRound()}
@@ -2458,14 +2477,15 @@ function ggArm(p){const i=cl(p.gg||0,0,GG.length-1),id=GG[i];p.perks=[];p.ghost=
   if(id==='kn'){p.w=[mkWepL('kn',{},[])];p.lethal='knife';p.nades=2}else{p.w=[mkWepL(id,{},[]),mkWepL('kn',{},[])];p.lethal='frag';p.nades=0}p.wi=0;p.knT=0}
 {const _al=applyLoadout;applyLoadout=function(p){if(MODE.gun){ggArm(p);if(p===me)me.op=OPS[S.op]?S.op:'soldier';return}return _al(p)}}
 /* no class pick: straight into the 3-2-1, everyone at the bottom of the ladder */
-{const _ps=preStart;preStart=function(){if(MODE.gun)for(const p of players){p.gg=0;if(!p.dead&&p.w)ggArm(p)}ggOn();_ps();if(MODE.gun&&preT>PRE_COUNT){preT=PRE_COUNT;setTimeout(()=>{if(loadoutOpen)closeLoadout()},60)}}}
+{const _ps=preStart;preStart=function(){if(MODE.gun)for(const p of players){p.gg=0;p.ggk=0;if(!p.dead&&p.w)ggArm(p)}ggOn();_ps();if(MODE.gun&&preT>PRE_COUNT){preT=PRE_COUNT;setTimeout(()=>{if(loadoutOpen)closeLoadout()},60)}}}
 function ggOn(){for(const id of['dLoad','pLoad']){const e=$(id);if(e)e.style.display=MODE.gun?'none':''}document.body.classList.toggle('gungame',!!MODE.gun)}
 {const _ol=openLoadout;openLoadout=function(){if(MODE.gun)return;return _ol()}}
 {const _sc=streakCheck;streakCheck=function(p){if(MODE.gun)return;return _sc(p)}}
 {const _nc=nukeCheck;nukeCheck=function(p){if(MODE.gun)return;return _nc(p)}}
 /* every kill moves you up; a knife or melee kill also knocks the victim back one */
 {const _kf=killFx;killFx=function(q,from,hs){const melee=KILL_MELEE;_kf(q,from,hs);if(!MODE.gun||!from||from===q||STREAK_DMG)return;
-  if(melee&&(q.gg||0)>0){q.gg--;if(q===me)ann('SET BACK',`Knifed by ${from.name} · back to ${ggName(q.gg)}`,'#ff5a46')}
+  q.ggk=0;if(melee&&GG_KNIFE&&(q.gg||0)>0){q.gg--;if(q===me)ann('SET BACK',`Knifed by ${from.name} · back to ${ggName(q.gg)}`,'#ff5a46')}
+  from.ggk=(from.ggk||0)+1;if(from.ggk<GG_KPW){if(from===me)pop(`${from.ggk}/${GG_KPW} WITH ${ggName(from.gg||0)}`,'#ffb02e');return}from.ggk=0;
   from.gg=(from.gg||0)+1;if(from.gg>=GG.length)return;
   if(!from.dead&&(from===me||from.bot&&(!NET.on||NET.host)))ggArm(from);
   if(from===me){ann(from.gg===GG.length-1?'FINAL WEAPON':'WEAPON UP',`${from.gg+1}/${GG.length} · ${ggName(from.gg)}`,'#ffb02e');sfx('swap')}
@@ -2476,6 +2496,104 @@ function ggSync(p,g){if(g==null||!MODE.gun)return;const was=p.gg||0;p.gg=g;if(p=
 {const _u=update;update=function(dt){_u(dt);if(!MODE.gun||state!=='play')return;for(const p of players){if(p.dead||(p.gg||0)!==GG.length-1)continue;if((p.nades||0)<2){p.knT=(p.knT||0)+dt;if(p.knT>2.5){p.knT=0;p.nades++}}else p.knT=0}}}
 function ggHud(){const i=cl(me.gg||0,0,GG.length-1),lead=players.reduce((a,p)=>(p.gg||0)>(a.gg||0)?p:a,me);
   return `<b>GUN GAME · ${i+1}/${GG.length}</b><span>${ggName(i)}</span><em>NEXT · ${ggName(i+1)}${lead!==me&&(lead.gg||0)>i?` · LEADER ${lead.name.toUpperCase()} ${(lead.gg||0)+1}`:''}</em>`}
+/* ================= Game mode settings + online rooms that use the main menu ================= */
+const ONOFF=[[1,'ON'],[0,'OFF']];
+const MCFG={
+  ffa:[{k:'lim',n:'KILL LIMIT',d:'Eliminations needed to win.',min:10,max:100,st:5,def:25},{k:'len',n:'TIME LIMIT',d:'Match length.',min:3,max:30,st:1,def:8,u:' MIN'},
+    {k:'resp',n:'RESPAWN DELAY',d:'Seconds before you come back.',min:1,max:10,st:1,def:3,u:' S'},{k:'ks',n:'SCORESTREAKS',d:'Earn streaks from points.',o:ONOFF,def:1},{k:'nuke',n:'TACTICAL NUKE',d:'25 kills without dying ends the match.',o:ONOFF,def:1}],
+  tdm:[{k:'lim',n:'SCORE LIMIT',d:'Team eliminations needed to win.',min:20,max:200,st:10,def:50},{k:'len',n:'TIME LIMIT',d:'Match length.',min:3,max:30,st:1,def:10,u:' MIN'},
+    {k:'resp',n:'RESPAWN DELAY',d:'Seconds before you come back.',min:1,max:10,st:1,def:3,u:' S'},{k:'ks',n:'SCORESTREAKS',d:'Earn streaks from points.',o:ONOFF,def:1},{k:'nuke',n:'TACTICAL NUKE',d:'25 kills without dying ends the match.',o:ONOFF,def:1}],
+  hp:[{k:'lim',n:'SCORE LIMIT',d:'Points needed to win. One point a second in the zone.',min:100,max:500,st:25,def:250},{k:'len',n:'TIME LIMIT',d:'Match length.',min:3,max:30,st:1,def:10,u:' MIN'},
+    {k:'hill',n:'ZONE TIME',d:'How long each hardpoint stays before it moves.',min:30,max:120,st:15,def:60,u:' S'},{k:'resp',n:'RESPAWN DELAY',d:'Seconds before you come back.',min:1,max:10,st:1,def:4,u:' S'},
+    {k:'ks',n:'SCORESTREAKS',d:'Earn streaks from points.',o:ONOFF,def:1},{k:'nuke',n:'TACTICAL NUKE',d:'25 kills without dying ends the match.',o:ONOFF,def:1}],
+  snd:[{k:'lim',n:'ROUNDS TO WIN',d:'Sides swap after one fewer round than this.',min:2,max:10,st:1,def:4},{k:'rt',n:'ROUND TIME',d:'Time to plant or defend each round.',min:60,max:240,st:15,def:105,u:' S',fmt:v=>`${Math.floor(v/60)}:${String(v%60).padStart(2,'0')}`},
+    {k:'bomb',n:'BOMB TIMER',d:'Seconds from plant to detonation.',min:20,max:60,st:5,def:40,u:' S'},{k:'plant',n:'PLANT TIME',d:'Seconds to plant the bomb.',min:2,max:8,st:1,def:4,u:' S'},{k:'defuse',n:'DEFUSE TIME',d:'Seconds to defuse it.',min:2,max:10,st:1,def:5,u:' S'},
+    {k:'ks',n:'SCORESTREAKS',d:'Earn streaks from points.',o:ONOFF,def:1}],
+  gun:[{k:'len',n:'TIME LIMIT',d:'Highest step wins if time runs out.',min:3,max:30,st:1,def:10,u:' MIN'},{k:'kpw',n:'KILLS PER WEAPON',d:'Kills needed with each gun to move up.',min:1,max:5,st:1,def:1},
+    {k:'resp',n:'RESPAWN DELAY',d:'Seconds before you come back.',min:1,max:10,st:1,def:3,u:' S'},{k:'knife',n:'KNIFE SET-BACK',d:'Knife and melee kills drop the victim one weapon.',o:ONOFF,def:1},
+    {k:'order',n:'WEAPON ORDER',d:'Classic ladder, or shuffled every match (knives stay last).',o:[['classic','CLASSIC'],['random','SHUFFLED']],def:'classic'}]};
+const MODE_NM={ffa:'FREE FOR ALL',tdm:'TEAM DEATHMATCH',hp:'HARDPOINT',snd:'SEARCH & DESTROY',gun:'GUN GAME'};
+function cfgOf(m){S.mcfg=S.mcfg||{};const c={},sv=S.mcfg[m]||{};for(const r of MCFG[m]||[])c[r.k]=sv[r.k]!=null?sv[r.k]:r.def;return c}
+const cfgCustom=m=>(MCFG[m]||[]).some(r=>cfgOf(m)[r.k]!==r.def);
+const cfgVal=(r,v)=>r.o?(r.o.find(o=>o[0]==v)||[0,v])[1]:r.fmt?r.fmt(v):v+(r.u||'');
+/* push a mode's settings into the match rules */
+const GG_BASE=GG.slice();let GG_KPW=1,GG_KNIFE=1;
+function seeded(s){return()=>{s=(s*1103515245+12345)%2147483648;return s/2147483648}}
+function applyCfg(m,c){const M=MODES[m];if(!M)return;c=Object.assign(cfgOf(m),c||{});
+  M.resp=c.resp;M.noKs=c.ks===0;M.noNuke=c.nuke===0;
+  if(m==='snd'){M.lim=c.lim;M.len=c.rt;ROUND_T=c.rt;BOMB_T=c.bomb;PLANT_T=c.plant;DEFUSE_T=c.defuse;HALF=Math.max(1,c.lim-1);M.sub=`One life per round. First to ${c.lim} rounds`}
+  else M.len=c.len*60;
+  if(m==='ffa'){M.lim=c.lim;M.sub=`First to ${c.lim} eliminations`}
+  if(m==='tdm'){M.lim=c.lim;M.sub=`First team to ${c.lim} eliminations`}
+  if(m==='hp'){M.lim=c.lim;HILL_T=c.hill;M.sub=`Hold the hardpoint to score. First to ${c.lim}`}
+  if(m==='gun'){GG_KPW=c.kpw;GG_KNIFE=c.knife;const L=GG_BASE.slice(0,-1);if(c.order==='random'){const r=seeded(c.seed||1);for(let i=L.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[L[i],L[j]]=[L[j],L[i]]}}
+    GG.length=0;GG.push(...L,'kn');M.lim=GG.length;M.sub=GG_KPW>1?`${GG_KPW} kills with every weapon. First through the ladder wins`:'A kill with every weapon. First through the ladder wins'}}
+function cfgForStart(m){const c=cfgOf(m);if(m==='gun'&&c.order==='random')c.seed=1+Math.floor(Math.random()*2e9);return c}
+{const _sm=startMatch;startMatch=function(){if(inRoom())return hostStart();applyCfg(S.mode,cfgForStart(S.mode));return _sm()}}
+{const _so=startOnline;startOnline=function(mode,R,sp,map){applyCfg(mode,NET.lobby.cfg);return _so(mode,R,sp,map)}}
+{const _cs=clientStart;clientStart=function(m){if(m.cfg)NET.lobby.cfg=m.cfg;return _cs(m)}}
+{const _hs=hostStart;hostStart=function(){if(!NET.host)return;const L=NET.lobby;L.cfg=cfgForStart(L.mode);return _hs()}}
+{const _sc=streakCheck;streakCheck=function(p){if(MODE.noKs)return;return _sc(p)}}
+{const _nc=nukeCheck;nukeCheck=function(p){if(MODE.noNuke)return;return _nc(p)}}
+{const _ps=preStart;preStart=function(){document.body.classList.toggle('noks',!!(MODE.noKs||MODE.gun));return _ps()}}
+
+/* ---------- the settings page (opens over the mode cards) ---------- */
+let cfgOpen=null;
+function cfgSet(m,k,v){S.mcfg=S.mcfg||{};S.mcfg[m]=Object.assign(S.mcfg[m]||{},{[k]:v});save();renderCfg();roomSync()}
+function openCfg(m){S.mode=m;save();cfgOpen=m;renderMenu()}
+function closeCfg(){cfgOpen=null;renderMenu()}
+function renderCfg(){let el=$('modeCfg');if(!el){el=document.createElement('div');el.id='modeCfg';$('step0').insertBefore(el,$('modes').nextSibling)}
+  const on=!!cfgOpen&&menuStep===1;el.hidden=!on;$('modes').hidden=on;document.body.classList.toggle('cfgon',on);if(!on)return;
+  const m=cfgOpen,c=cfgOf(m),card=MODE_CARDS.find(x=>x[0]===m)||[];
+  el.style.setProperty('--a',card[4]||'#ffb02e');
+  el.innerHTML=`<div class="cfh"><div class="ico">${card[5]||''}</div><div><small>GAME SETTINGS</small><h2>${MODE_NM[m]}</h2></div><button class="ghost" data-a="reset" ${cfgCustom(m)?'':'disabled'}>RESET TO DEFAULT</button></div>
+    <div class="cfg">${MCFG[m].map(r=>{const v=c[r.k],ch=v!==r.def;return `<div class="cfr ${ch?'ch':''}"><div><b>${r.n}</b><span>${r.d}${ch?` <em>Default ${cfgVal(r,r.def)}</em>`:''}</span></div>
+      ${r.o?`<div class="chips">${r.o.map(([ov,t])=>`<button class="chip" data-k="${r.k}" data-v="${ov}" aria-pressed="${v==ov}">${t}</button>`).join('')}</div>`
+        :`<div class="stp"><button data-k="${r.k}" data-d="-1" ${v<=r.min?'disabled':''}>‹</button><output>${cfgVal(r,v)}</output><button data-k="${r.k}" data-d="1" ${v>=r.max?'disabled':''}>›</button></div>`}</div>`}).join('')}</div>
+    <div class="cff"><button class="ghost" data-a="back">‹ BACK TO MODES</button><button class="nextb" data-a="next">${inRoom()?'START MATCH ›':'NEXT ›'}</button></div>`;
+  el.onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const a=b.dataset.a;
+    if(a==='back')return closeCfg();if(a==='next'){cfgOpen=null;return startMatch()}if(a==='reset'){S.mcfg[m]={};save();renderCfg();roomSync();return}
+    const r=MCFG[m].find(x=>x.k===b.dataset.k);if(!r)return;if(r.o){const ov=r.o.find(o=>String(o[0])===b.dataset.v)[0];cfgSet(m,r.k,ov)}else cfgSet(m,r.k,cl(c[r.k]+r.st*+b.dataset.d,r.min,r.max));sfx('swap')}}
+/* mode cards: NEXT and GAME SETTINGS on hover; card text follows the settings */
+const CARD_TXT={ffa:c=>[`Everyone for themselves. First to ${c.lim} eliminations wins.`,['RESPAWNS',c.len+' MIN','SOLO']],
+  tdm:c=>[`Ravens vs Vultures. First team to ${c.lim} eliminations.`,['RESPAWNS',c.len+' MIN','TEAMS']],
+  hp:c=>[`Hold the moving zone to score. First to ${c.lim} points.`,['OBJECTIVE',c.hill+'S ZONES','TEAMS']],
+  snd:c=>[`One life per round. Plant the bomb or defuse it. First to ${c.lim}.`,['NO RESPAWNS','BOMB',c.lim+' ROUNDS']],
+  gun:c=>[`Every ${c.kpw>1?c.kpw+' kills give':'kill gives'} you the next gun. Get through all ${GG_BASE.length} to win.${c.knife?' Knife kills set people back.':''}`,['RESPAWNS',c.order==='random'?'SHUFFLED':'LADDER','SOLO']]};
+{const _rm=renderMenu;renderMenu=function(){_rm();
+  document.querySelectorAll('#modes .mc').forEach(card=>{const m=card.dataset.mode,c=cfgOf(m),[d,tags]=CARD_TXT[m]?CARD_TXT[m](c):[null,null];
+    if(d){card.querySelector('p').textContent=d;card.querySelector('.tags').innerHTML=tags.map(t=>`<i>${t}</i>`).join('')+(cfgCustom(m)?'<i class="cus">CUSTOM</i>':'')}
+    const nb=card.querySelector('.nextb');if(nb)nb.remove();
+    const bx=document.createElement('div');bx.className='mcb';bx.innerHTML=`<button class="nextb" data-a="next">${inRoom()?'START ›':'NEXT ›'}</button><button class="cfgb" data-a="cfg">⚙ GAME SETTINGS</button>`;
+    bx.onclick=e=>{e.stopPropagation();const b=e.target.closest('button');if(!b)return;if(b.dataset.a==='cfg')openCfg(m);else{S.mode=m;save();startMatch()}};card.appendChild(bx)});
+  renderCfg();roomBar();
+  if(inRoom()){chips('bcount',[[0,'None'],[6,'Fill to 6'],[8,'Fill to 8'],[10,'Fill to 10'],[12,'Fill to 12']],'fill',roomSync);const h=$('bcount').previousElementSibling;if(h)h.textContent='FILL WITH BOTS';
+    chips('diff',[['easy','Easy'],['normal','Normal'],['hard','Hard']],'diff',roomSync);$('play').textContent='START MATCH ›';$('mHint').textContent=menuStep===1?'Pick a mode, then START MATCH · everyone picks a class once the match loads':'Pick a map for the room, then press NEXT'}
+  else{const h=$('bcount').previousElementSibling;if(h)h.textContent='BOTS';$('play').textContent='DEPLOY ›'}
+  roomSync()}}
+/* back / escape close the settings page first */
+addEventListener('click',e=>{if(cfgOpen&&e.target.closest('#mBack')){e.stopImmediatePropagation();closeCfg()}},true);
+addEventListener('keydown',e=>{if(!cfgOpen||state!=='menu'||$('menu').hidden)return;if(e.code==='Escape'){e.stopImmediatePropagation();closeCfg()}else if(e.code==='Enter'){e.stopImmediatePropagation();cfgOpen=null;startMatch()}},true);
+
+/* ---------- online: the host builds the match from the main menu ---------- */
+const inRoom=()=>NET.on&&NET.host&&!NET.inMatch&&!!NET.code;
+function showRoomMenu(){$('lobby').hidden=true;$('over').hidden=true;$('onM').hidden=true;$('hud').hidden=true;$('menu').hidden=false;state='menu';if(S.fill==null)S.fill=NET.lobby.fill;if(menuStep==null)menuStep=0;goStep(menuStep||0)}
+{const _sl=showLobby;showLobby=function(){if(NET.on&&(NET.host||NET.creating)&&!NET.inMatch)return showRoomMenu();return _sl()}}
+{const _nr=netRecv;netRecv=function(m){_nr(m);if(m.t==='welcome'){NET.creating=false;if(NET.host)showRoomMenu();else if(!$('menu').hidden&&document.body.classList.contains('inroom'))_showLobbyPlain()}
+  if(m.t==='leave'&&NET.host&&!NET.inMatch&&state!=='play'&&!$('lobby').hidden)showRoomMenu();if((m.t==='join'||m.t==='leave')&&inRoom())roomBar()}}
+function _showLobbyPlain(){$('menu').hidden=true;$('lobby').hidden=false;renderLobby()}
+let roomLast='';
+function roomSync(){if(!inRoom())return;const L=NET.lobby;L.mode=S.mode;L.map=S.map;L.diff=S.diff;L.fill=S.fill==null?8:S.fill;L.cfg=cfgOf(S.mode);const k=JSON.stringify(L);if(k!==roomLast){roomLast=k;hostLobbySync()}roomBar()}
+function roomBar(){let el=$('roomBar');const on=inRoom()&&state==='menu';document.body.classList.toggle('inroom',on);
+  if(!el){el=document.createElement('div');el.id='roomBar';el.className='glass';document.querySelector('#menu .mtop').appendChild(el)}el.hidden=!on;if(!on)return;
+  const ps=lobbyPlayers(),fill=NET.lobby.fill||0;
+  el.innerHTML=`<div class="rbt"><span><i class="dot"></i>ONLINE ROOM</span><b>${NET.code}</b><button class="chip" data-a="copy">COPY INVITE</button><button class="chip" data-a="leave">LEAVE</button></div>
+    <div class="rbp">${ps.map(p=>`<i class="${p.me?'me':''}">${esc(p.name)}${p.id===NET.hostId?' ★':''}</i>`).join('')}${fill>ps.length?`<i class="bot">+${fill-ps.length} BOTS</i>`:''}</div>`;
+  el.onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a==='copy'){const u=location.origin+location.pathname+'#room='+NET.code;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>pop('INVITE LINK COPIED','#9fe06a'),()=>prompt('Invite link',u))}
+    else{netLeave();document.body.classList.remove('inroom');renderMenu()}}}
+/* guests see the host's settings in the lobby */
+{const _rl=renderLobby;renderLobby=function(){_rl();if($('lobby').hidden)return;const L=NET.lobby;let el=$('lbCfg');if(!el){el=document.createElement('p');el.id='lbCfg';el.className='tagl';$('lbMode').after(el)}
+  const m=L.mode,c=Object.assign(cfgOf(m),L.cfg||{});el.textContent=(MCFG[m]||[]).map(r=>`${r.n} ${cfgVal(r,c[r.k])}`).join(' · ')}}
 /* ================= Audio ================= */
 let ac=null,master,nbuf;
 function audio(){try{if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=(S.vol==null?80:S.vol)/100;master.connect(ac.destination);nbuf=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);const d=nbuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}if(ac.state==='suspended')ac.resume()}catch(e){ac=null}}
@@ -2716,7 +2834,7 @@ $('play').onclick=()=>startMatch();$('again').onclick=()=>{if(NET.on){state='lob
 /* online menu */
 function onMsg(t){$('onMsg').textContent=t||''}
 function needName(){const n=($('nmIn').value||'').trim().replace(/[^\w \-]/g,'').slice(0,16);if(!n){onMsg('Type a name first.');$('nmIn').focus();return null}S.name=n;save();return n}
-$('mkRoom').onclick=()=>{if(!netEnabled())return onMsg('Online play is not set up yet.');if(!needName())return;const c=roomCode();location.hash='room='+c;netConnect(c)};
+$('mkRoom').onclick=()=>{if(!netEnabled())return onMsg('Online play is not set up yet.');if(!needName())return;const c=roomCode();location.hash='room='+c;NET.creating=true;netConnect(c)};
 $('joinRoom').onclick=()=>{if(!netEnabled())return onMsg('Online play is not set up yet.');if(!needName())return;const c=($('codeIn').value||'').trim().toUpperCase();if(!/^[A-Z0-9]{4,8}$/.test(c))return onMsg('Enter the 4-letter room code.');location.hash='room='+c;netConnect(c)};
 $('lbStart').onclick=()=>hostStart();$('lbLeave').onclick=()=>{netLeave();$('lobby').hidden=true;$('menu').hidden=false};
 $('lbCopy').onclick=()=>{const v=$('lbLink').value;try{navigator.clipboard.writeText(v);$('lbCopy').textContent='Copied!';setTimeout(()=>$('lbCopy').textContent='Copy invite link',1500)}catch(e){$('lbLink').select()}};
