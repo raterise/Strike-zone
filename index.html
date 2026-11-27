@@ -244,6 +244,7 @@ input[type=text],#online input,#lobby input{font:700 16px var(--f);letter-spacin
 #sideLo kbd{font-size:11px;border:1px solid rgba(0,0,0,.3);border-radius:3px;padding:1px 5px;margin-left:8px;font-family:var(--f)}#sideLo .ks kbd{border-color:rgba(255,255,255,.3)}
 body.loside #clk,body.loside #hint,body.loside #score,body.loside #hpS,body.loside #feed,body.loside #streaks,body.loside #hp,body.loside #fps{visibility:hidden}
 .akt{display:block;width:100%;text-align:left;font:400 22px/1 'Black Ops One',var(--fn);letter-spacing:1px;color:#efe6da;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,0));border:1px solid var(--line);border-left:3px solid rgba(255,255,255,.2);border-radius:5px;padding:12px 14px;cursor:pointer}.akt small{display:block;font:700 12px var(--f);letter-spacing:1.5px;color:var(--dim);margin-top:5px}.akt.on{border-color:var(--y);color:var(--y);background:linear-gradient(90deg,rgba(255,176,46,.2),rgba(255,176,46,0))}.akt:hover{border-color:var(--y)}
+.wnrow{display:flex;align-items:flex-end;gap:10px}.wnrow .wcname{flex:1;min-width:0}.wren{flex:none;font:700 13px var(--f);letter-spacing:2px;color:var(--y);background:rgba(255,176,46,.08);border:1px solid rgba(255,176,46,.5);border-radius:4px;padding:8px 12px;cursor:pointer}.wren:hover{background:rgba(255,176,46,.18)}
 </style>
 </head>
 <body>
@@ -726,16 +727,16 @@ function hitPlayer(o,d,q,maxT){const rh=.38;let best=null;/* body box and head b
   for(const b of parts2){const t=rayBox(o,d,b,maxT);if(t>=0&&(!best||t<best.t)){const hl=Math.hypot(d[0],d[2])||1,lat=Math.abs((d[0]*(q.z-o[2])-d[2]*(q.x-o[0]))/hl),hy=o[1]+d[1]*t;best={t,h:b.h,leg:!b.h&&(hy<q.y+(q.crouch?.42:.78)||lat>.24)}}}return best}
 function fire(p){const c=curW(p),W=WS(c);if(W.melee){if(c.cd>0||p.dead)return false;c.cd=1/W.rps;melee(p,true);return true}if(c.cd>0||c.rl>0||p.dead||(p===me&&(T<(p.sprintOut||0)||meleeT>0)))return false;if(c.mag<=0){reload(p);if(p===me)sfx('dry');return false}
   c.mag--;c.cd=1/W.rps;p.prot=0;const ads=p===me?adsK:(p.ai.tgt?1:0),moving=Math.hypot(p.vx,p.vz)>1,spr=lerp(W.hip,W.ads,ads)*(moving?1.5:1)*(p.ground?1:2)*(p.crouch?.8:1)+(p.bot?DIFF[S.diff].aim*(1-p.ai.react*0):0)+(p===me?recoil*.4:0);
-  const o=eyeOf(p);let any=false,kill=false;if(W.proj)fireProj(p,W,o,spr);
+  if(W.akimbo&&p===me)akimboSide^=1;const o=eyeOf(p);let any=false,kill=false;if(W.proj)fireProj(p,W,o,spr);
   for(let k=0;k<(W.proj?0:W.pel);k++){const yaw=p.yaw+(p.bot?p.ai.aimE[0]:0)+R(-spr,spr),pitch=p.pitch+(p.bot?p.ai.aimE[1]:0)+R(-spr,spr),d=dirOf(yaw,pitch),w=rayWorld(o,d,200);let tB=w.t,who=null,hs=false,leg=false;
     for(const q of players){if(q===p||q.dead||!foe(p,q))continue;const h=hitPlayer(o,d,q,tB);if(h&&h.t<tB){tB=h.t;who=q;hs=h.h;leg=h.leg}}
     {const sk=rayStreaks(o,d,tB);if(sk){tB=sk.t;who=null;w.b=null;if(sk.h)damageHeli(sk.h,dmgAt(W,tB),p);else damageDrone(sk.dr,dmgAt(W,tB),p)}}
     const end=[o[0]+d[0]*tB,o[1]+d[1]*tB,o[2]+d[2]*tB];
-    if(k===0||W.pel<4){const mz=p===me?muzzleWorld():[o[0]+d[0]*.8,o[1]-.15+d[1]*.8,o[2]+d[2]*.8];tracers.push({a:mz,b:end,t:.06});recordShot(p,mz,end)}
+    if(k===0||W.pel<4){const mz=p===me?muzzleWorld(W.akimbo&&akimboSide):[o[0]+d[0]*.8,o[1]-.15+d[1]*.8,o[2]+d[2]*.8];tracers.push({a:mz,b:end,t:.06});recordShot(p,mz,end)}
     if(who&&who.prot>T){for(let i=0;i<3;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-1.5,1.5),vy:R(0,2),vz:R(-1.5,1.5),t:.3,c:[1.4,1.6,2],s:.08})}
     else if(who){const dmg=dmgAt(W,tB)*(hs?W.hs:leg?(W.limb||.85):1);any=true;if(damage(who,dmg,p,hs))kill=true;for(let i=0;i<4;i++)parts.push({x:end[0],y:end[1],z:end[2],vx:R(-2,2),vy:R(0,3),vz:R(-2,2),t:.4,c:[.6,.05,.05],s:.12})}
     else if(w.b){if(w.b.tur)damageTurret(w.b.tur,dmgAt(W,tB),p);decalHit(w.b,end);for(let i=0;i<3;i++)parts.push({x:end[0]-d[0]*.05,y:end[1]-d[1]*.05,z:end[2]-d[2]*.05,vx:R(-1.5,1.5),vy:R(.5,2.5),vz:R(-1.5,1.5),t:.5,c:[.55,.5,.42],s:.1})}}
-  if(p===me){const bk=W.bipod&&me.crouch?.4:1;recoil=Math.min(.12,recoil+W.rec*bk);me.pitch+=W.rec*bk*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=W.quiet||W.noflash?0:.05;if(W.akimbo)akimboSide^=1;me.shotT=T;sfx(W.quiet?'qshot':'shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
+  if(p===me){const bk=W.bipod&&me.crouch?.4:1;recoil=Math.min(.12,recoil+W.rec*bk);me.pitch+=W.rec*bk*.55*(1-adsK*.35);me.yaw+=R(-W.rec,W.rec)*.25;flashT=W.quiet||W.noflash?0:.05;me.shotT=T;sfx(W.quiet?'qshot':'shot',c.id);if(any){hitT=.18;hitK=kill;sfx(kill?'kill':'hit')}}
   else{const d=Math.hypot(p.x-me.x,p.z-me.z);sfx('far',c.id,W.quiet?d*3:d,Math.atan2(p.x-me.x,p.z-me.z)-me.yaw);if(!W.quiet)p.lastShot=T}
   return true}
 function damage(q,dmg,from,hs){if(q.dead)return false;if(q.prot>T&&from!==q)return false;if(from&&from!==q&&!STREAK_DMG)(q.hitBy||(q.hitBy=new Map())).set(from,T);
@@ -1660,7 +1661,7 @@ function render(){specP=null;const W2=C.width,H2=C.height;gl.bindFramebuffer(gl.
     const lh=rp>.05&&rp<.85&&(BASE(c.id)!=='sg'||c.id==='sg2')?Math.sin((rp-.05)/.8*Math.PI):0;if(!scoped)for(const[hx,hy,hz]of(c.id==='kn'?[[.0,-.03,.18]]:[[.0,-.12,.18],[-.02-lh*.02,-.05-lh*.22,-.28+lh*.2]])){gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(hx,hy,hz,0,.3)));{const om=opMesh(opOf(me));draw(om&&om.hand||M.hand)}}
     if(WS(c).akimbo&&!kn&&!scoped)drawAkimboVM(c,gx,gy,gz,ry,rx);
     if(flashT>0&&c.id!=='kn'&&!(WS(c).akimbo&&akimboSide)){gl.uniform1f(U.uEm,1);gl.uniform3fv(U.uTint,[1,1,1]);gl.uniformMatrix4fv(U.uM,false,mul(gm,modelM(0,GUNM[c.id]&&GUNM[c.id].muzzle?GUNM[c.id].muzzle[1]:0,muzzleZ(c),R(0,6),0,.12)));draw(M.flash);gl.uniform1f(U.uEm,0)}}fxEnd()}
-function muzzleWorld(){const f=dirOf(me.yaw,me.pitch),r=[Math.cos(me.yaw),0,-Math.sin(me.yaw)],e=camE,s=1-adsK;return[e[0]+f[0]*.9+r[0]*.22*s,e[1]+f[1]*.9-.16*s-.05,e[2]+f[2]*.9+r[2]*.22*s]}
+function muzzleWorld(left){const f=dirOf(me.yaw,me.pitch),r=[Math.cos(me.yaw),0,-Math.sin(me.yaw)],e=camE,s=(1-adsK)*(left?-1.1:1);return[e[0]+f[0]*.9+r[0]*.22*s,e[1]+f[1]*.9-.16*Math.abs(s)-.05,e[2]+f[2]*.9+r[2]*.22*s]}
 function project(p){const m=VP,w=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(w<=.05)return null;return[((m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12])/w*.5+.5)*OV.width,(1-((m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13])/w*.5+.5))*OV.height]}
 /* ================= Loadouts: classes, attachments, perks, equipment, sidearms ================= */
 /* ---- extra sidearms (reuse the pistol model, recoloured, with their own parts) ---- */
@@ -2155,7 +2156,7 @@ function lobbyInit(){if($('ltabs'))return;
   menu.insertBefore(ot,menu.querySelector('.mfoot'));
   const oc=$('oCv');oc.onpointerdown=e=>{wDrag={x:e.clientX,r:opRot};oc.setPointerCapture(e.pointerId)};oc.onpointermove=e=>{if(wDrag)opRot=wDrag.r+(e.clientX-wDrag.x)*.012};oc.onpointerup=()=>wDrag=null;
   $('oUse').onclick=()=>{S.op=opSel;save();sfx('swap');renderOps()};
-  wt.addEventListener('click',wClick);wt.addEventListener('mouseover',wOver);wt.addEventListener('input',wInput);
+  wt.addEventListener('click',wClick);wt.addEventListener('keydown',e=>{if(e.target.id==='wClsName'&&e.key==='Enter'){e.preventDefault();e.target.blur();wToast('Saved · '+classById(wSel).n)}});wt.addEventListener('mouseover',wOver);wt.addEventListener('input',wInput);
   wt.addEventListener('pointerdown',e=>{const cv=e.target.closest('canvas#wCv');if(!cv)return;wDrag={x:e.clientX,r:wRot};cv.setPointerCapture(e.pointerId)});
   wt.addEventListener('pointermove',e=>{if(wDrag&&e.target.id==='wCv')wRot=wDrag.r+(e.clientX-wDrag.x)*.012});wt.addEventListener('pointerup',()=>wDrag=null);
   addEventListener('keydown',e=>{if(e.code==='Escape'&&lobTab==='weapons'&&!$('menu').hidden&&$('setM').hidden&&wNav.length>1){e.preventDefault();e.stopPropagation();wBack()}},true);
@@ -2199,13 +2200,13 @@ function pgClass(){const C=classById(wSel),ed=clsEditable(wSel),at=clsAtts(C),L=
     ${card('lethal','LETHAL',`${icon(C.lethal,'big')}<b>${L.n}</b>`)}
     ${card('ks','SCORESTREAKS',`<div class="atl">${(S.streaks||DEF_STREAKS).map(k=>`<i>${SK[k].n}</i>`).join('')}</div><em>CHANGE ›</em>`,'ksc')}
     ${[0,1,2].map(t=>card('perk'+t,'PERK '+(t+1),`${icon(C.perks[t],'big perk')}<b>${perkName(C.perks[t])}</b>`,'perkc')).join('')}
-  </div><div class="wside">${ed?`<input id="wClsName" class="wcname" maxlength="18" spellcheck="false" value="${esc2(C.n)}" title="Click to rename">`:`<h2 class="wcname">${esc2(C.n)}</h2><p class="wdef">Default class · changing anything makes an editable copy</p>`}
+  </div><div class="wside">${ed?`<div class="wnrow"><input id="wClsName" class="wcname" maxlength="18" spellcheck="false" value="${esc2(C.n)}" title="Type a name"><button class="wren" data-a="rename">✎ RENAME</button></div>`:`<h2 class="wcname">${esc2(C.n)}</h2><p class="wdef">Default class · changing anything makes an editable copy</p>`}
     <div class="wprev"><canvas id="wCv" width="640" height="230"></canvas><p class="whint">drag to turn</p></div><div class="winfo" id="wInfo"></div>
     <div class="wact">${S.cls===wSel?'<span class="weq">★ ACTIVE CLASS</span>':'<button class="mid wuse" data-a="use">USE THIS CLASS</button>'}
       <button class="mid" data-a="dup">DUPLICATE</button>${ed&&S.classes.length>1?'<button class="mid wdel" data-a="del">DELETE</button>':''}</div></div></div>`}
 
 /* ---- page 2: choose something for a slot ---- */
-function pickOpts(slot,C){if(slot==='prim')return PRIMS.map(id=>({v:id,n:WEP[id].n,g:WCLS[clsOf(id)]+'S',img:gunImg(id),on:C.prim===id}));
+function pickOpts(slot,C){if(slot==='prim'){const ord=['ar','smg','lmg','sg','snp'];return PRIMS.slice().sort((a,b)=>ord.indexOf(clsOf(a))-ord.indexOf(clsOf(b))||PRIMS.indexOf(a)-PRIMS.indexOf(b)).map(id=>({v:id,n:WEP[id].n,g:WCLS[clsOf(id)]+'S',img:gunImg(id),on:C.prim===id}))}
   if(slot==='sec')return SIDEARMS.map(id=>({v:id,n:WEP[id].n,img:gunImg(id),on:C.sec===id}));
   if(slot==='lethal')return Object.entries(LETHALS).map(([id,L])=>({v:id,n:L.n,img:icon(id,'big'),on:C.lethal===id}));
   if(slot==='tac')return Object.entries(TACTICALS).map(([id,L])=>({v:id,n:L.n,img:icon(id,'big'),on:C.tac===id}));
@@ -2266,6 +2267,7 @@ function wInput(e){if(e.target.id!=='wClsName'||!clsEditable(wSel))return;classB
 function wClick(e){const P=wPage(),a=e.target.closest('[data-a]');
   if(a){const A=a.dataset.a;if(A==='back')wBack();else if(A==='new')wNewClass();else if(A==='del')wDelete();
     else if(A==='akimbo'){const C=wEditable();if(!C)return;C.secAtt=C.secAtt||{};if(C.secAtt.under==='akimbo')delete C.secAtt.under;else C.secAtt.under='akimbo';save();sfx('swap');renderWeapons();renderMenu()}
+    else if(A==='rename'){const i=$('wClsName');if(i){i.focus();i.select()}}
     else if(A==='use'){S.cls=wSel;save();sfx('swap');renderWeapons();renderMenu()}
     else if(A==='dup'){if(S.classes.length>=CLS_MAX){wToast('All '+CLS_MAX+' custom slots are full');return}const c=JSON.parse(JSON.stringify(classById(wSel)));c.n=(c.n+' 2').slice(0,18);S.classes.push(c);wSel='c'+(S.classes.length-1);save();sfx('swap');renderWeapons();renderMenu()}return}
   const tab=e.target.closest('.ctab[data-cl]');if(tab){wSel=tab.dataset.cl;wNav=[{pg:'class'}];sfx('swap');renderWeapons();return}
